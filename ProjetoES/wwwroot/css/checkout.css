@@ -1,0 +1,203 @@
+/* RESET BÁSICO */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #fbfbfb; /* Fundo muito clarinho para contrastar com os inputs brancos */
+    height: 100vh;
+    overflow: hidden; /* Evita o scroll na página inteira, controlamos nas metades */
+}
+
+/* CONTAINER PRINCIPAL (Split Screen) */
+.checkout-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* METADE ESQUERDA: RESUMO DO PEDIDO */
+.summary-section {
+    flex: 0 0 40%; /* Ocupa 40% da largura */
+    max-width: 500px;
+    background-color: #9f75a0; /* Tom roxo/rosa da imagem */
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.summary-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+/* Lista de Itens no Resumo */
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    flex: 1; /* Empurra o botão para baixo se houver espaço */
+}
+
+.order-item {
+    display: flex;
+    gap: 15px;
+}
+
+.item-image {
+    width: 100px;
+    height: 100px;
+    background-color: #c4c4c4;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.item-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+/* Botão Pagar (Esquerda) */
+.btn-pay {
+    margin-top: 40px;
+    width: 100%;
+    background-color: #6a40bf; /* Tom roxo azulado do botão */
+    color: white;
+    border: 2px solid #8e6ee0; /* Borda exterior clarinha */
+    padding: 15px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: center;
+}
+
+.btn-pay:hover {
+    background-color: #5833a1;
+}
+
+/* METADE DIREITA: FORMULÁRIO DE CHECKOUT */
+.form-section {
+    flex: 1;
+    padding: 40px 60px;
+    overflow-y: auto; /* Permite scroll se o formulário for comprido */
+    background-color: #fcfcfc;
+}
+
+.form-main-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 40px;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #9f75a0; /* Roxo igual ao da esquerda */
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+/* Grelha do Formulário */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+    gap: 20px;
+}
+
+/* Inputs */
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 15px;
+    border: none;
+    background-color: #ffffff;
+    border-radius: 4px;
+    font-size: 12px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Sombra muito suave para destacar do fundo */
+    transition: box-shadow 0.2s;
+}
+
+.input-group input::placeholder {
+    color: #b0b0b0;
+}
+
+.input-group input:focus {
+    box-shadow: 0 0 0 2px #9f75a0; /* Destaca a roxo quando selecionado */
+}
+
+/* Logos de Pagamento */
+.payment-methods {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.payment-methods i {
+    font-size: 32px;
+}
+
+/* Cores das marcas para dar realismo */
+.fa-cc-visa { color: #1a1f71; }
+.fa-cc-stripe { color: #6772e5; }
+.fa-cc-paypal { color: #003087; }
+.fa-cc-mastercard { color: #eb001b; }
+.fa-google-pay { color: #4285F4; }
+
+/* Ajustes para telemóvel */
+@media (max-width: 900px) {
+    .checkout-wrapper {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .summary-section {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+        overflow-y: visible;
+    }
+    .form-section {
+        overflow-y: visible;
+        padding: 30px;
+    }
+    .form-grid {
+        grid-template-columns: 1fr; /* Passa a 1 coluna em ecrãs pequenos */
+    }
+}

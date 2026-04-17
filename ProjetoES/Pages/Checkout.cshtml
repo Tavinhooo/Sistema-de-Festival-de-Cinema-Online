@@ -1,0 +1,159 @@
+@page
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProjetoES</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="~/css/checkout.css" />
+</head>
+<body>
+
+    <div class="checkout-wrapper">
+        
+        <aside class="summary-section">
+            <h2 class="summary-title">Resumo do Pedido</h2>
+            
+            <div class="order-items">
+                
+                <div class="order-item">
+                    <div class="item-image"></div>
+                    <div class="item-details">
+                        <div class="item-title">Festival da Batata Doce</div>
+                        <div>
+                            <div class="item-row"><span>Data</span> <span>X/X/X</span></div>
+                            <div class="item-row"><span>Sessão</span> <span>X</span></div>
+                            <div class="item-row"><span>Preço Total</span> <span>15€</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-item">
+                    <div class="item-image"></div>
+                    <div class="item-details">
+                        <div class="item-title">Festival da Pêra Mole</div>
+                        <div>
+                            <div class="item-row"><span>Data</span> <span>X/X/X</span></div>
+                            <div class="item-row"><span>Sessão</span> <span>X</span></div>
+                            <div class="item-row"><span>Preço Total</span> <span>40€</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-item">
+                    <div class="item-image"></div>
+                    <div class="item-details">
+                        <div class="item-title">Festival do Caroço</div>
+                        <div>
+                            <div class="item-row"><span>Data</span> <span>X/X/X</span></div>
+                            <div class="item-row"><span>Sessão</span> <span>X</span></div>
+                            <div class="item-row"><span>Preço Total</span> <span>10€</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button" class="btn-pay">Pagar X€</button>
+        </aside>
+
+        <main class="form-section">
+            
+            <h1 class="form-main-title">Complete o seu pedido</h1>
+
+            <form action="#" method="POST">
+                
+                <h3 class="section-subtitle">Detalhes Pessoais</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Primeiro nome</label>
+                        <input type="text" placeholder="Escreva O Seu Primeiro Nome...">
+                    </div>
+                    <div class="input-group">
+                        <label>Último nome</label>
+                        <input type="text" placeholder="Escreva O Seu Último Nome...">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="Escreva Seu Email...">
+                    </div>
+                    <div class="input-group">
+                        <label>Número de Telefone</label>
+                        <input type="tel" placeholder="Escreva O Seu Número De Telefone...">
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">Detalhes de Pagamento</h3>
+                
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-stripe"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-google-pay"></i>
+                </div>
+
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Titular do Cartão</label>
+                        <input type="text" placeholder="Escreva O Nome Do Titular...">
+                    </div>
+                    <div class="input-group">
+                        <label>Número do Cartão</label>
+                        <input type="text" placeholder="Enter Your Card Number...">
+                    </div>
+                    <div class="input-group">
+                        <label>CVV</label>
+                        <input type="text" placeholder="Exemplo: 123">
+                    </div>
+                    <div class="input-group">
+                        <label>Data de Validade</label>
+                        <input type="text" placeholder="MM/YY">
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">Morada de Faturação</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Nome do Destinatário</label>
+                        <input type="text" placeholder="Escreva O Nome Do Destinatário...">
+                    </div>
+                    <div class="input-group">
+                        <label>Morada</label>
+                        <input type="text" placeholder="Sua Morada...">
+                    </div>
+                    <div class="input-group">
+                        <label>País</label>
+                        <input type="text" placeholder="Seu País...">
+                    </div>
+                    <div class="input-group">
+                        <label>Cidade</label>
+                        <input type="text" placeholder="Sua Cidade...">
+                    </div>
+                    <div class="input-group">
+                        <label>Localidade</label>
+                        <input type="text" placeholder="Sua Localidade...">
+                    </div>
+                    <div class="input-group">
+                        <label>Código Postal</label>
+                        <input type="text" placeholder="Exemplo: 9000-002">
+                    </div>
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
