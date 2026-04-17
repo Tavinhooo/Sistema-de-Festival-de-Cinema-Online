@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v10.0": {
       "ProjetoES/1.0.0": {
         "dependencies": {
+          "Microsoft.AspNetCore.Authentication.Google": "10.0.6",
           "Microsoft.EntityFrameworkCore.Design": "10.0.6",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.1"
         },
@@ -20,6 +21,14 @@
           "lib/net6.0/Humanizer.dll": {
             "assemblyVersion": "2.14.0.0",
             "fileVersion": "2.14.1.48190"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.Google/10.0.6": {
+        "runtime": {
+          "lib/net10.0/Microsoft.AspNetCore.Authentication.Google.dll": {
+            "assemblyVersion": "10.0.6.0",
+            "fileVersion": "10.0.626.17701"
           }
         }
       },
@@ -490,6 +499,13 @@
       "sha512": "sha512-lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
       "path": "humanizer.core/2.14.1",
       "hashPath": "humanizer.core.2.14.1.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.Google/10.0.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ta/Odpe4E0mDjuE+fUwgDs4fvlvVdR8jysyfYrZnZuMxJGl6aw9H9RbRKZWIV+3J09Jn068blIOQpdY9Vetb2g==",
+      "path": "microsoft.aspnetcore.authentication.google/10.0.6",
+      "hashPath": "microsoft.aspnetcore.authentication.google.10.0.6.nupkg.sha512"
     },
     "Microsoft.Build.Framework/18.0.2": {
       "type": "package",

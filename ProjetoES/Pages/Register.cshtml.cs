@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Npgsql;
 using ProjetoES.Data;
 using ProjetoES.Models;
@@ -91,6 +92,18 @@ namespace ProjetoES.Pages
             }
 
             return RedirectToPage("Login");
+        }
+
+        // Este é o método que o botão do Google vai ativar
+        public IActionResult OnPostGoogleLogin(string? returnUrl = null)
+        {
+            // Define para onde voltar depois do Google aprovar
+            var redirectUrl = returnUrl ?? Url.Content("~/Index");
+
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+
+            // O "Challenge" invoca o painel da Google que configurámos no Program.cs
+            return Challenge(properties, Microsoft.AspNetCore.Authentication.Google.GoogleDefaults.AuthenticationScheme);
         }
     }
 }

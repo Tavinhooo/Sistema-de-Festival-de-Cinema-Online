@@ -199,3 +199,4 @@
 /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/a4f7asu9en-{0}-doewn0up9v-doewn0up9v.gz
 /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/lkv2wqxwfx-{0}-7w34v553u1-7w34v553u1.gz
 /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/h3dw79blt6-{0}-mqjwgzj6ok-mqjwgzj6ok.gz
+/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/bin/Debug/net10.0/Microsoft.AspNetCore.Authentication.Google.dll
