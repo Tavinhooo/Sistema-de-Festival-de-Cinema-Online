@@ -1,220 +1,177 @@
 @page
 @{
     ViewData["Title"] = "Detalhes do Filme";
-    Layout = null;
 }
 
-<!DOCTYPE html>
-<html lang="pt-PT">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ProjetoES</title>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+@section Styles {
     <link rel="stylesheet" href="~/css/filme.css" />
-    
     <link rel="stylesheet" href="~/css/modais.css" />
-</head>
-<body>
+}
 
-    <header class="navbar">
-        <div class="logo">
-            <i class="fa-brands fa-figma"></i>
-        </div>
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisa Geral">
-            <i class="fas fa-search"></i>
-        </div>
-        <div class="nav-actions">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            <a class="btn btn-signin" asp-page="/Login">Sign in</a>
-            <a class="btn btn-register" asp-page="/Register">Register</a>
-        </div>
-    </header>
-
-    <main class="main-content">
-        
-        <div class="movie-hero">
-            
-            <div class="movie-info-col">
-                <div class="movie-header">
-                    <div class="movie-poster">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
+<div class="main-content">
+    <div class="movie-hero">
+        <div class="movie-info-col">
+            <div class="movie-header">
+                <div class="movie-poster">
+                    <div class="shapes-placeholder">
+                        <div style="width: 100%; display:flex; justify-content:center;">
+                            <div class="shape-triangle"></div>
                         </div>
-                    </div>
-                    <div class="movie-details">
-                        <h1>Título do Filme</h1>
-                        <p>8.1 (Rating)</p>
-                        <p>Gêneros do Filme</p>
-                        <p>2026 &nbsp;&nbsp; 2h:12min &nbsp;&nbsp; +16</p>
+                        <div class="shape shape-star"></div>
+                        <div class="shape shape-square"></div>
                     </div>
                 </div>
-
-                <div class="movie-buttons">
-                    <button class="btn-pill">Sinopse</button>
-                    <button class="btn-pill">Elenco e Realizador</button>
-                    <button class="btn-add-cart">Adicionar ao carrinho</button>
+                <div class="movie-details">
+                    <h1>Título do Filme</h1>
+                    <p>8.1 (Rating)</p>
+                    <p>Gêneros do Filme</p>
+                    <p>2026 &nbsp;&nbsp; 2h:12min &nbsp;&nbsp; +16</p>
                 </div>
             </div>
 
-            <div class="movie-trailer-col">
-                <h2 class="trailer-title">Trailer:</h2>
-                <div class="trailer-box">
-                    <i class="far fa-play-circle"></i>
-                </div>
-                
-                <div class="trailer-actions">
-                    <div class="action-item">
-                        <i class="fas fa-plus-circle"></i> Ver Depois
-                    </div>
-                    <div class="action-item" id="btnAbrirAvaliacao" style="cursor: pointer;">
-                        <i class="far fa-star"></i> Avaliar
-                    </div>
-                    <div class="action-item">
-                        <i class="far fa-eye"></i> Visto
-                    </div>
-                </div>
+            <div class="movie-buttons">
+                <button class="btn-pill">Sinopse</button>
+                <button class="btn-pill">Elenco e Realizador</button>
+                <button class="btn-add-cart">Adicionar ao carrinho</button>
+            </div>
+        </div>
+
+        <div class="movie-trailer-col">
+            <h2 class="trailer-title">Trailer:</h2>
+            <div class="trailer-box">
+                <i class="far fa-play-circle"></i>
             </div>
             
-        </div>
-
-        <div>
-            <div class="section-badge">Relacionados</div>
-            <div class="card-row">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div class="card">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
-                        </div>
-                    </div>
-                }
+            <div class="trailer-actions">
+                <div class="action-item">
+                    <i class="fas fa-plus-circle"></i> Ver Depois
+                </div>
+                <div class="action-item" id="btnAbrirAvaliacao" style="cursor: pointer;">
+                    <i class="far fa-star"></i> Avaliar
+                </div>
+                <div class="action-item">
+                    <i class="far fa-eye"></i> Visto
+                </div>
             </div>
-        </div>
-
-        <div>
-            <div class="section-badge">Avaliações</div>
-            <div class="reviews-row">
-                @for (int i = 0; i < 4; i++)
-                {
-                    <div class="review-card">
-                        <div class="review-header" style="justify-content: space-between; width: 100%;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span>John Jones</span>
-                                <i class="far fa-star"></i> 9
-                            </div>
-                            <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
-                                <i class="fas fa-flag"></i>
-                            </button>
-                        </div>
-                        <div class="review-body">
-                            Comentario: Este filme é excelente, recomendo vivamente a todos!
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-
-    </main>
-
-    <div class="modal-overlay" id="modalAvaliacao">
-        <div class="modal-box">
-            
-            <div class="modal-header">
-                <h2>Avaliar Filme</h2>
-                <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
-            </div>
-
-            <p style="font-size: 14px; color: #666;">Qual é a tua nota para o <strong>Título do Filme</strong>?</p>
-
-            <div class="rating-scale">
-                <button class="rating-btn">1</button>
-                <button class="rating-btn">2</button>
-                <button class="rating-btn">3</button>
-                <button class="rating-btn">4</button>
-                <button class="rating-btn">5</button>
-                <button class="rating-btn">6</button>
-                <button class="rating-btn">7</button>
-                <button class="rating-btn">8</button>
-                <button class="rating-btn">9</button>
-                <button class="rating-btn">10</button>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn-cancel" type="button">Cancelar</button>
-                <button class="btn-submit" type="button">Submeter Avaliação</button>
-            </div>
-
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalDenuncia">
-        <div class="modal-box">
-            
-            <div class="modal-header">
-                <h2>Denunciar Comentário</h2>
-                <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
-            </div>
-
-            <div class="form-group">
-                <label>Motivo da Denúncia</label>
-                <select>
-                    <option value="">Selecione um motivo...</option>
-                    <option value="spam">Spam ou Publicidade</option>
-                    <option value="ofensivo">Linguagem Ofensiva</option>
-                    <option value="spoiler">Contém Spoilers</option>
-                    <option value="outro">Outro motivo</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Detalhes Adicionais (Opcional)</label>
-                <textarea placeholder="Explique brevemente porque este comentário viola as regras..."></textarea>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn-cancel" type="button">Cancelar</button>
-                <button class="btn-submit" type="button" style="background-color: #e53935;">Denunciar</button>
-            </div>
-
+    <div>
+        <div class="section-badge">Relacionados</div>
+        <div class="card-row">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="card">
+                    <div class="shapes-placeholder">
+                        <div style="width: 100%; display:flex; justify-content:center;">
+                            <div class="shape-triangle"></div>
+                        </div>
+                        <div class="shape shape-star"></div>
+                        <div class="shape shape-square"></div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
+    <div>
+        <div class="section-badge">Avaliações</div>
+        <div class="reviews-row">
+            @for (int i = 0; i < 4; i++)
+            {
+                <div class="review-card">
+                    <div class="review-header" style="justify-content: space-between; width: 100%;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span>John Jones</span>
+                            <i class="far fa-star"></i> 9
+                        </div>
+                        <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
+                            <i class="fas fa-flag"></i>
+                        </button>
+                    </div>
+                    <div class="review-body">
+                        Comentario: Este filme é excelente, recomendo vivamente a todos!
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalAvaliacao">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>Avaliar Filme</h2>
+            <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <p style="font-size: 14px; color: #666;">Qual é a tua nota para o <strong>Título do Filme</strong>?</p>
+        <div class="rating-scale">
+            <button class="rating-btn">1</button>
+            <button class="rating-btn">2</button>
+            <button class="rating-btn">3</button>
+            <button class="rating-btn">4</button>
+            <button class="rating-btn">5</button>
+            <button class="rating-btn">6</button>
+            <button class="rating-btn">7</button>
+            <button class="rating-btn">8</button>
+            <button class="rating-btn">9</button>
+            <button class="rating-btn">10</button>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" type="button">Cancelar</button>
+            <button class="btn-submit" type="button">Submeter Avaliação</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalDenuncia">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>Denunciar Comentário</h2>
+            <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="form-group">
+            <label>Motivo da Denúncia</label>
+            <select>
+                <option value="">Selecione um motivo...</option>
+                <option value="spam">Spam ou Publicidade</option>
+                <option value="ofensivo">Linguagem Ofensiva</option>
+                <option value="spoiler">Contém Spoilers</option>
+                <option value="outro">Outro motivo</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Detalhes Adicionais (Opcional)</label>
+            <textarea placeholder="Explique brevemente porque este comentário viola as regras..."></textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" type="button">Cancelar</button>
+            <button class="btn-submit" type="button" style="background-color: #e53935;">Denunciar</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Elementos
             const btnAvaliar = document.getElementById('btnAbrirAvaliacao');
             const btnsDenunciar = document.querySelectorAll('.btn-reportar-comentario');
             const modalAvaliacao = document.getElementById('modalAvaliacao');
             const modalDenuncia = document.getElementById('modalDenuncia');
             const botoesFechar = document.querySelectorAll('.btn-close, .btn-cancel');
 
-            // Abrir Avaliação
             if(btnAvaliar) {
                 btnAvaliar.addEventListener('click', function() {
                     modalAvaliacao.classList.add('active');
                 });
             }
 
-            // Abrir Denúncia
             btnsDenunciar.forEach(btn => {
                 btn.addEventListener('click', function() {
                     modalDenuncia.classList.add('active');
                 });
             });
 
-            // Fechar qualquer modal
             botoesFechar.forEach(btn => {
                 btn.addEventListener('click', function() {
                     modalAvaliacao.classList.remove('active');
@@ -222,7 +179,6 @@
                 });
             });
             
-            // Bónus: Selecionar a nota no modal de avaliação
             const ratingBtns = document.querySelectorAll('.rating-btn');
             ratingBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -232,6 +188,4 @@
             });
         });
     </script>
-
-</body>
-</html>
+}

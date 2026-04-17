@@ -29,3 +29,45 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.user-widget {
+    display: flex;
+    align-items: center;
+  background: #f3eff7;
+    padding: 8px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-decoration: none !important;
+  color: #4b356f !important;
+  border: 1px solid #d9cbe9;
+}
+
+.user-widget:hover {
+  background: #efe6f8;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 12px;
+    border: 1px solid #fff;
+    background: #9f75a0;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    font-size: 0.75rem;
+  color: #7b629c;
+}

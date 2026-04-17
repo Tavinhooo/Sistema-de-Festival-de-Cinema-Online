@@ -1,118 +1,101 @@
 @page
 @{
     ViewData["Title"] = "Área do Utilizador";
-    Layout = null;
 }
 
-<!DOCTYPE html>
-<html lang="pt-PT">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] - ProjetoES</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+@section Styles {
     <link rel="stylesheet" href="~/css/perfil.css" />
-</head>
-<body>
+}
 
-    <header class="navbar">
-        <div class="logo"><i class="fa-brands fa-figma"></i></div>
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisar nos meus filmes...">
+<div class="profile-container">
+    <aside class="profile-sidebar">
+        <div class="user-preview">
+            <div class="avatar-circle">JJ</div>
+            <h3>John Jones</h3>
+            <p>Membro desde 2025</p>
         </div>
-        <div class="nav-actions">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            <div class="avatar-circle" style="width:35px; height:35px; font-size:14px; margin:0;">JJ</div>
-        </div>
-    </header>
 
-    <div class="profile-container">
-        <aside class="profile-sidebar">
-            <div class="user-preview">
-                <div class="avatar-circle">JJ</div>
-                <h3>John Jones</h3>
-                <p>Membro desde 2025</p>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active"><i class="fas fa-ticket-alt"></i> Meus Acessos</a>
-                <a href="#" class="nav-item"><i class="fas fa-list"></i> Minhas Listas</a>
-                <a href="#" class="nav-item"><i class="fas fa-history"></i> Histórico de Compras</a>
-                <a href="#" class="nav-item"><i class="fas fa-user-cog"></i> Definições</a>
-                <a href="/" class="nav-item" style="margin-top: 20px; color: #e53935;"><i class="fas fa-sign-out-alt"></i> Sair</a>
-            </nav>
-        </aside>
-
-        <main class="profile-content">
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active"><i class="fas fa-ticket-alt"></i> Meus Acessos</a>
+            <a href="#" class="nav-item"><i class="fas fa-list"></i> Minhas Listas</a>
+            <a href="#" class="nav-item"><i class="fas fa-history"></i> Histórico de Compras</a>
+            <a href="#" class="nav-item"><i class="fas fa-user-cog"></i> Definições</a>
             
-            <section class="section-header">
-                <h2>Meus Acessos Reservados</h2>
-                <p style="font-size: 14px; color: #666;">Tens 3 acessos ativos para este festival.</p>
-                
-                <div class="access-grid" style="margin-top:25px;">
-                    <div class="access-card">
-                        <div class="access-thumb"></div>
-                        <div class="access-info">
-                            <span class="access-type type-bilhete">Bilhete de Sessão</span>
-                            <h4>Festival da Batata Doce</h4>
-                            <p style="font-size:11px; color:#777;">Sessão: 14/05 às 21:00</p>
-                            <button class="btn-watch">Ver Agora</button>
-                        </div>
-                    </div>
-                    <div class="access-card">
-                        <div class="access-thumb"></div>
-                        <div class="access-info">
-                            <span class="access-type type-passe">Passe Completo</span>
-                            <h4>Festival do Caroço</h4>
-                            <p style="font-size:11px; color:#777;">Acesso ilimitado</p>
-                            <button class="btn-watch">Explorar Filmes</button>
-                        </div>
-                    </div>
-                    <div class="access-card">
-                        <div class="access-thumb"></div>
-                        <div class="access-info">
-                            <span class="access-type type-aluguer">Aluguer Digital</span>
-                            <h4>Batman: O Início</h4>
-                            <p style="font-size:11px; color:#777;">Expira em: 46h</p>
-                            <button class="btn-watch">Retomar Filme</button>
-                        </div>
+            <form method="post" asp-page="/Index" asp-page-handler="Logout" style="width: 100%; display: block; margin-top: 20px;">
+                <button type="submit" class="nav-item" style="color: #e53935; background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </form>
+        </nav>
+    </aside>
+
+    <main class="profile-content">
+        
+        <section class="section-header">
+            <h2>Meus Acessos Reservados</h2>
+            <p style="font-size: 14px; color: #666;">Tens 3 acessos ativos para este festival.</p>
+            
+            <div class="access-grid" style="margin-top:25px;">
+                <div class="access-card">
+                    <div class="access-thumb"></div>
+                    <div class="access-info">
+                        <span class="access-type type-bilhete">Bilhete de Sessão</span>
+                        <h4>Festival da Batata Doce</h4>
+                        <p style="font-size:11px; color:#777;">Sessão: 14/05 às 21:00</p>
+                        <button class="btn-watch">Ver Agora</button>
                     </div>
                 </div>
-            </section>
+                <div class="access-card">
+                    <div class="access-thumb"></div>
+                    <div class="access-info">
+                        <span class="access-type type-passe">Passe Completo</span>
+                        <h4>Festival do Caroço</h4>
+                        <p style="font-size:11px; color:#777;">Acesso ilimitado</p>
+                        <button class="btn-watch">Explorar Filmes</button>
+                    </div>
+                </div>
+                <div class="access-card">
+                    <div class="access-thumb"></div>
+                    <div class="access-info">
+                        <span class="access-type type-aluguer">Aluguer Digital</span>
+                        <h4>Batman: O Início</h4>
+                        <p style="font-size:11px; color:#777;">Expira em: 46h</p>
+                        <button class="btn-watch">Retomar Filme</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            <section class="section-header" style="margin-top: 50px;">
-                <h2>Histórico Recente</h2>
-                <table class="history-table" style="margin-top:20px;">
-                    <thead>
-                        <tr>
-                            <th>ID Pedido</th>
-                            <th>Data</th>
-                            <th>Item</th>
-                            <th>Valor</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>#ES-9482</td>
-                            <td>12/03/2026</td>
-                            <td>Passe Completo + 1 Bilhete</td>
-                            <td>55.00€</td>
-                            <td class="status-pago">Pago</td>
-                        </tr>
-                        <tr>
-                            <td>#ES-9421</td>
-                            <td>10/03/2026</td>
-                            <td>Aluguer Digital</td>
-                            <td>4.50€</td>
-                            <td class="status-pago">Pago</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+        <section class="section-header" style="margin-top: 50px;">
+            <h2>Histórico Recente</h2>
+            <table class="history-table" style="margin-top:20px;">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Data</th>
+                        <th>Item</th>
+                        <th>Valor</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#ES-9482</td>
+                        <td>12/03/2026</td>
+                        <td>Passe Completo + 1 Bilhete</td>
+                        <td>55.00€</td>
+                        <td class="status-pago">Pago</td>
+                    </tr>
+                    <tr>
+                        <td>#ES-9421</td>
+                        <td>10/03/2026</td>
+                        <td>Aluguer Digital</td>
+                        <td>4.50€</td>
+                        <td class="status-pago">Pago</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-        </main>
-    </div>
-
-</body>
-</html>
+    </main>
+</div>

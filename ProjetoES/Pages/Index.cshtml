@@ -1,80 +1,47 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Página Inicial";
-    Layout = null; 
+    ViewData["Title"] = "Home page";
 }
 
-<!DOCTYPE html>
-<html lang="pt-PT">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ProjetoES</title>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
+@section Styles {
     <link rel="stylesheet" href="~/css/index.css" />
-</head>
-<body>
+}
 
-    <header class="navbar">
-        <div class="logo">
-            <i class="fa-brands fa-figma"></i>
-        </div>
-        
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisa Geral">
-            <i class="fas fa-search"></i>
-        </div>
-
-        <div class="nav-actions">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            <a class="btn btn-signin" asp-page="/Login">Sign in</a>
-            <a class="btn btn-register" asp-page="/Register">Register</a>
-        </div>
-    </header>
-
-    <main class="main-content">
-        
-        <section>
-            <h2 class="section-title">Festivais a decorrer...</h2>
-            <div class="card-row">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div class="card">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
+<div class="main-content">
+    <section>
+        <h2 class="section-title">Festivais a decorrer...</h2>
+        <div class="card-row">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="card">
+                    <div class="shapes-placeholder">
+                        <div style="width: 100%; display:flex; justify-content:center;">
+                            <div class="shape-triangle"></div>
                         </div>
+                        <div class="shape shape-star"></div>
+                        <div class="shape shape-square"></div>
                     </div>
-                }
-            </div>
-        </section>
+                </div>
+            }
+        </div>
+    </section>
 
-        <section>
-            <h2 class="section-title">Próximos Festivais</h2>
-            <div class="card-row">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div class="card">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
+    <section>
+        <h2 class="section-title">Próximos Festivais</h2>
+        <div class="card-row">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="card">
+                    <div class="shapes-placeholder">
+                        <div style="width: 100%; display:flex; justify-content:center;">
+                            <div class="shape-triangle"></div>
                         </div>
+                        <div class="shape shape-star"></div>
+                        <div class="shape shape-square"></div>
                     </div>
-                }
-            </div>
-        </section>
-
-    </main>
-
-</body>
-</html>
+                </div>
+            }
+        </div>
+    </section>
+</div>
