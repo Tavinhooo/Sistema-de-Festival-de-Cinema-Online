@@ -1,0 +1,105 @@
+@page
+@{
+    ViewData["Title"] = "O Meu Carrinho";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - ProjetoES</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/carrinho.css" />
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo"><i class="fa-brands fa-figma"></i></div>
+        <div class="search-container">
+            <input type="text" placeholder="Pesquisar mais filmes...">
+        </div>
+        <div class="nav-actions">
+            <div class="avatar-circle" style="width:35px; height:35px; background:#edeaf3; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:12px; font-weight:700;">JJ</div>
+        </div>
+    </header>
+
+    <div class="cart-container">
+        <h1 class="cart-title">O Meu Carrinho</h1>
+
+        <div class="cart-items">
+            
+            <div class="cart-item">
+                <div class="item-img"></div>
+                <div class="item-info">
+                    <div class="item-header">
+                        <span class="item-name">Festival da Batata Doce</span>
+                        <span class="item-price">15.00€</span>
+                    </div>
+                    <span class="item-tag tag-bilhete">Bilhete de Sessão</span>
+                    <div class="item-details">
+                        <p><strong>Sessão:</strong> Estreia Noturna</p>
+                        <p><strong>Horário:</strong> 14/05/2026 - 21:00</p>
+                    </div>
+                </div>
+                <button class="btn-remove"><i class="fas fa-trash-alt"></i> Remover</button>
+            </div>
+
+            <div class="cart-item">
+                <div class="item-img"></div>
+                <div class="item-info">
+                    <div class="item-header">
+                        <span class="item-name">Festival do Caroço</span>
+                        <span class="item-price">40.00€</span>
+                    </div>
+                    <span class="item-tag tag-passe">Passe Completo</span>
+                    <div class="item-details">
+                        <p><strong>Duração:</strong> Todo o Festival</p>
+                        <p><strong>Datas:</strong> 10/05 a 20/05</p>
+                    </div>
+                </div>
+                <button class="btn-remove"><i class="fas fa-trash-alt"></i> Remover</button>
+            </div>
+
+            <div class="cart-item">
+                <div class="item-img"></div>
+                <div class="item-info">
+                    <div class="item-header">
+                        <span class="item-name">Batman: O Início</span>
+                        <span class="item-price">4.50€</span>
+                    </div>
+                    <span class="item-tag tag-aluguer">Aluguer Digital</span>
+                    <div class="item-details">
+                        <p><strong>Prazo:</strong> 48 horas após primeiro play</p>
+                    </div>
+                </div>
+                <button class="btn-remove"><i class="fas fa-trash-alt"></i> Remover</button>
+            </div>
+
+        </div>
+
+        <aside class="cart-summary">
+            <h3 style="margin-bottom: 20px;">Resumo</h3>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>59.50€</span>
+            </div>
+            <div class="summary-row">
+                <span>Taxas</span>
+                <span>0.00€</span>
+            </div>
+            <div class="summary-total">
+                <div class="summary-row" style="margin:0; color: #111;">
+                    <span>Total</span>
+                    <span>59.50€</span>
+                </div>
+            </div>
+
+            <button class="btn-checkout" onclick="location.href='/Checkout'">Finalizar Compra</button>
+            <a href="/" class="btn-back">Continuar a comprar</a>
+        </aside>
+    </div>
+
+</body>
+</html>

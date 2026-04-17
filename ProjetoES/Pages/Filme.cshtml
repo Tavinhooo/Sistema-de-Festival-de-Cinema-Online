@@ -14,6 +14,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/filme.css" />
+    
+    <link rel="stylesheet" href="~/css/modais.css" />
 </head>
 <body>
 
@@ -27,8 +29,8 @@
         </div>
         <div class="nav-actions">
             <i class="fas fa-shopping-cart cart-icon"></i>
-            <button class="btn btn-signin">Sign in</button>
-            <button class="btn btn-register">Register</button>
+            <a class="btn btn-signin" asp-page="/Login">Sign in</a>
+            <a class="btn btn-register" asp-page="/Register">Register</a>
         </div>
     </header>
 
@@ -72,7 +74,7 @@
                     <div class="action-item">
                         <i class="fas fa-plus-circle"></i> Ver Depois
                     </div>
-                    <div class="action-item">
+                    <div class="action-item" id="btnAbrirAvaliacao" style="cursor: pointer;">
                         <i class="far fa-star"></i> Avaliar
                     </div>
                     <div class="action-item">
@@ -107,12 +109,17 @@
                 @for (int i = 0; i < 4; i++)
                 {
                     <div class="review-card">
-                        <div class="review-header">
-                            <span>John Jones</span>
-                            <i class="far fa-star"></i> 9
+                        <div class="review-header" style="justify-content: space-between; width: 100%;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>John Jones</span>
+                                <i class="far fa-star"></i> 9
+                            </div>
+                            <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
+                                <i class="fas fa-flag"></i>
+                            </button>
                         </div>
                         <div class="review-body">
-                            Comentario:
+                            Comentario: Este filme é excelente, recomendo vivamente a todos!
                         </div>
                     </div>
                 }
@@ -120,6 +127,111 @@
         </div>
 
     </main>
+
+    <div class="modal-overlay" id="modalAvaliacao">
+        <div class="modal-box">
+            
+            <div class="modal-header">
+                <h2>Avaliar Filme</h2>
+                <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
+            </div>
+
+            <p style="font-size: 14px; color: #666;">Qual é a tua nota para o <strong>Título do Filme</strong>?</p>
+
+            <div class="rating-scale">
+                <button class="rating-btn">1</button>
+                <button class="rating-btn">2</button>
+                <button class="rating-btn">3</button>
+                <button class="rating-btn">4</button>
+                <button class="rating-btn">5</button>
+                <button class="rating-btn">6</button>
+                <button class="rating-btn">7</button>
+                <button class="rating-btn">8</button>
+                <button class="rating-btn">9</button>
+                <button class="rating-btn">10</button>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" type="button">Cancelar</button>
+                <button class="btn-submit" type="button">Submeter Avaliação</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalDenuncia">
+        <div class="modal-box">
+            
+            <div class="modal-header">
+                <h2>Denunciar Comentário</h2>
+                <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="form-group">
+                <label>Motivo da Denúncia</label>
+                <select>
+                    <option value="">Selecione um motivo...</option>
+                    <option value="spam">Spam ou Publicidade</option>
+                    <option value="ofensivo">Linguagem Ofensiva</option>
+                    <option value="spoiler">Contém Spoilers</option>
+                    <option value="outro">Outro motivo</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Detalhes Adicionais (Opcional)</label>
+                <textarea placeholder="Explique brevemente porque este comentário viola as regras..."></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" type="button">Cancelar</button>
+                <button class="btn-submit" type="button" style="background-color: #e53935;">Denunciar</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos
+            const btnAvaliar = document.getElementById('btnAbrirAvaliacao');
+            const btnsDenunciar = document.querySelectorAll('.btn-reportar-comentario');
+            const modalAvaliacao = document.getElementById('modalAvaliacao');
+            const modalDenuncia = document.getElementById('modalDenuncia');
+            const botoesFechar = document.querySelectorAll('.btn-close, .btn-cancel');
+
+            // Abrir Avaliação
+            if(btnAvaliar) {
+                btnAvaliar.addEventListener('click', function() {
+                    modalAvaliacao.classList.add('active');
+                });
+            }
+
+            // Abrir Denúncia
+            btnsDenunciar.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modalDenuncia.classList.add('active');
+                });
+            });
+
+            // Fechar qualquer modal
+            botoesFechar.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modalAvaliacao.classList.remove('active');
+                    modalDenuncia.classList.remove('active');
+                });
+            });
+            
+            // Bónus: Selecionar a nota no modal de avaliação
+            const ratingBtns = document.querySelectorAll('.rating-btn');
+            ratingBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    ratingBtns.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>

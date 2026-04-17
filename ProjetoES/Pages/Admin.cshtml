@@ -1,0 +1,145 @@
+@page
+@{
+    ViewData["Title"] = "Painel de Administração";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - ProjetoES</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body>
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="admin-logo">
+                <i class="fa-brands fa-figma"></i>
+                Projeto<span>ES</span>
+            </a>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active"><i class="fas fa-home"></i> Dashboard</a>
+            
+            <div class="menu-group">Gestão de Conteúdo</div>
+            <a href="#" class="menu-item"><i class="fas fa-calendar-alt"></i> Festivais</a>
+            <a href="#" class="menu-item"><i class="fas fa-film"></i> Catálogo de Filmes</a>
+            <a href="#" class="menu-item"><i class="fas fa-clock"></i> Sessões & Horários</a>
+            
+            <div class="menu-group">Utilizadores & Vendas</div>
+            <a href="#" class="menu-item"><i class="fas fa-users"></i> Clientes</a>
+            <a href="#" class="menu-item"><i class="fas fa-ticket-alt"></i> Controlo de Acessos</a>
+            
+            <div class="menu-group">Segurança</div>
+            <a href="#" class="menu-item">
+                <i class="fas fa-flag"></i> Moderação
+                <span style="background:#e53935; color:white; padding:2px 6px; border-radius:10px; font-size:10px; margin-left:auto;">3</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="menu-item" style="color: #bbb;"><i class="fas fa-sign-out-alt"></i> Terminar Sessão</a>
+        </div>
+    </aside>
+
+    <main class="admin-content">
+        
+        <header class="admin-topbar">
+            <div class="topbar-search">
+                <input type="text" placeholder="Pesquisar por ID, email ou filme...">
+            </div>
+            <div class="topbar-actions">
+                <i class="fas fa-bell" style="color: #666; cursor: pointer;"></i>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="text-align:right;">
+                        <div style="font-size:13px; font-weight:700;">Admin User</div>
+                        <div style="font-size:11px; color:#777;">Super Administrador</div>
+                    </div>
+                    <div style="width:35px; height:35px; background:#6a40bf; color:white; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold;">A</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-panel">
+            
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Gestão de Festivais</h1>
+                </div>
+                <button class="btn-primary"><i class="fas fa-plus"></i> Novo Festival</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-purple"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Festivais Ativos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-blue"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <h3>1,240</h3>
+                        <p>Clientes Registados</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-red"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Reports Pendentes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">Todos os Festivais</div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome do Festival</th>
+                            <th>Data Início</th>
+                            <th>Data Término</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#001</td>
+                            <td><strong>Festival da Batata Doce</strong></td>
+                            <td>10/05/2026</td>
+                            <td>15/05/2026</td>
+                            <td><span class="badge badge-active">Ativo</span></td>
+                            <td>
+                                <button class="action-btn" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Gerir Filmes"><i class="fas fa-film"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#002</td>
+                            <td><strong>Festival da Pêra Mole</strong></td>
+                            <td>20/06/2026</td>
+                            <td>25/06/2026</td>
+                            <td><span class="badge badge-draft">Agendado</span></td>
+                            <td>
+                                <button class="action-btn" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Gerir Filmes"><i class="fas fa-film"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

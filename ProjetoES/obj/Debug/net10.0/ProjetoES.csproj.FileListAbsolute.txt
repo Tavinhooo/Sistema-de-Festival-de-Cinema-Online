@@ -102,3 +102,9 @@
 /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/lkv2wqxwfx-{0}-0f7yclrlcm-0f7yclrlcm.gz
 /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/h3dw79blt6-{0}-935f3axoj5-935f3axoj5.gz
 /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/8z3e4jccmd-{0}-vculsie5xl-vculsie5xl.gz
+/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/a4f7asu9en-{0}-falnp0xzln-falnp0xzln.gz
+/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/a8s2i0zju8-{0}-xte84z65uz-xte84z65uz.gz
+/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/09xcgz8b8r-{0}-t7mflooxw8-t7mflooxw8.gz
+/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/j1fvq2fkfl-{0}-tji2mhijmi-tji2mhijmi.gz
+/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/3ex6f2d5lx-{0}-xm5fx5oppl-xm5fx5oppl.gz
+/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/Debug/net10.0/compressed/cgyjkn90vy-{0}-0djarors6q-0djarors6q.gz
