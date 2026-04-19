@@ -1,145 +1,174 @@
 @page
 @model ProjetoES.Pages.Admin.AdicionarFilmeModel
 @{
-    ViewData["Title"] = "Gestão - Adicionar Filme";
+    ViewData["Title"] = "Importar Filme";
 }
 
-<style>
-    /* Usamos uma div wrapper para não interferir com o body do Layout */
-    .admin-page-wrapper {
-        font-family: 'Inter', sans-serif; /* Força a fonte correta */
-        padding: 40px 20px; /* Dá espaço à volta, afastando do header */
-    }
+@section Styles {
+    <style>
+        .clean-wrapper { background-color: #f8f9fa; min-height: 80vh; padding: 40px 20px; font-family: 'Inter', sans-serif; }
+        .clean-card { max-width: 800px; margin: 0 auto; background: white; padding: 35px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .clean-title { color: #2c3e50; border-bottom: 2px solid #e5d8fb; padding-bottom: 12px; margin-bottom: 30px; font-weight: 700; font-size: 24px; margin-top:0; }
+        .clean-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .clean-full { grid-column: 1 / -1; }
+        .clean-group { display: flex; flex-direction: column; }
+        .clean-group label { font-weight: 600; color: #444; margin-bottom: 8px; font-size: 14px; }
+        .clean-group input, .clean-group textarea, .clean-group select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; transition: border-color 0.3s; background-color: white;}
+        .clean-group input:focus, .clean-group textarea:focus, .clean-group select:focus { border-color: #6b439b; outline: none; box-shadow: 0 0 0 3px rgba(107, 67, 155, 0.1); }
+        .clean-btn { background-color: #6b439b; color: white; border: none; padding: 15px 24px; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%; transition: background 0.3s; }
+        .clean-btn:hover { background-color: #55357c; }
+        
+        /* Estilos para os resultados da API */
+        .api-search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        .api-results-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 30px; }
+        .api-movie-card { min-width: 120px; cursor: pointer; text-align: center; transition: transform 0.2s; }
+        .api-movie-card:hover { transform: scale(1.05); }
+        .api-movie-card img { width: 120px; height: 180px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .api-movie-card p { font-size: 12px; font-weight: 600; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+    </style>
+}
 
-    .admin-container { 
-        max-width: 800px; 
-        margin: 0 auto; /* Centra na página */
-        padding: 35px; 
-        background: white; 
-        border-radius: 12px; 
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-    }
-    
-    .admin-title { 
-        color: #2c3e50; 
-        border-bottom: 2px solid #e5d8fb; 
-        padding-bottom: 12px; 
-        margin-bottom: 30px; 
-        font-weight: 700;
-    }
+<div class="clean-wrapper">
+    <div class="clean-card">
+        <h2 class="clean-title">Importar Filme da Internet (TMDB)</h2>
 
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .full-width { grid-column: 1 / -1; }
-    
-    .input-group { display: flex; flex-direction: column; }
-    .input-group label { font-weight: 600; color: #444; margin-bottom: 8px; font-size: 14px; }
-    .input-group input, .input-group select, .input-group textarea { 
-        padding: 12px; 
-        border: 1px solid #ddd; 
-        border-radius: 8px; 
-        font-family: 'Inter', sans-serif; /* Importante para as textareas não mudarem de fonte */
-        font-size: 14px;
-        transition: all 0.3s ease; 
-    }
-    .input-group input:focus, .input-group textarea:focus, .input-group select:focus { 
-        border-color: #6b439b; 
-        outline: none; 
-        box-shadow: 0 0 0 3px rgba(107, 67, 155, 0.1); /* Efeito de brilho moderno */
-    }
-    
-    .btn-submit { 
-        background-color: #6b439b; 
-        color: white; 
-        border: none; 
-        padding: 15px 24px; 
-        font-size: 16px; 
-        font-weight: 600; 
-        border-radius: 8px; 
-        cursor: pointer; 
-        transition: background 0.3s, transform 0.1s; 
-        margin-top: 25px; 
-        width: 100%; 
-    }
-    .btn-submit:hover { background-color: #55357c; transform: translateY(-1px); }
-    
-    .alert-success { 
-        background-color: #edf7ed; 
-        color: #1e4620; 
-        padding: 16px; 
-        border-radius: 8px; 
-        margin-bottom: 25px; 
-        text-align: center; 
-        font-weight: 600; 
-        border: 1px solid #c8e6c9;
-    }
-</style>
-
-<div class="admin-page-wrapper">
-    <div class="admin-container">
-        <h2 class="admin-title">Adicionar Novo Filme</h2>
-
-    @if (Model.Sucesso)
-    {
-        <div class="alert-success">
-            ✅ O filme foi adicionado à base de dados com sucesso!
+        <div class="api-search-box">
+            <input type="text" id="tmdbPesquisa" placeholder="Ex: The Matrix" style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px;" />
+            <button type="button" class="clean-btn" style="width: auto;" onclick="pesquisarTMDB()">Pesquisar</button>
         </div>
-    }
+        
+        <div id="loading" style="display:none; text-align:center; color:#666;">A procurar filmes no mundo todo... 🌍</div>
+        <div class="api-results-grid" id="tmdbResultados"></div>
 
-    <form method="post">
-        <div class="form-grid">
-            
-            <div class="input-group full-width">
-                <label asp-for="Input.Titulo">Título do Filme</label>
-                <input asp-for="Input.Titulo" placeholder="Ex: O Padrinho" />
-                <span asp-validation-for="Input.Titulo" style="color: red; font-size: 12px;"></span>
+        <hr style="border: 0; border-top: 2px dashed #eee; margin: 30px 0;" />
+
+        @if (Model.Sucesso)
+        {
+            <div style="background-color: #edf7ed; color: #1e4620; padding: 16px; border-radius: 8px; margin-bottom: 25px; text-align: center; font-weight: 600; border: 1px solid #c8e6c9;">
+                ✅ O filme foi guardado no teu Festival com sucesso!
+            </div>
+        }
+
+        <form method="post">
+            <div class="clean-grid">
+                
+                <div class="clean-group clean-full">
+                    <label asp-for="Input.FestivalId">A que Festival pertence? (Obrigatório)</label>
+                    <select asp-for="Input.FestivalId">
+                        <option value="">-- Seleciona o Festival --</option>
+                        @foreach (var festival in Model.FestivaisDisponiveis)
+                        {
+                            <option value="@festival.Id">@festival.Nome</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="clean-group clean-full">
+                    <label asp-for="Input.Titulo">Título do Filme</label>
+                    <input asp-for="Input.Titulo" id="formTitulo" />
+                </div>
+
+                <div class="clean-group clean-full">
+                    <label asp-for="Input.Sinopse">Sinopse</label>
+                    <textarea asp-for="Input.Sinopse" id="formSinopse" rows="4"></textarea>
+                </div>
+
+                <div class="clean-group clean-full">
+                    <label asp-for="Input.PosterUrl">URL do Poster</label>
+                    <input asp-for="Input.PosterUrl" id="formPoster" />
+                </div>
+
+                <div class="clean-group">
+                    <label asp-for="Input.Ano">Ano de Lançamento</label>
+                    <input asp-for="Input.Ano" id="formAno" type="number" />
+                </div>
+
+                <div class="clean-group">
+                    <label asp-for="Input.Genero">Género</label>
+                    <input asp-for="Input.Genero" id="formGenero" placeholder="Ex: Ação" />
+                </div>
+
+                <div class="clean-group">
+                    <label asp-for="Input.DuracaoMinutos">Duração (minutos)</label>
+                    <input asp-for="Input.DuracaoMinutos" id="formDuracao" type="number" />
+                </div>
+
+                <div class="clean-group">
+                    <label asp-for="Input.PrecoBilhete">Preço do Bilhete (€)</label>
+                    <input asp-for="Input.PrecoBilhete" type="number" step="0.01" />
+                </div>
+
             </div>
 
-            <div class="input-group full-width">
-                <label asp-for="Input.Sinopse">Sinopse</label>
-                <textarea asp-for="Input.Sinopse" rows="4" placeholder="Descrição do filme..."></textarea>
-                <span asp-validation-for="Input.Sinopse" style="color: red; font-size: 12px;"></span>
-            </div>
-
-            <div class="input-group">
-                <label asp-for="Input.Genero">Género</label>
-                <select asp-for="Input.Genero">
-                    <option value="">Selecione...</option>
-                    <option value="Ação">Ação</option>
-                    <option value="Comédia">Comédia</option>
-                    <option value="Drama">Drama</option>
-                    <option value="Ficção Científica">Ficção Científica</option>
-                    <option value="Terror">Terror</option>
-                    <option value="Romance">Romance</option>
-                    <option value="Documentário">Documentário</option>
-                </select>
-                <span asp-validation-for="Input.Genero" style="color: red; font-size: 12px;"></span>
-            </div>
-
-            <div class="input-group">
-                <label asp-for="Input.Ano">Ano de Lançamento</label>
-                <input asp-for="Input.Ano" type="number" />
-                <span asp-validation-for="Input.Ano" style="color: red; font-size: 12px;"></span>
-            </div>
-
-            <div class="input-group">
-                <label asp-for="Input.DuracaoMinutos">Duração (Minutos)</label>
-                <input asp-for="Input.DuracaoMinutos" type="number" placeholder="Ex: 120" />
-                <span asp-validation-for="Input.DuracaoMinutos" style="color: red; font-size: 12px;"></span>
-            </div>
-
-            <div class="input-group">
-                <label asp-for="Input.PrecoBilhete">Preço do Bilhete (€)</label>
-                <input asp-for="Input.PrecoBilhete" type="number" step="0.01" placeholder="Ex: 5.50" />
-                <span asp-validation-for="Input.PrecoBilhete" style="color: red; font-size: 12px;"></span>
-            </div>
-
-            <div class="input-group full-width">
-                <label asp-for="Input.PosterUrl">URL do Poster (Opcional - link de uma imagem da internet)</label>
-                <input asp-for="Input.PosterUrl" placeholder="https://..." />
-            </div>
-
-        </div>
-
-        <button type="submit" class="btn-submit">+ Guardar Filme</button>
-    </form>
+            <button type="submit" class="clean-btn" style="margin-top: 25px;">+ Guardar Filme no Festival</button>
+        </form>
+    </div>
 </div>
+
+@section Scripts {
+<script>
+    async function pesquisarTMDB() {
+        const query = document.getElementById('tmdbPesquisa').value;
+        if (!query) return;
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('tmdbResultados').innerHTML = '';
+
+        try {
+            const response = await fetch(`/Admin/AdicionarFilme?handler=PesquisaTmdb&query=${encodeURIComponent(query)}`);
+            const filmes = await response.json();
+            
+            document.getElementById('loading').style.display = 'none';
+            
+            let html = '';
+            filmes.forEach(f => {
+                const sinopseSafe = f.overview ? f.overview.replace(/'/g, "&#39;").replace(/"/g, "&quot;") : '';
+                const dataObj = f.release_date ? f.release_date.substring(0,4) : '@DateTime.Now.Year';
+                const poster = f.poster_path ? `https://image.tmdb.org/t/p/w500${f.poster_path}` : '';
+
+                // AGORA PASSAMOS O 'f.id' também!
+                html += `
+                    <div class="api-movie-card" onclick="preencherFormulario(${f.id}, '${f.title.replace(/'/g, "\\'")}', '${sinopseSafe}', '${dataObj}', '${poster}')">
+                        <img src="${poster || '/images/default-poster.jpg'}" alt="${f.title}" />
+                        <p title="${f.title}">${f.title}</p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('tmdbResultados').innerHTML = html;
+        } catch (error) {
+            console.error("Erro:", error);
+            document.getElementById('loading').innerHTML = "Erro ao pesquisar.";
+        }
+    }
+
+    async function preencherFormulario(id, titulo, sinopse, ano, poster) {
+        // 1. Preenche o que já sabemos instantaneamente
+        document.getElementById('formTitulo').value = titulo;
+        document.getElementById('formSinopse').value = sinopse;
+        document.getElementById('formAno').value = ano;
+        document.getElementById('formPoster').value = poster;
+        
+        // Faz scroll
+        document.getElementById('formTitulo').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // 2. Coloca um texto temporário enquanto vai buscar à API
+        document.getElementById('formGenero').value = "A carregar...";
+        
+        // 3. Vai buscar os detalhes extra silenciosamente
+        try {
+            const response = await fetch(`/Admin/AdicionarFilme?handler=DetalhesTmdb&id=${id}`);
+            const detalhes = await response.json();
+
+            if (detalhes) {
+                document.getElementById('formDuracao').value = detalhes.duracao || 0;
+                // A primeira letra em minúsculas (generosString) porque o JSON do C# envia em camelCase
+                document.getElementById('formGenero').value = detalhes.generosString || "Desconhecido"; 
+            }
+        } catch (error) {
+            console.error("Erro ao buscar detalhes:", error);
+            document.getElementById('formGenero').value = "";
+        }
+    }
+</script>
+}

@@ -27,5 +27,24 @@ namespace ProjetoES.Services
             // Ordenar para mostrar os mais recentes primeiro
             return await _context.Filmes.OrderByDescending(f => f.Ano).ToListAsync();
         }
+        public async Task EliminarFilmeAsync(int id)
+        {
+            var filme = await _context.Filmes.FindAsync(id);
+            if (filme != null)
+            {
+                _context.Filmes.Remove(filme);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<Filme?> ObterFilmePorIdAsync(int id)
+        {
+            return await _context.Filmes.FindAsync(id);
+        }
+
+        public async Task AtualizarFilmeAsync(Filme filme)
+        {
+            _context.Filmes.Update(filme);
+            await _context.SaveChangesAsync();
+        }
     }
 }

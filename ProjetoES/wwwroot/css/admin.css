@@ -250,3 +250,45 @@ body {
 }
 
 .action-btn:hover { color: #6a40bf; }
+
+/* ==========================================================================
+   ESTILOS DOS FORMULÁRIOS (Inputs, Textareas, Grelhas)
+   ========================================================================== */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.full-width { grid-column: 1 / -1; }
+
+.input-group { display: flex; flex-direction: column; }
+.input-group label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+.input-group input, .input-group select, .input-group textarea {
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+}
+.input-group input:focus, .input-group textarea:focus {
+    border-color: #6a40bf; /* O teu roxo do botão */
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(106, 64, 191, 0.1);
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 14px;
+}

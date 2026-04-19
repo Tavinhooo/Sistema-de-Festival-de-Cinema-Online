@@ -2,30 +2,36 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ProjetoES.Interfaces;
 using ProjetoES.Factories;
+using ProjetoES.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProjetoES.Pages.Admin
 {
-    // Mais tarde podemos adicionar aqui a tag [Authorize(Roles = "Administrador")]
-    // para garantir que clientes normais não entram nesta página!
     public class AdicionarFilmeModel : PageModel
     {
         private readonly IFilmeService _filmeService;
+        private readonly IFestivalService _festivalService;
+        private readonly ITmdbService _tmdbService; // Novo serviço!
 
-        // Injeção de Dependência (DIP - SOLID)
-        public AdicionarFilmeModel(IFilmeService filmeService)
+        // Injetamos os TRÊS serviços
+        public AdicionarFilmeModel(IFilmeService filmeService, IFestivalService festivalService, ITmdbService tmdbService)
         {
             _filmeService = filmeService;
+            _festivalService = festivalService;
+            _tmdbService = tmdbService;
         }
 
         [BindProperty]
         public InputModel Input { get; set; } = new();
 
+        public List<Festival> FestivaisDisponiveis { get; set; } = new();
         public bool Sucesso { get; set; } = false;
 
-        // O InputModel separa a validação visual da Base de Dados (SRP - SOLID)
         public class InputModel
         {
+            [Required(ErrorMessage = "Tens de escolher a que festival este filme pertence.")]
+            public int FestivalId { get; set; }
+
             [Required(ErrorMessage = "O título é obrigatório.")]
             public string Titulo { get; set; } = string.Empty;
 
@@ -36,49 +42,53 @@ namespace ProjetoES.Pages.Admin
             public string Genero { get; set; } = string.Empty;
 
             [Required]
-            [Range(1888, 2100, ErrorMessage = "Ano inválido.")]
             public int Ano { get; set; } = DateTime.Now.Year;
 
             [Required]
-            [Range(1, 600, ErrorMessage = "Duração inválida.")]
             public int DuracaoMinutos { get; set; }
 
             [Required]
-            [Range(0.01, 100.00, ErrorMessage = "Preço inválido.")]
             public decimal PrecoBilhete { get; set; }
 
             public string PosterUrl { get; set; } = string.Empty;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            // Entra aqui quando a página carrega a primeira vez
+            FestivaisDisponiveis = await _festivalService.ObterTodosFestivaisAsync();
+        }
+
+        // NOVO: Este método é chamado via JavaScript para ir à API!
+        public async Task<JsonResult> OnGetPesquisaTmdbAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query)) return new JsonResult(new List<TmdbMovie>());
+
+            var resultados = await _tmdbService.PesquisarFilmesAsync(query);
+            return new JsonResult(resultados);
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            FestivaisDisponiveis = await _festivalService.ObterTodosFestivaisAsync();
+
             if (!ModelState.IsValid) return Page();
 
-            // 1. Usar o Padrão Factory Method para criar a entidade de forma segura
             var novoFilme = FilmeFactory.CriarFilme(
-                Input.Titulo,
-                Input.Sinopse,
-                Input.Genero,
-                Input.Ano,
-                Input.DuracaoMinutos,
-                Input.PrecoBilhete,
-                Input.PosterUrl
+                Input.Titulo, Input.Sinopse, Input.Genero, Input.Ano,
+                Input.DuracaoMinutos, Input.PrecoBilhete, Input.PosterUrl
             );
 
-            // 2. Usar a Interface para guardar na BD (Desacoplamento)
+            novoFilme.FestivalId = Input.FestivalId;
+
             await _filmeService.AdicionarFilmeAsync(novoFilme);
 
-            // 3. Limpar o formulário e mostrar mensagem de sucesso
-            Sucesso = true;
-            ModelState.Clear();
-            Input = new InputModel(); 
-
-            return Page();
+            return RedirectToPage("/Filmes", new { festivalId = novoFilme.FestivalId });
+        }
+        // Vai buscar a Duração e os Géneros quando clicamos num poster
+        public async Task<JsonResult> OnGetDetalhesTmdbAsync(int id)
+        {
+            var detalhes = await _tmdbService.ObterDetalhesFilmeAsync(id);
+            return new JsonResult(detalhes);
         }
     }
 }

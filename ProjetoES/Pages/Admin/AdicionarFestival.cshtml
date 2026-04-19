@@ -1,0 +1,124 @@
+@page
+@model ProjetoES.Pages.Admin.AdicionarFestivalModel
+@{
+    ViewData["Title"] = "Gestão - Adicionar Festival";
+}
+
+<style>
+    /* Usamos uma div wrapper para não interferir com o body do Layout */
+    .admin-page-wrapper {
+        font-family: 'Inter', sans-serif; /* Força a fonte correta */
+        padding: 40px 20px; /* Dá espaço à volta, afastando do header */
+    }
+
+    .admin-container { 
+        max-width: 800px; 
+        margin: 0 auto; /* Centra na página */
+        padding: 35px; 
+        background: white; 
+        border-radius: 12px; 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+    }
+    
+    .admin-title { 
+        color: #2c3e50; 
+        border-bottom: 2px solid #e5d8fb; 
+        padding-bottom: 12px; 
+        margin-bottom: 30px; 
+        font-weight: 700;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .full-width { grid-column: 1 / -1; }
+    
+    .input-group { display: flex; flex-direction: column; }
+    .input-group label { font-weight: 600; color: #444; margin-bottom: 8px; font-size: 14px; }
+    .input-group input, .input-group select, .input-group textarea { 
+        padding: 12px; 
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        font-family: 'Inter', sans-serif; /* Importante para as textareas não mudarem de fonte */
+        font-size: 14px;
+        transition: all 0.3s ease; 
+    }
+    .input-group input:focus, .input-group textarea:focus, .input-group select:focus { 
+        border-color: #6b439b; 
+        outline: none; 
+        box-shadow: 0 0 0 3px rgba(107, 67, 155, 0.1); /* Efeito de brilho moderno */
+    }
+    
+    .btn-submit { 
+        background-color: #6b439b; 
+        color: white; 
+        border: none; 
+        padding: 15px 24px; 
+        font-size: 16px; 
+        font-weight: 600; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        transition: background 0.3s, transform 0.1s; 
+        margin-top: 25px; 
+        width: 100%; 
+    }
+    .btn-submit:hover { background-color: #55357c; transform: translateY(-1px); }
+    
+    .alert-success { 
+        background-color: #edf7ed; 
+        color: #1e4620; 
+        padding: 16px; 
+        border-radius: 8px; 
+        margin-bottom: 25px; 
+        text-align: center; 
+        font-weight: 600; 
+        border: 1px solid #c8e6c9;
+    }
+</style>
+
+<div class="admin-page-wrapper">
+    <div class="admin-container">
+        <h2 class="admin-title">Criar Novo Festival</h2>
+
+    @if (Model.Sucesso)
+    {
+        <div class="alert-success">
+            ✅ O festival foi criado com sucesso!
+        </div>
+    }
+
+    <form method="post">
+        <div class="form-grid">
+            
+            <div class="input-group full-width">
+                <label asp-for="Input.Nome">Nome do Festival</label>
+                <input asp-for="Input.Nome" placeholder="Ex: Festival de Cinema de Cannes 2026" />
+                <span asp-validation-for="Input.Nome" style="color: red; font-size: 12px;"></span>
+            </div>
+
+            <div class="input-group full-width">
+                <label asp-for="Input.Descricao">Descrição do Evento</label>
+                <textarea asp-for="Input.Descricao" rows="4" placeholder="Sobre o que é este festival..."></textarea>
+                <span asp-validation-for="Input.Descricao" style="color: red; font-size: 12px;"></span>
+            </div>
+
+            <div class="input-group">
+                <label asp-for="Input.DataInicio">Data de Início</label>
+                <input asp-for="Input.DataInicio" type="date" />
+                <span asp-validation-for="Input.DataInicio" style="color: red; font-size: 12px;"></span>
+            </div>
+
+            <div class="input-group">
+                <label asp-for="Input.DataFim">Data de Fim</label>
+                <input asp-for="Input.DataFim" type="date" />
+                <span asp-validation-for="Input.DataFim" style="color: red; font-size: 12px;"></span>
+            </div>
+
+            <div class="input-group full-width">
+                <label asp-for="Input.PosterUrl">URL do Cartaz do Festival (Opcional - link de uma imagem da internet)</label>
+                <input asp-for="Input.PosterUrl" placeholder="https://..." />
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn-submit">+ Guardar Festival</button>
+    </form>
+</div>

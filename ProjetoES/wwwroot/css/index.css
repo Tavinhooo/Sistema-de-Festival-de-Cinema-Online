@@ -1,4 +1,4 @@
-/* SEÇÕES DE CONTEÚDO */
+/* SEÇÕES DE CONTEÚDO (Mantido igual ao teu) */
 .main-content {
     padding: 30px 40px;
 }
@@ -10,7 +10,7 @@
     color: #222;
 }
 
-/* GRELHA DE CARTÕES */
+/* GRELHA DE CARTÕES (Mantido igual ao teu) */
 .card-row {
     display: flex;
     gap: 20px;
@@ -32,23 +32,78 @@
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    /* justify-content e align-items removidos para não empurrar tudo para o centro */
+    justify-content: flex-start; 
+    align-items: stretch;
     flex-shrink: 0;
     position: relative;
+    overflow: hidden; /* IMPORTANTE: Faz com que a imagem respeite os cantos arredondados */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efeito hover suave */
 }
 
-/* FORMAS GEOMÉTRICAS DENTRO DO CARTÃO */
-.shapes-placeholder {
+/* Efeito ao passar o rato no cartão */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* --- NOVAS CLASSES PARA O CONTEÚDO DO FILME --- */
+
+.card-poster {
+    width: 100%;
+    height: 230px;
+    object-fit: cover; /* Garante que a imagem preenche o espaço sem distorcer */
+    background-color: #d1cbdc; /* A cor cinza/roxa de fundo caso a imagem falhe */
+}
+
+.card-info {
+    padding: 15px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width: 100px;
-    height: 100px;
-    gap: 10px;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
 }
 
-.shape {
-    background-color: #d1cbdc;
+.card-movie-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #222;
+    margin: 0 0 4px 0;
+    white-space: nowrap; /* Não deixa o título partir para a linha de baixo */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Coloca "..." se o título for muito grande */
+}
+
+.card-movie-genre {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}
+
+.card-movie-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.card-movie-price {
+    font-weight: 700;
+    color: #6b439b;
+    font-size: 16px;
+}
+
+.btn-comprar {
+    background-color: #6b439b;
+    color: white;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.btn-comprar:hover {
+    background-color: #55357c;
 }

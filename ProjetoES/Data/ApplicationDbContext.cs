@@ -19,5 +19,6 @@ namespace ProjetoES.Data
         public DbSet<ItemCarrinho> ItensCarrinho { get; set; }
         public DbSet<Compra> Compras { get; set; }
         public DbSet<Acesso> Acessos { get; set; }
+        public DbSet<Festival> Festivais { get; set; }
     }
 }

@@ -156,17 +156,29 @@ body {
     justify-content: center;
     align-items: center;
     position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.03);
 }
 
 /* FORMAS GEOMÉTRICAS DENTRO DO CARTÃO */
 .shapes-placeholder {
+    width: 100% !important;
+    height: 100% !important;
+    background-color: #edeaf3;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    width: 100px;
-    height: 100px;
     gap: 10px;
+    position: relative;
+}
+
+.shapes-placeholder img + .fallback-shapes {
+    display: none !important;
 }
 
 .shape {

@@ -1,4 +1,5 @@
 @page
+@model FilmeModel
 @{
     ViewData["Title"] = "Detalhes do Filme";
 }
@@ -13,19 +14,13 @@
         <div class="movie-info-col">
             <div class="movie-header">
                 <div class="movie-poster">
-                    <div class="shapes-placeholder">
-                        <div style="width: 100%; display:flex; justify-content:center;">
-                            <div class="shape-triangle"></div>
-                        </div>
-                        <div class="shape shape-star"></div>
-                        <div class="shape shape-square"></div>
-                    </div>
+                    <img src="@Model.Filme!.PosterUrl" style="width:100%; border-radius:15px;" />
                 </div>
                 <div class="movie-details">
-                    <h1>Título do Filme</h1>
-                    <p>8.1 (Rating)</p>
-                    <p>Gêneros do Filme</p>
-                    <p>2026 &nbsp;&nbsp; 2h:12min &nbsp;&nbsp; +16</p>
+                    <h1>@Model.Filme!.Titulo</h1>
+                    <p>⭐ 8.1 (Rating)</p> <p>@Model.Filme!.Genero</p>
+                    <p>@Model.Filme!.Ano &nbsp;&nbsp; @Model.Filme!.DuracaoMinutos min &nbsp;&nbsp; +16</p>
+                    <h3 style="color: #6b439b; margin-top: 10px;">@Model.Filme!.PrecoBilhete.ToString("0.00")€</h3>
                 </div>
             </div>
 

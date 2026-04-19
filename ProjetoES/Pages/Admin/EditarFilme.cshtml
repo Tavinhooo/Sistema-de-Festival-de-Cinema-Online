@@ -1,0 +1,62 @@
+@page
+@model ProjetoES.Pages.Admin.EditarFilmeModel
+@{
+    ViewData["Title"] = "Editar Filme";
+}
+
+<div class="admin-page-wrapper">
+    <div class="admin-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e5d8fb; padding-bottom: 12px; margin-bottom: 30px;">
+            <h2 class="admin-title" style="border: none; margin: 0; padding: 0;">Editar Filme</h2>
+            <a href="/Admin/ListarFilmes" style="color: #6b439b; font-weight: 600; text-decoration: none;">&larr; Voltar à Lista</a>
+        </div>
+
+        @if (Model.Sucesso)
+        {
+            <div class="alert-success" style="background-color: #edf7ed; color: #1e4620; padding: 16px; border-radius: 8px; margin-bottom: 25px; text-align: center; border: 1px solid #c8e6c9;">
+                ✅ O filme foi atualizado com sucesso!
+            </div>
+        }
+
+        <form method="post">
+            <input type="hidden" asp-for="FilmeParaEditar.Id" /> <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="grid-column: 1 / -1; display: flex; flex-direction: column;">
+                    <label asp-for="FilmeParaEditar.Titulo" style="font-weight: 600; margin-bottom: 5px;">Título</label>
+                    <input asp-for="FilmeParaEditar.Titulo" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+
+                <div style="grid-column: 1 / -1; display: flex; flex-direction: column;">
+                    <label asp-for="FilmeParaEditar.Sinopse" style="font-weight: 600; margin-bottom: 5px;">Sinopse</label>
+                    <textarea asp-for="FilmeParaEditar.Sinopse" rows="4" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+                </div>
+
+                <div style="display: flex; flex-direction: column;">
+                    <label asp-for="FilmeParaEditar.Genero" style="font-weight: 600; margin-bottom: 5px;">Género</label>
+                    <input asp-for="FilmeParaEditar.Genero" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+
+                <div style="display: flex; flex-direction: column;">
+                    <label asp-for="FilmeParaEditar.Ano" style="font-weight: 600; margin-bottom: 5px;">Ano</label>
+                    <input asp-for="FilmeParaEditar.Ano" type="number" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+
+                <div style="display: flex; flex-direction: column;">
+                    <label asp-for="FilmeParaEditar.DuracaoMinutos" style="font-weight: 600; margin-bottom: 5px;">Duração (min)</label>
+                    <input asp-for="FilmeParaEditar.DuracaoMinutos" type="number" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+
+                <div style="display: flex; flex-direction: column;">
+                    <label asp-for="FilmeParaEditar.PrecoBilhete" style="font-weight: 600; margin-bottom: 5px;">Preço (€)</label>
+                    <input asp-for="FilmeParaEditar.PrecoBilhete" type="number" step="0.01" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+
+                <div style="grid-column: 1 / -1; display: flex; flex-direction: column;">
+                    <label asp-for="FilmeParaEditar.PosterUrl" style="font-weight: 600; margin-bottom: 5px;">URL do Poster</label>
+                    <input asp-for="FilmeParaEditar.PosterUrl" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+            </div>
+
+            <button type="submit" style="background-color: #6b439b; color: white; padding: 12px 20px; border: none; border-radius: 5px; width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer;">Guardar Alterações</button>
+        </form>
+    </div>
+</div>

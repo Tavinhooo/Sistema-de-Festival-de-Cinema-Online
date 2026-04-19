@@ -34,8 +34,20 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Admin/AdicionarFestival.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQWRpY2lvbmFyRmVzdGl2YWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Admin/AdicionarFilme.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQWRpY2lvbmFyRmlsbWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Admin/EditarFilme.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vRWRpdGFyRmlsbWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Admin/ListarFilmes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vTGlzdGFyRmlsbWVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Carrinho.cshtml]

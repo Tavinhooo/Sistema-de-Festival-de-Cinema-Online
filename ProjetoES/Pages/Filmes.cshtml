@@ -1,4 +1,5 @@
 @page
+@model FilmesModel
 @{
     ViewData["Title"] = "Página de Filmes";
 }
@@ -16,17 +17,29 @@
     </div>
 
     <div class="card-grid">
-        @for (int i = 0; i < 15; i++)
+        @foreach (var filme in Model.ListaFilmes)
         {
-            <div class="card">
-                <div class="shapes-placeholder">
-                    <div style="width: 100%; display:flex; justify-content:center;">
-                        <div class="shape-triangle"></div>
+            <a href="/Filme?id=@filme.Id" class="card" style="text-decoration: none; color: inherit;">
+                <div class="shapes-placeholder" style="width: 100% !important; height: 100% !important; padding: 0; overflow: hidden; position: relative;">
+                    @if (!string.IsNullOrEmpty(filme.PosterUrl))
+                    {
+                        <img src="@filme.PosterUrl" 
+                             style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" 
+                             onerror="this.style.display='none'" />
+                    }
+
+                    <div class="fallback-shapes" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; width: 100%; height: 100%;">
+                         <div style="width: 100%; display:flex; justify-content:center;"><div class="shape-triangle"></div></div>
+                         <div class="shape shape-star"></div>
+                         <div class="shape shape-square"></div>
                     </div>
-                    <div class="shape shape-star"></div>
-                    <div class="shape shape-square"></div>
+
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px 10px 10px 10px; color: white; text-align: center;">
+                        <strong style="display: block; font-size: 14px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">@filme.Titulo</strong>
+                        <span style="font-size: 11px; opacity: 0.9;">@filme.Genero • @filme.Ano</span>
+                    </div>
                 </div>
-            </div>
+            </a>
         }
     </div>
 </div>

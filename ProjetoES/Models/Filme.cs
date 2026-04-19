@@ -30,6 +30,11 @@ namespace ProjetoES.Models
         public decimal PrecoBilhete { get; set; }
 
         // Para já vamos usar um Link da internet para a imagem para ser mais fácil
-        public string PosterUrl { get; set; } = string.Empty; 
+        public string PosterUrl { get; set; } = string.Empty;
+        [Required(ErrorMessage = "O filme deve pertencer a um festival.")]
+        public int FestivalId { get; set; }
+
+        [ForeignKey("FestivalId")]
+        public Festival? Festival { get; set; }
     }
 }

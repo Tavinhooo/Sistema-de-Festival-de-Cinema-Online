@@ -80,6 +80,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddTransient<ProjetoES.Services.EmailService>();
 // Regista a injeção de dependência para a Interface dos Filmes
 builder.Services.AddScoped<ProjetoES.Interfaces.IFilmeService, ProjetoES.Services.FilmeService>();
+builder.Services.AddScoped<ProjetoES.Interfaces.IFestivalService, ProjetoES.Services.FestivalService>();
+// Regista o serviço do TMDB permitindo-lhe usar o HttpClient para ir à internet
+builder.Services.AddHttpClient<ProjetoES.Interfaces.ITmdbService, ProjetoES.Services.TmdbService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

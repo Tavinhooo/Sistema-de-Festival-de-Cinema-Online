@@ -6,5 +6,8 @@ namespace ProjetoES.Interfaces
     {
         Task AdicionarFilmeAsync(Filme filme);
         Task<List<Filme>> ObterTodosFilmesAsync();
+        Task EliminarFilmeAsync(int id);
+        Task<Filme?> ObterFilmePorIdAsync(int id);
+        Task AtualizarFilmeAsync(Filme filme);
     }
 }
