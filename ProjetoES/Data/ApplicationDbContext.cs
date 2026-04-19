@@ -14,6 +14,7 @@ namespace ProjetoES.Data
         public DbSet<Utilizador> Utilizadores { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Administrador> Administradores { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<Carrinho> Carrinhos { get; set; }
         public DbSet<ItemCarrinho> ItensCarrinho { get; set; }
         public DbSet<Compra> Compras { get; set; }

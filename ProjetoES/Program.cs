@@ -79,6 +79,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddTransient<ProjetoES.Services.EmailService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
