@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ProjetoES.Data;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using ProjetoES.Data;
 using ProjetoES.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -80,6 +78,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddTransient<ProjetoES.Services.EmailService>();
+// Regista a injeção de dependência para a Interface dos Filmes
+builder.Services.AddScoped<ProjetoES.Interfaces.IFilmeService, ProjetoES.Services.FilmeService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

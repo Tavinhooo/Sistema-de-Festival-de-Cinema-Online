@@ -34,6 +34,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Admin/AdicionarFilme.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQWRpY2lvbmFyRmlsbWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Carrinho.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2FycmluaG8uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
