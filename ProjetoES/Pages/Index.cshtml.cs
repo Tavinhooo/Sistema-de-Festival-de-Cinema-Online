@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using ProjetoES.Interfaces;
 using ProjetoES.Models;
 
@@ -20,6 +23,12 @@ namespace ProjetoES.Pages
         {
             // Vamos buscar todos os festivais guardados
             ListaFestivais = await _festivalService.ObterTodosFestivaisAsync();
+        }
+
+        public async Task<IActionResult> OnPostLogoutAsync()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToPage("/Index");
         }
     }
 }
