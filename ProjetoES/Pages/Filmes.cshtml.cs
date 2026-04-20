@@ -12,9 +12,16 @@ namespace ProjetoES.Pages
 
         public List<Filme> ListaFilmes { get; set; } = new();
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? festivalId)
         {
-            ListaFilmes = await _filmeService.ObterTodosFilmesAsync();
+            if (festivalId.HasValue)
+            {
+                ListaFilmes = await _filmeService.ObterFilmesPorFestivalAsync(festivalId.Value);
+            }
+            else
+            {
+                ListaFilmes = await _filmeService.ObterTodosFilmesAsync();
+            }
         }
     }
 }

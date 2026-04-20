@@ -9,5 +9,6 @@ namespace ProjetoES.Interfaces
         Task EliminarFilmeAsync(int id);
         Task<Filme?> ObterFilmePorIdAsync(int id);
         Task AtualizarFilmeAsync(Filme filme);
+        Task<List<Filme>> ObterFilmesPorFestivalAsync(int festivalId);
     }
 }

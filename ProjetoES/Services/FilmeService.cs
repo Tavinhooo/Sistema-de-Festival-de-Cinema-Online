@@ -46,5 +46,12 @@ namespace ProjetoES.Services
             _context.Filmes.Update(filme);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<Filme>> ObterFilmesPorFestivalAsync(int festivalId)
+        {
+            return await _context.Filmes
+                .Where(f => f.FestivalId == festivalId)
+                .OrderByDescending(f => f.Ano)
+                .ToListAsync();
+        }
     }
 }
