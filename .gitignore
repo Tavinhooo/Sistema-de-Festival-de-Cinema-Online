@@ -1,0 +1,28 @@
+# ==========================================
+# Pastas de Build e Publicação (Ignorar SEMPRE)
+# ==========================================
+[Bb]in/
+[Oo]bj/
+out/
+
+# ==========================================
+# Ficheiros Específicos do Visual Studio / VS Code
+# ==========================================
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+
+# ==========================================
+# Ficheiros do Sistema Operativo (Opcional, mas recomendado)
+# ==========================================
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Ficheiros de Configuração Local / Secrets
+# ==========================================
+# Se tiveres passwords ou connection strings locais que não queres partilhar:
+# appsettings.Development.json 
+# (Descomenta a linha acima se o teu Development.json tiver dados sensíveis reais)
