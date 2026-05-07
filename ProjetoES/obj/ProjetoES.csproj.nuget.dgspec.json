@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/ProjetoES.csproj": {}
+    "C:\\Users\\octav\\Documents\\2025-2026 UMa\\Segundo Semestre\\Engenharia de Software\\Projeto\\Sistema-de-Festival-de-Cinema-Online\\ProjetoES\\ProjetoES.csproj": {}
   },
   "projects": {
-    "/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/ProjetoES.csproj": {
+    "C:\\Users\\octav\\Documents\\2025-2026 UMa\\Segundo Semestre\\Engenharia de Software\\Projeto\\Sistema-de-Festival-de-Cinema-Online\\ProjetoES\\ProjetoES.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/ProjetoES.csproj",
+        "projectUniqueName": "C:\\Users\\octav\\Documents\\2025-2026 UMa\\Segundo Semestre\\Engenharia de Software\\Projeto\\Sistema-de-Festival-de-Cinema-Online\\ProjetoES\\ProjetoES.csproj",
         "projectName": "ProjetoES",
-        "projectPath": "/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/ProjetoES.csproj",
-        "packagesPath": "/home/codespace/.nuget/packages/",
-        "outputPath": "/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/obj/",
+        "projectPath": "C:\\Users\\octav\\Documents\\2025-2026 UMa\\Segundo Semestre\\Engenharia de Software\\Projeto\\Sistema-de-Festival-de-Cinema-Online\\ProjetoES\\ProjetoES.csproj",
+        "packagesPath": "C:\\Users\\octav\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\octav\\Documents\\2025-2026 UMa\\Segundo Semestre\\Engenharia de Software\\Projeto\\Sistema-de-Festival-de-Cinema-Online\\ProjetoES\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/codespace/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\octav\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net10.0": {
@@ -62,7 +62,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.200/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

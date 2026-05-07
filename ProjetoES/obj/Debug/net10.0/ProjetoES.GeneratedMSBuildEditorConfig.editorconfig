@@ -11,81 +11,81 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ProjetoES
 build_property.RootNamespace = ProjetoES
-build_property.ProjectDir = /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/
+build_property.ProjectDir = C:\Users\octav\Documents\2025-2026 UMa\Segundo Semestre\Engenharia de Software\Projeto\Sistema-de-Festival-de-Cinema-Online\ProjetoES\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES
+build_property.MSBuildProjectDirectory = C:\Users\octav\Documents\2025-2026 UMa\Segundo Semestre\Engenharia de Software\Projeto\Sistema-de-Festival-de-Cinema-Online\ProjetoES
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Admin.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4uY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Admin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Carrinho.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2FycmluaG8uY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Carrinho.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2FycmluaG8uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Checkout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2hlY2tvdXQuY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Checkout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2hlY2tvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Cinema.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2luZW1hLmNzaHRtbA==
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Cinema.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2luZW1hLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Error.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Filme.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRmlsbWUuY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Filme.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmlsbWUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Filmes.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRmlsbWVzLmNzaHRtbA==
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Filmes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmlsbWVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXguY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Login.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTG9naW4uY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Perfil.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUGVyZmlsLmNzaHRtbA==
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Perfil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVyZmlsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJpdmFjeS5jc2h0bWw=
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Register.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUmVnaXN0ZXIuY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVnaXN0ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Shared/_ValidationScriptsPartial.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Sucesso.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU3VjZXNzby5jc2h0bWw=
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Sucesso.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3VjZXNzby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/_ViewImports.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/_ViewStart.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Shared/_Layout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19MYXlvdXQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = b-19b7fx5na4
+[C:/Users/octav/Documents/2025-2026 UMa/Segundo Semestre/Engenharia de Software/Projeto/Sistema-de-Festival-de-Cinema-Online/ProjetoES/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-txw0ybhak3
