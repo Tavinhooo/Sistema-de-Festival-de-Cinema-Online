@@ -12,7 +12,7 @@ using ProjetoES.API.Data;
 namespace ProjetoES.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260509134708_AddFestivais")]
+    [Migration("20260509144750_AddFestivais")]
     partial class AddFestivais
     {
         /// <inheritdoc />
