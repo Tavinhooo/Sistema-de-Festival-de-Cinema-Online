@@ -9,4 +9,5 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Festival> Festivais { get; set; }
+    public DbSet<Filme> Filmes { get; set; }
 }

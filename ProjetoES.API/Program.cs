@@ -15,6 +15,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // DI registration
 builder.Services.AddScoped<FestivalRepository>();
 builder.Services.AddScoped<FestivalService>();
+builder.Services.AddScoped<FilmeRepository>();
+builder.Services.AddScoped<FilmeService>();
 
 var app = builder.Build();
 
