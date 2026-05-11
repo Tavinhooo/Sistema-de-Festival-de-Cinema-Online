@@ -1,0 +1,40 @@
+using Microsoft.EntityFrameworkCore;
+using ProjetoES.API.Data;
+using ProjetoES.API.Models;
+namespace ProjetoES.API.Repositories;
+public class AvaliacaoRepository 
+{
+    private readonly AppDbContext _context;
+    public AvaliacaoRepository(AppDbContext context)
+    {
+        _context = context;
+    }
+    public Avaliacao? ObterAvaliacaoPorId(int id)
+    {
+        return _context.Avaliacoes.Find(id);
+    }
+    public List<Avaliacao> ObterAvaliacoesPorFilme(int filmeId)
+    {
+        return _context.Avaliacoes.Where(a => a.FilmeID == filmeId).ToList();
+    }
+    public List<Avaliacao> ObterAvaliacoesPorCliente(int clienteId)
+    {
+        return _context.Avaliacoes.Where(a => a.ClienteID == clienteId).ToList();
+    }
+    public void AdicionarAvaliacao(Avaliacao avaliacao)
+    {
+        _context.Avaliacoes.Add(avaliacao);
+        _context.SaveChanges();
+    }
+    public void AtualizarAvaliacao(Avaliacao avaliacao)
+    {
+        _context.Avaliacoes.Update(avaliacao);
+        _context.SaveChanges();
+    }
+    public void EliminarAvaliacao(Avaliacao avaliacao)
+    {
+        _context.Avaliacoes.Remove(avaliacao);
+        _context.SaveChanges();
+    }
+    
+}
