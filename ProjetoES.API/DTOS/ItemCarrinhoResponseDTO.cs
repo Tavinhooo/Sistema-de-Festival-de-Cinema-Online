@@ -6,6 +6,7 @@ public class ItemCarrinhoResponseDTO
     public int FilmeId { get; set; }
     public string FilmeTitulo { get; set; } = string.Empty;
     public int Quantidade { get; set; }
+    public string TipoAcesso { get; set; } = string.Empty;
     public double PrecoUnitario { get; set; }
     public double Subtotal { get; set; }
 }

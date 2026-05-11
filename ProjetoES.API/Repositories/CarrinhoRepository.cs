@@ -37,6 +37,14 @@ public class CarrinhoRepository
             .FirstOrDefault(c => c.UtilizadorId == utilizadorId);
     }
 
+    public Carrinho? ObterComItens(int utilizadorId)
+    {
+        return _context.Carrinhos
+            .Include(c => c.Itens)
+            .ThenInclude(i => i.Filme)
+            .FirstOrDefault(c => c.UtilizadorId == utilizadorId);
+    }
+
     public void CriarCarrinho(Carrinho carrinho)
     {
         _context.Carrinhos.Add(carrinho);
@@ -57,5 +65,13 @@ public class CarrinhoRepository
             _context.Carrinhos.Remove(carrinho);
             _context.SaveChanges();
         }
+    }
+
+    public void Guardar() => _context.SaveChanges();
+
+    public void Limpar(Carrinho carrinho)
+    {
+        _context.ItensCarrinho.RemoveRange(carrinho.Itens);
+        _context.SaveChanges();
     }
 }
