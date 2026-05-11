@@ -29,7 +29,8 @@ builder.Services.AddScoped<CarrinhoRepository>();
 builder.Services.AddScoped<CarrinhoService>();
 builder.Services.AddScoped<PedidoRepository>();
 builder.Services.AddScoped<CheckoutFacade>();
-builder.Services.AddHttpClient<ITmdbService, TmdbService>();
+builder.Services.AddHttpClient<ITmdbApiClient, TmdbApiClient>();
+builder.Services.AddScoped<ITmdbService, TmdbServiceAdapter>();
 // Auth DI
 builder.Services.AddScoped<AuthRepository>();
 builder.Services.AddScoped<AuthService>();

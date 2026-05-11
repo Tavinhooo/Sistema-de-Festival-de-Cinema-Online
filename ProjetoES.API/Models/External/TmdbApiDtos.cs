@@ -1,0 +1,42 @@
+using System.Text.Json.Serialization;
+
+namespace ProjetoES.API.Models.External;
+
+public class TmdbSearchApiResponse
+{
+    [JsonPropertyName("results")]
+    public List<TmdbMovieApiDto> Results { get; set; } = new();
+}
+
+public class TmdbMovieApiDto
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = string.Empty;
+
+    [JsonPropertyName("overview")]
+    public string Overview { get; set; } = string.Empty;
+
+    [JsonPropertyName("release_date")]
+    public string ReleaseDate { get; set; } = string.Empty;
+
+    [JsonPropertyName("poster_path")]
+    public string PosterPath { get; set; } = string.Empty;
+}
+
+public class TmdbMovieDetailsApiDto
+{
+    [JsonPropertyName("runtime")]
+    public int Runtime { get; set; }
+
+    [JsonPropertyName("genres")]
+    public List<TmdbGenreApiDto> Genres { get; set; } = new();
+}
+
+public class TmdbGenreApiDto
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+}
