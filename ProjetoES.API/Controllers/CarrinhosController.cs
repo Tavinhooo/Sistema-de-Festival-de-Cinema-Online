@@ -7,7 +7,6 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/carrinhos")]
-[Authorize]
 public class CarrinhosController : ControllerBase
 {
     private readonly CarrinhoService _service;
@@ -18,12 +17,14 @@ public class CarrinhosController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public ActionResult<List<CarrinhoResponseDTO>> ObterTodosCarrinhos()
     {
         return Ok(_service.ObterTodosCarrinhos());
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public ActionResult<CarrinhoResponseDTO> ObterCarrinhoPorId(int id)
     {
         var carrinho = _service.ObterCarrinhoPorId(id);
@@ -36,6 +37,7 @@ public class CarrinhosController : ControllerBase
     }
 
     [HttpGet("usuario/{utilizadorId}")]
+    [AllowAnonymous]
     public ActionResult<CarrinhoResponseDTO> ObterCarrinhoPorUtilizador(int utilizadorId)
     {
         var carrinho = _service.ObterCarrinhoPorUtilizador(utilizadorId);
@@ -48,6 +50,7 @@ public class CarrinhosController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public ActionResult<CarrinhoResponseDTO> CriarCarrinho(CarrinhoRequestDTO dto)
     {
         try
@@ -62,6 +65,7 @@ public class CarrinhosController : ControllerBase
     }
 
     [HttpPost("{carrinhoId}/itens")]
+    [AllowAnonymous]
     public ActionResult<CarrinhoResponseDTO> AdicionarItem(int carrinhoId, ItemCarrinhoRequestDTO dto)
     {
         try
@@ -75,6 +79,7 @@ public class CarrinhosController : ControllerBase
     }
 
     [HttpDelete("{carrinhoId}/itens/{itemId}")]
+    [AllowAnonymous]
     public ActionResult<CarrinhoResponseDTO> RemoverItem(int carrinhoId, int itemId)
     {
         try
@@ -88,6 +93,7 @@ public class CarrinhosController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [AllowAnonymous]
     public ActionResult RemoverCarrinho(int id)
     {
         var carrinho = _service.ObterCarrinhoPorId(id);
