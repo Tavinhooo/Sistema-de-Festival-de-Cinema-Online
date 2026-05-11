@@ -32,10 +32,25 @@ public class AuthService
             PrimeiroNome = dto.PrimeiroNome,
             UltimoNome = dto.UltimoNome,
             Email = dto.Email,
-            PasswordHash = hash
+            PasswordHash = hash,
+            IsLogged = true
         };
 
-        _repo.CriarMembro(membro);
+        if (dto.VisitanteId.HasValue)
+        {
+            var visitante = _repo.ObterVisitantePorId(dto.VisitanteId.Value);
+            if (visitante == null)
+                throw new ArgumentException("Visitante inválido.");
+
+            if (visitante is Membro)
+                throw new ArgumentException("Este visitante já foi convertido em membro.");
+
+            membro = _repo.ConverterVisitanteEmMembro(dto.VisitanteId.Value, membro);
+        }
+        else
+        {
+            _repo.CriarMembro(membro);
+        }
 
         return GenerateToken(membro);
     }
@@ -48,6 +63,9 @@ public class AuthService
 
         if (!BCrypt.Net.BCrypt.Verify(dto.Password, membro.PasswordHash))
             throw new ArgumentException("Credenciais inválidas.");
+
+        membro.IsLogged = true;
+        _repo.AtualizarMembro(membro);
 
         return GenerateToken(membro);
     }
