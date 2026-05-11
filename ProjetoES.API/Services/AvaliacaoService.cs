@@ -46,4 +46,32 @@ public class AvaliacaoService
         var avaliacao = _repository.ObterAvaliacaoPorId(id) ?? throw new ArgumentException("Avaliação não encontrada.");
         _repository.EliminarAvaliacao(avaliacao);
     }
+    public double CalcularMediaAvaliacao(int filmeId)
+    {
+        var avaliacoes = _repository.ObterAvaliacoesPorFilme(filmeId);
+        if (avaliacoes.Count == 0) return 0;
+        return avaliacoes.Average(a => a.Nota);
+    }
+
+    public void ReportarAvaliacao(int id)
+    {
+        var avaliacao = _repository.ObterAvaliacaoPorId(id) ?? throw new ArgumentException("Avaliação não encontrada.");
+        avaliacao.IsReportado = true;
+        _repository.AtualizarAvaliacao(avaliacao);
+    }
+    //Moderação Admin
+    public List <Avaliacao> ObterAvaliacoesReportadas()
+    {
+        return _repository.ObterTodasAvaliacoes()
+        .Where(a => a.IsReportado)
+        .ToList();
+    }
+
+    public void RejeitarReport(int id)
+    {
+        var avaliacao = _repository.ObterAvaliacaoPorId(id) ?? throw new ArgumentException("Avaliação não encontrada.");
+        avaliacao.IsReportado = false;
+        _repository.AtualizarAvaliacao(avaliacao);
+    }
+
 }

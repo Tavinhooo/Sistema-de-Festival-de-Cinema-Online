@@ -9,6 +9,10 @@ public class AvaliacaoRepository
     {
         _context = context;
     }
+    public List<Avaliacao> ObterTodasAvaliacoes()
+    {
+        return _context.Avaliacoes.ToList();
+    }
     public Avaliacao? ObterAvaliacaoPorId(int id)
     {
         return _context.Avaliacoes.Find(id);
@@ -20,6 +24,10 @@ public class AvaliacaoRepository
     public List<Avaliacao> ObterAvaliacoesPorCliente(int clienteId)
     {
         return _context.Avaliacoes.Where(a => a.ClienteID == clienteId).ToList();
+    }
+    public List<Avaliacao> ObterAvaliacoesReportadas()
+    {
+        return _context.Avaliacoes.Where(a => a.IsReportado).ToList();
     }
     public void AdicionarAvaliacao(Avaliacao avaliacao)
     {
