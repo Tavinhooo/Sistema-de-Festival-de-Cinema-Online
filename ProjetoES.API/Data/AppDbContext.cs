@@ -19,4 +19,5 @@ public class AppDbContext : DbContext
     public DbSet<Pedido> Pedidos { get; set; }
     public DbSet<ItemPedido> ItensPedido { get; set; }
     public DbSet<Avaliacao> Avaliacoes { get; set; }
+    public DbSet<ListaPessoal> ListaPessoais { get; set; }
 }
