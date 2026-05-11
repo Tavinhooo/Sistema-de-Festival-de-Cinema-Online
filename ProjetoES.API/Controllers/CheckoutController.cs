@@ -8,36 +8,17 @@ using System.Security.Claims;
 namespace ProjetoES.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/checkout")]
     [Authorize]
     public class CheckoutController : ControllerBase
     {
-        private readonly CheckoutService _checkoutService;
+        private readonly CheckoutFacade _checkoutFacade;
         private readonly PedidoRepository _pedidoRepository;
 
-        public CheckoutController(CheckoutService checkoutService, PedidoRepository pedidoRepository)
+        public CheckoutController(CheckoutFacade checkoutFacade, PedidoRepository pedidoRepository)
         {
-            _checkoutService = checkoutService;
+            _checkoutFacade = checkoutFacade;
             _pedidoRepository = pedidoRepository;
-        }
-
-        // POST: api/checkout
-        [HttpPost]
-        public IActionResult Checkout([FromBody] CheckoutRequestDTO dto)
-        {
-            try
-            {
-                var memberId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-                if (memberId == 0)
-                    return Unauthorized("Utilizador não autenticado.");
-
-                var pedido = _checkoutService.Checkout(dto.CarrinhoId, memberId, dto.MetodoPagamento);
-                return Ok(pedido);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         // GET: api/checkout/historico

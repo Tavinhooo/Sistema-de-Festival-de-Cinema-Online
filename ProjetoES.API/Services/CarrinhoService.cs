@@ -74,11 +74,12 @@ public class CarrinhoService
             throw new ArgumentException("Filme inválido.");
         }
 
-        var itemExistente = carrinho.Itens.FirstOrDefault(i => i.FilmeId == dto.FilmeId);
+        var itemExistente = carrinho.Itens.FirstOrDefault(i => i.FilmeId == dto.FilmeId && i.TipoAcesso == dto.TipoAcesso);
         if (itemExistente != null)
         {
             itemExistente.Quantidade += dto.Quantidade;
             itemExistente.PrecoUnitario = (double)filme.PrecoBilhete;
+            itemExistente.TipoAcesso = dto.TipoAcesso;
         }
         else
         {
@@ -87,7 +88,8 @@ public class CarrinhoService
                 FilmeId = dto.FilmeId,
                 Quantidade = dto.Quantidade,
                 PrecoUnitario = (double)filme.PrecoBilhete,
-                CarrinhoId = carrinho.Id
+                CarrinhoId = carrinho.Id,
+                TipoAcesso = dto.TipoAcesso
             });
         }
 
@@ -127,6 +129,7 @@ public class CarrinhoService
             FilmeId = item.FilmeId,
             FilmeTitulo = item.Filme?.Titulo ?? string.Empty,
             Quantidade = item.Quantidade,
+            TipoAcesso = item.TipoAcesso,
             PrecoUnitario = item.PrecoUnitario,
             Subtotal = item.PrecoUnitario * item.Quantidade
         }).ToList();
