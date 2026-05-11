@@ -1,16 +1,19 @@
 using ProjetoES.API.Models;
 using ProjetoES.API.Repositories;
+using ProjetoES.API.Interfaces;
 
 namespace ProjetoES.API.Services;
-public class AvaliacaoService
+public class AvaliacaoService : IAvaliacaoObservable
 {
     private readonly AvaliacaoRepository _repository;
-
+    private readonly List<IAvaliacaoObserver> _observers = new List<IAvaliacaoObserver>();
     public AvaliacaoService(AvaliacaoRepository repository)
     {
         _repository = repository;
     }
-
+    public void RegistrarObserver(IAvaliacaoObserver observer) => _observers.Add(observer);
+    public void RemoverObserver(IAvaliacaoObserver observer) => _observers.Remove(observer);
+    public void NotificarObservers(int filmeId) => _observers.ForEach(o => o.AtualizarMediaAvaliacao(filmeId));
     public List<Avaliacao> ObterAvaliacoesPorFilme(int filmeId)
     {
         return _repository.ObterAvaliacoesPorFilme(filmeId);

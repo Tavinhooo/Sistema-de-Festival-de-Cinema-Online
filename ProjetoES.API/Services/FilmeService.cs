@@ -1,17 +1,27 @@
 using ProjetoES.API.Models;
 using ProjetoES.API.Repositories;
-
+using ProjetoES.API.Interfaces;
 namespace ProjetoES.API.Services;
 
-public class FilmeService
+public class FilmeService : IAvaliacaoObserver
 {
     private readonly FilmeRepository _repository;
+    private readonly AvaliacaoService _avaliacaoService;
 
-    public FilmeService(FilmeRepository repository)
+    public FilmeService(FilmeRepository repository, AvaliacaoService avaliacaoService)
     {
         _repository = repository;
+        _avaliacaoService = avaliacaoService;
+        _avaliacaoService.RegistrarObserver(this);
     }
 
+    public void AtualizarMediaAvaliacao(int filmeId)
+    {
+        var filme = _repository.ObterFilmePorId(filmeId);
+        if(filme == null) return;
+        filme.MediaAvaliacao = _avaliacaoService.CalcularMediaAvaliacao(filmeId);
+        _repository.AtualizarFilme(filme);
+    }
     public List<Filme> ObterTodosFilmes()
     {
         return _repository.ObterTodosFilmes();
