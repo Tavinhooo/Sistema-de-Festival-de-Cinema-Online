@@ -23,6 +23,8 @@ builder.Services.AddScoped<FilmeRepository>();
 builder.Services.AddScoped<FilmeService>();
 builder.Services.AddScoped<SessaoRepository>();
 builder.Services.AddScoped<SessaoService>();
+builder.Services.AddScoped<AcessoRepository>();
+builder.Services.AddScoped<AcessoService>();
 builder.Services.AddScoped<CarrinhoRepository>();
 builder.Services.AddScoped<CarrinhoService>();
 builder.Services.AddScoped<PedidoRepository>();

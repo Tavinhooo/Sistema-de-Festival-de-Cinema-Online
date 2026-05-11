@@ -16,6 +16,6 @@ namespace ProjetoES.API.Models
         public DateTime? DataValidade { get; set; } // Útil para os Alugueres de 48h
         
         public EstadoAcesso Estado { get; set; } = EstadoAcesso.Ativo;
-        public string TipoAcesso { get; set; } = string.Empty; // Bilhete, Passe, Aluguer
+        public string TipoAcesso { get; set; } = string.Empty; // Bilhete de Sessão, Passe diário, Passe completo, Aluguer digital
     }
 }
