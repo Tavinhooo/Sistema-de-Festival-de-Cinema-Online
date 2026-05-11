@@ -12,7 +12,7 @@ namespace ProjetoES.API.Models
         public int FilmeId { get; set; }
         public virtual Filme? Filme { get; set; }
         
-        public DateTime DataAquisicao { get; set; } = DateTime.Now;
+        public DateTime DataAquisicao { get; set; }
         public DateTime? DataValidade { get; set; } // Útil para os Alugueres de 48h
         
         public EstadoAcesso Estado { get; set; } = EstadoAcesso.Ativo;

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProjetoES.API.Interfaces;
 using ProjetoES.API.Models;
 using ProjetoES.API.Services;
 
@@ -9,10 +10,12 @@ namespace ProjetoES.API.Controllers;
 public class FilmesController : ControllerBase
 {
     private readonly FilmeService _service;
+    private readonly ITmdbService _tmdbService;
 
-    public FilmesController(FilmeService service)
+    public FilmesController(FilmeService service, ITmdbService tmdbService)
     {
         _service = service;
+        _tmdbService = tmdbService;
     }
 
     [HttpGet]
@@ -38,6 +41,25 @@ public class FilmesController : ControllerBase
     {
         List<Filme> filmes = _service.ObterFilmesPorFestival(festivalId);
         return Ok(filmes);
+    }
+
+    [HttpGet("tmdb/pesquisa")]
+    public async Task<ActionResult<List<TmdbMovie>>> PesquisarFilmesTmdb([FromQuery] string query)
+    {
+        var resultados = await _tmdbService.PesquisarFilmesAsync(query);
+        return Ok(resultados);
+    }
+
+    [HttpGet("tmdb/detalhes/{tmdbId}")]
+    public async Task<ActionResult<TmdbMovie.TmdbMovieDetails>> ObterDetalhesTmdb(int tmdbId)
+    {
+        var detalhes = await _tmdbService.ObterDetalhesFilmeAsync(tmdbId);
+        if (detalhes == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(detalhes);
     }
 
     [HttpPost]

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjetoES.API.Data;
@@ -11,9 +12,11 @@ using ProjetoES.API.Data;
 namespace ProjetoES.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260511100533_AddVisitantesAndMembros")]
+    partial class AddVisitantesAndMembros
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,68 +176,6 @@ namespace ProjetoES.API.Migrations
                     b.ToTable("ItensCarrinho");
                 });
 
-            modelBuilder.Entity("ProjetoES.API.Models.ItemPedido", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("FilmeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PedidoId")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("PrecoUnitario")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FilmeId");
-
-                    b.HasIndex("PedidoId");
-
-                    b.ToTable("ItensPedido");
-                });
-
-            modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("DataPagamento")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataPedido")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MemberId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("MembroId")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MembroId");
-
-                    b.ToTable("Pedidos");
-                });
-
             modelBuilder.Entity("ProjetoES.API.Models.Sessao", b =>
                 {
                     b.Property<int>("Id")
@@ -361,34 +302,6 @@ namespace ProjetoES.API.Migrations
                     b.Navigation("Filme");
                 });
 
-            modelBuilder.Entity("ProjetoES.API.Models.ItemPedido", b =>
-                {
-                    b.HasOne("ProjetoES.API.Models.Filme", "Filme")
-                        .WithMany()
-                        .HasForeignKey("FilmeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjetoES.API.Models.Pedido", "Pedido")
-                        .WithMany("Itens")
-                        .HasForeignKey("PedidoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Filme");
-
-                    b.Navigation("Pedido");
-                });
-
-            modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>
-                {
-                    b.HasOne("ProjetoES.API.Models.Membro", "Membro")
-                        .WithMany()
-                        .HasForeignKey("MembroId");
-
-                    b.Navigation("Membro");
-                });
-
             modelBuilder.Entity("ProjetoES.API.Models.Sessao", b =>
                 {
                     b.HasOne("ProjetoES.API.Models.Festival", "Festival")
@@ -409,11 +322,6 @@ namespace ProjetoES.API.Migrations
                 });
 
             modelBuilder.Entity("ProjetoES.API.Models.Carrinho", b =>
-                {
-                    b.Navigation("Itens");
-                });
-
-            modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>
                 {
                     b.Navigation("Itens");
                 });
