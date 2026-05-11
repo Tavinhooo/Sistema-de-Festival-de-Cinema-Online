@@ -25,6 +25,8 @@ builder.Services.AddScoped<SessaoRepository>();
 builder.Services.AddScoped<SessaoService>();
 builder.Services.AddScoped<AcessoRepository>();
 builder.Services.AddScoped<AcessoService>();
+builder.Services.AddScoped<AvaliacaoRepository>();
+builder.Services.AddScoped<AvaliacaoService>();
 builder.Services.AddScoped<CarrinhoRepository>();
 builder.Services.AddScoped<CarrinhoService>();
 builder.Services.AddScoped<PedidoRepository>();
