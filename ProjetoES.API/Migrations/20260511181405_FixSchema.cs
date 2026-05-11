@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ProjetoES.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddListaPessoal : Migration
+    public partial class FixSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

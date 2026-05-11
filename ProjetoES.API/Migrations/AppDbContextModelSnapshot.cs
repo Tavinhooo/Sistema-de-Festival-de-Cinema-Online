@@ -342,7 +342,7 @@ namespace ProjetoES.API.Migrations
                     b.ToTable("Sessoes");
                 });
 
-            modelBuilder.Entity("ProjetoES.API.Models.Visitante", b =>
+            modelBuilder.Entity("ProjetoES.API.Models.UtilizadorBase", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -352,28 +352,15 @@ namespace ProjetoES.API.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
-
-                    b.Property<bool>("IsLogged")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Visitantes");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Visitante");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("ProjetoES.API.Models.Membro", b =>
-                {
-                    b.HasBaseType("ProjetoES.API.Models.Visitante");
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsLogged")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("MetodoPagamento")
                         .HasColumnType("text");
@@ -389,6 +376,42 @@ namespace ProjetoES.API.Migrations
                     b.Property<string>("UltimoNome")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Visitantes", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("UtilizadorBase");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("ProjetoES.API.Models.Utilizador", b =>
+                {
+                    b.HasBaseType("ProjetoES.API.Models.UtilizadorBase");
+
+                    b.Property<DateTime?>("DataPrimeiraCompra")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DataPromocaoAdmin")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.HasDiscriminator().HasValue("Utilizador");
+                });
+
+            modelBuilder.Entity("ProjetoES.API.Models.Visitante", b =>
+                {
+                    b.HasBaseType("ProjetoES.API.Models.UtilizadorBase");
+
+                    b.HasDiscriminator().HasValue("Visitante");
+                });
+
+            modelBuilder.Entity("ProjetoES.API.Models.Membro", b =>
+                {
+                    b.HasBaseType("ProjetoES.API.Models.Utilizador");
 
                     b.HasDiscriminator().HasValue("Membro");
                 });
@@ -480,7 +503,7 @@ namespace ProjetoES.API.Migrations
             modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>
                 {
                     b.HasOne("ProjetoES.API.Models.Membro", "Membro")
-                        .WithMany()
+                        .WithMany("HistoricoCompras")
                         .HasForeignKey("MembroId");
 
                     b.Navigation("Membro");
@@ -518,6 +541,11 @@ namespace ProjetoES.API.Migrations
             modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>
                 {
                     b.Navigation("Itens");
+                });
+
+            modelBuilder.Entity("ProjetoES.API.Models.Membro", b =>
+                {
+                    b.Navigation("HistoricoCompras");
                 });
 #pragma warning restore 612, 618
         }

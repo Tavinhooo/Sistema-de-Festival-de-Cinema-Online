@@ -12,8 +12,8 @@ using ProjetoES.API.Data;
 namespace ProjetoES.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260511161831_PendingChanges")]
-    partial class PendingChanges
+    [Migration("20260511181405_FixSchema")]
+    partial class FixSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,6 +159,9 @@ namespace ProjetoES.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("ListaPessoalId")
+                        .HasColumnType("integer");
+
                     b.Property<double>("MediaAvaliacao")
                         .HasColumnType("double precision");
 
@@ -180,6 +183,8 @@ namespace ProjetoES.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FestivalId");
+
+                    b.HasIndex("ListaPessoalId");
 
                     b.ToTable("Filmes");
                 });
@@ -248,6 +253,27 @@ namespace ProjetoES.API.Migrations
                     b.HasIndex("PedidoId");
 
                     b.ToTable("ItensPedido");
+                });
+
+            modelBuilder.Entity("ProjetoES.API.Models.ListaPessoal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MembroId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MembroId");
+
+                    b.ToTable("ListaPessoais");
                 });
 
             modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>
@@ -400,6 +426,10 @@ namespace ProjetoES.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ProjetoES.API.Models.ListaPessoal", null)
+                        .WithMany("Filmes")
+                        .HasForeignKey("ListaPessoalId");
+
                     b.Navigation("Festival");
                 });
 
@@ -439,6 +469,17 @@ namespace ProjetoES.API.Migrations
                     b.Navigation("Pedido");
                 });
 
+            modelBuilder.Entity("ProjetoES.API.Models.ListaPessoal", b =>
+                {
+                    b.HasOne("ProjetoES.API.Models.Membro", "Membro")
+                        .WithMany()
+                        .HasForeignKey("MembroId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Membro");
+                });
+
             modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>
                 {
                     b.HasOne("ProjetoES.API.Models.Membro", "Membro")
@@ -470,6 +511,11 @@ namespace ProjetoES.API.Migrations
             modelBuilder.Entity("ProjetoES.API.Models.Carrinho", b =>
                 {
                     b.Navigation("Itens");
+                });
+
+            modelBuilder.Entity("ProjetoES.API.Models.ListaPessoal", b =>
+                {
+                    b.Navigation("Filmes");
                 });
 
             modelBuilder.Entity("ProjetoES.API.Models.Pedido", b =>

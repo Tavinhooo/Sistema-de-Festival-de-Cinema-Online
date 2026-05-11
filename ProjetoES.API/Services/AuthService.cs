@@ -27,13 +27,14 @@ public class AuthService
 
         var hash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-        var membro = new Membro
+        var utilizador = new Utilizador
         {
             PrimeiroNome = dto.PrimeiroNome,
             UltimoNome = dto.UltimoNome,
             Email = dto.Email,
             PasswordHash = hash,
-            IsLogged = true
+            IsLogged = true,
+            Tipo = TipoUtilizador.Membro
         };
 
         if (dto.VisitanteId.HasValue)
@@ -42,35 +43,36 @@ public class AuthService
             if (visitante == null)
                 throw new ArgumentException("Visitante inválido.");
 
-            if (visitante is Membro)
-                throw new ArgumentException("Este visitante já foi convertido em membro.");
+            // Se já tem Email, significa que foi convertido para Membro/Utilizador
+            if (!string.IsNullOrEmpty(visitante.Email))
+                throw new ArgumentException("Este visitante já foi convertido em utilizador.");
 
-            membro = _repo.ConverterVisitanteEmMembro(dto.VisitanteId.Value, membro);
+            utilizador = _repo.ConverterVisitanteEmUtilizador(dto.VisitanteId.Value, utilizador);
         }
         else
         {
-            _repo.CriarMembro(membro);
+            _repo.CriarUtilizador(utilizador);
         }
 
-        return GenerateToken(membro);
+        return GenerateToken(utilizador);
     }
 
     public AuthResponseDTO Login(AuthLoginDTO dto)
     {
-        var membro = _repo.ObterPorEmail(dto.Email);
-        if (membro == null)
+        var utilizador = _repo.ObterPorEmail(dto.Email);
+        if (utilizador == null)
             throw new ArgumentException("Credenciais inválidas.");
 
-        if (!BCrypt.Net.BCrypt.Verify(dto.Password, membro.PasswordHash))
+        if (!BCrypt.Net.BCrypt.Verify(dto.Password, utilizador.PasswordHash))
             throw new ArgumentException("Credenciais inválidas.");
 
-        membro.IsLogged = true;
-        _repo.AtualizarMembro(membro);
+        utilizador.IsLogged = true;
+        _repo.AtualizarUtilizador(utilizador);
 
-        return GenerateToken(membro);
+        return GenerateToken(utilizador);
     }
 
-    private AuthResponseDTO GenerateToken(Membro usuario)
+    private AuthResponseDTO GenerateToken(Utilizador usuario)
     {
         var secret = _config["JwtSettings:Secret"] ?? throw new InvalidOperationException("JWT secret not configured");
         var issuer = _config["JwtSettings:Issuer"] ?? "ProjetoES";
