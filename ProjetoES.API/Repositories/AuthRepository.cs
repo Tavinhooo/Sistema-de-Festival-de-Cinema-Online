@@ -13,9 +13,9 @@ public class AuthRepository
         _context = context;
     }
 
-    public Membro? ObterPorEmail(string email)
+    public Utilizador? ObterPorEmail(string email)
     {
-        return _context.Set<Membro>().FirstOrDefault(u => u.Email == email);
+        return _context.Set<Utilizador>().FirstOrDefault(u => u.Email == email);
     }
 
     public Visitante? ObterVisitantePorId(int visitanteId)
@@ -31,31 +31,35 @@ public class AuthRepository
         return visitante;
     }
 
-    public void CriarMembro(Membro membro)
+    public void CriarUtilizador(Utilizador utilizador)
     {
-        _context.Add(membro);
+        _context.Add(utilizador);
         _context.SaveChanges();
     }
 
-    public Membro ConverterVisitanteEmMembro(int visitanteId, Membro membro)
+    public Utilizador ConverterVisitanteEmUtilizador(int visitanteId, Utilizador utilizador)
     {
         _context.Database.ExecuteSqlInterpolated($@"
             UPDATE ""Visitantes""
-            SET ""Discriminator"" = 'Membro',
-                ""PrimeiroNome"" = {membro.PrimeiroNome},
-                ""UltimoNome"" = {membro.UltimoNome},
-                ""Email"" = {membro.Email},
-                ""PasswordHash"" = {membro.PasswordHash},
+            SET ""Discriminator"" = 'Utilizador',
+                ""PrimeiroNome"" = {utilizador.PrimeiroNome},
+                ""UltimoNome"" = {utilizador.UltimoNome},
+                ""Email"" = {utilizador.Email},
+                ""PasswordHash"" = {utilizador.PasswordHash},
                 ""IsLogged"" = TRUE,
-                ""MetodoPagamento"" = {membro.MetodoPagamento}
+                ""MetodoPagamento"" = {utilizador.MetodoPagamento},
+                ""Tipo"" = {(int)utilizador.Tipo}
             WHERE ""Id"" = {visitanteId} AND ""Discriminator"" = 'Visitante'");
 
-        return _context.Set<Membro>().First(u => u.Id == visitanteId);
+        // Retornar o utilizador já construído sem fazer query pós-UPDATE
+        // para evitar inconsistências de tracking do EF
+        utilizador.Id = visitanteId;
+        return utilizador;
     }
 
-    public void AtualizarMembro(Membro membro)
+    public void AtualizarUtilizador(Utilizador utilizador)
     {
-        _context.Set<Membro>().Update(membro);
+        _context.Set<Utilizador>().Update(utilizador);
         _context.SaveChanges();
     }
 }

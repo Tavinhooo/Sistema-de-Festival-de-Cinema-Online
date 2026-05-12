@@ -1,9 +1,8 @@
 namespace ProjetoES.API.Models
 {
-    public class Visitante //deixou de ser abstrato para poder existir como visitante anónimo no sistema.
+    // Visitante anónimo - herda de UtilizadorBase para usar TPH
+    // Distinguido de Utilizador apenas pelo campo Discriminator='Visitante'
+    public class Visitante : UtilizadorBase
     {
-        public int Id { get; set; }
-        // Marca se a visita atual está autenticada.
-        public bool IsLogged { get; set; }
     }
 }
