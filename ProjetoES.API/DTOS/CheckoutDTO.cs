@@ -31,4 +31,15 @@ namespace ProjetoES.API.DTOs
         public string Estado { get; set; } = string.Empty;
         public List<ItemPedidoResponseDTO> Itens { get; set; } = new();
     }
+
+    // RF04 — resultado do checkout com promoção automática de Membro para Cliente
+    public class CheckoutResultDTO
+    {
+        public int PedidoId { get; set; }
+        public double Total { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        // Preenchido apenas se foi promovido de Membro para Cliente
+        public string? NovoToken { get; set; }
+        public DateTime? TokenExpiresAt { get; set; }
+    }
 }

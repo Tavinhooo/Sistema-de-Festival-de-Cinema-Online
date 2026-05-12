@@ -1,3 +1,5 @@
+using ProjetoES.API.DTOs;
+using ProjetoES.API.DTOS;
 using ProjetoES.API.Models;
 using ProjetoES.API.Repositories;
 
@@ -8,18 +10,21 @@ namespace ProjetoES.API.Services
         private readonly CarrinhoRepository _carrinhoRepo;
         private readonly PedidoRepository _pedidoRepo;
         private readonly AcessoService _acessoService;
+        private readonly ClienteService _clienteService;
 
         public CheckoutFacade(
             CarrinhoRepository carrinhoRepo,
             PedidoRepository pedidoRepo,
-            AcessoService acessoService)
+            AcessoService acessoService,
+            ClienteService clienteService)
         {
             _carrinhoRepo = carrinhoRepo;
             _pedidoRepo = pedidoRepo;
             _acessoService = acessoService;
+            _clienteService = clienteService;
         }
 
-        public Pedido ProcessarCheckout(int utilizadorId, string metodoPagamento)
+        public CheckoutResultDTO ProcessarCheckout(int utilizadorId, string metodoPagamento)
         {
             var carrinho = _carrinhoRepo.ObterComItens(utilizadorId)
                 ?? throw new InvalidOperationException("Carrinho vazio ou não encontrado.");
@@ -37,7 +42,7 @@ namespace ProjetoES.API.Services
 
             var pedido = new Pedido
             {
-                MemberId = utilizadorId,
+                UtilizadorId = utilizadorId,
                 DataPedido = DateTime.UtcNow,
                 DataPagamento = DateTime.UtcNow,
                 Total = (double)itensPedido.Sum(i => i.PrecoUnitario),
@@ -55,7 +60,27 @@ namespace ProjetoES.API.Services
 
             _carrinhoRepo.Limpar(carrinho);
 
-            return pedido;
+            // RF04 — promover Membro para Cliente automaticamente após pagamento
+            var resultado = new CheckoutResultDTO
+            {
+                PedidoId = pedido.Id,
+                Total = pedido.Total,
+                Estado = pedido.Estado.ToString()
+            };
+
+            try
+            {
+                var authResponse = _clienteService.PromoverParaCliente(utilizadorId);
+                // Utilizador era Membro, foi promovido — devolve novo token com Role = "Cliente"
+                resultado.NovoToken = authResponse.Token;
+                resultado.TokenExpiresAt = authResponse.ExpiresAt;
+            }
+            catch (ArgumentException)
+            {
+                // Utilizador já era Cliente ou Administrador — não faz nada, continua normalmente
+            }
+
+            return resultado;
         }
     }
 }

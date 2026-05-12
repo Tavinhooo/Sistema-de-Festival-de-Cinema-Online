@@ -33,9 +33,9 @@ namespace ProjetoES.API.Services
             // Criar pedido
             var pedido = new Pedido
             {
-                MemberId = memberId,
+                UtilizadorId = memberId,
                 DataPedido = DateTime.UtcNow,
-                DataPagamento = DateTime.UtcNow, // Em produção: apenas após pagamento confirmado
+                DataPagamento = DateTime.UtcNow,
                 Total = total,
                 Estado = EstadoPedido.Completo
             };
@@ -93,7 +93,7 @@ namespace ProjetoES.API.Services
             return new PedidoResponseDTO
             {
                 Id = pedido.Id,
-                MemberId = pedido.MemberId,
+                MemberId = pedido.UtilizadorId,   // DTO mantém o nome MemberId para não quebrar o frontend
                 DataPedido = pedido.DataPedido,
                 DataPagamento = pedido.DataPagamento,
                 Total = pedido.Total,

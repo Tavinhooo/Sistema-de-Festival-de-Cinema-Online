@@ -15,8 +15,10 @@ public class ListaPessoalService : IListaPessoalService
         _context = context;
     }
     public ListaPessoal CriarLista(int membroId, TipoLista tipo)
-    {   
-        var membro = _context.Membros.Find(membroId) ?? throw new ArgumentException("Membro não encontrado");
+    {
+        var utilizador = _context.Utilizadores.Find(membroId)
+            ?? throw new ArgumentException("Utilizador não encontrado");
+
         var lista = new ListaPessoal
         {
             MembroId = membroId,

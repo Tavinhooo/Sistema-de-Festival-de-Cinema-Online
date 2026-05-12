@@ -21,17 +21,45 @@ namespace ProjetoES.API.Controllers
             _pedidoRepository = pedidoRepository;
         }
 
+        private int ObterUtilizadorIdDoToken()
+        {
+            var sub = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? throw new UnauthorizedAccessException("Token inválido.");
+            return int.Parse(sub);
+        }
+
+        // POST: api/checkout — RF04: processa compra e promove Membro para Cliente
+        [HttpPost]
+        public IActionResult ProcessarCheckout(CheckoutRequestDTO dto)
+        {
+            try
+            {
+                var utilizadorId = ObterUtilizadorIdDoToken();
+                var resultado = _checkoutFacade.ProcessarCheckout(utilizadorId, dto.MetodoPagamento);
+                return Created(string.Empty, resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         // GET: api/checkout/historico
         [HttpGet("historico")]
         public IActionResult ObterHistorico()
         {
             try
             {
-                var memberId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-                if (memberId == 0)
-                    return Unauthorized("Utilizador não autenticado.");
-
-                var pedidos = _pedidoRepository.ObterPedidosPorMembro(memberId);
+                var utilizadorId = ObterUtilizadorIdDoToken();
+                var pedidos = _pedidoRepository.ObterPedidosPorMembro(utilizadorId);
                 return Ok(pedidos);
             }
             catch (Exception ex)
@@ -46,14 +74,13 @@ namespace ProjetoES.API.Controllers
         {
             try
             {
-                var memberId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var utilizadorId = ObterUtilizadorIdDoToken();
                 var pedido = _pedidoRepository.ObterPedidoPorId(id);
 
                 if (pedido == null)
                     return NotFound("Pedido não encontrado.");
 
-                // Verificar que o pedido pertence ao utilizador autenticado
-                if (pedido.MemberId != memberId)
+                if (pedido.UtilizadorId != utilizadorId)
                     return Forbid("Não tem permissão para ver este pedido.");
 
                 return Ok(pedido);

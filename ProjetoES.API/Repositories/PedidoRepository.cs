@@ -17,8 +17,8 @@ namespace ProjetoES.API.Repositories
         {
             return _context.Pedidos
                 .Include(p => p.Itens)
-                .ThenInclude(ip => ip.Filme)
-                .Include(p => p.Membro)
+                    .ThenInclude(ip => ip.Filme)
+                .Include(p => p.Utilizador)
                 .ToList();
         }
 
@@ -26,17 +26,17 @@ namespace ProjetoES.API.Repositories
         {
             return _context.Pedidos
                 .Include(p => p.Itens)
-                .ThenInclude(ip => ip.Filme)
-                .Include(p => p.Membro)
+                    .ThenInclude(ip => ip.Filme)
+                .Include(p => p.Utilizador)
                 .FirstOrDefault(p => p.Id == id);
         }
 
-        public List<Pedido> ObterPedidosPorMembro(int memberId)
+        public List<Pedido> ObterPedidosPorMembro(int utilizadorId)
         {
             return _context.Pedidos
                 .Include(p => p.Itens)
-                .ThenInclude(ip => ip.Filme)
-                .Where(p => p.MemberId == memberId)
+                    .ThenInclude(ip => ip.Filme)
+                .Where(p => p.UtilizadorId == utilizadorId)
                 .OrderByDescending(p => p.DataPedido)
                 .ToList();
         }

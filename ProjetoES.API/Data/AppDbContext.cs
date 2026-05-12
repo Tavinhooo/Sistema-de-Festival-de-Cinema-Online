@@ -25,16 +25,49 @@ public class AppDbContext : DbContext
     public DbSet<Avaliacao> Avaliacoes { get; set; }
     public DbSet<ListaPessoal> ListaPessoais { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    base.OnModelCreating(modelBuilder);
 
-        // TPH (Table Per Hierarchy) - Base é UtilizadorBase, todos usam tabela "Visitantes"
-        modelBuilder.Entity<UtilizadorBase>()
-            .ToTable("Visitantes")
-            .HasDiscriminator<string>("Discriminator")
-            .HasValue<Visitante>("Visitante")
-            .HasValue<Utilizador>("Utilizador")
-            .HasValue<Membro>("Membro");
-    }
+    // TPH
+    modelBuilder.Entity<UtilizadorBase>()
+        .ToTable("Visitantes")
+        .HasDiscriminator<string>("Discriminator")
+        .HasValue<Visitante>("Visitante")
+        .HasValue<Utilizador>("Utilizador")
+        .HasValue<Membro>("Membro");
+
+    // Pedido → Utilizador
+    modelBuilder.Entity<Pedido>()
+        .HasOne(p => p.Utilizador)
+        .WithMany(u => u.HistoricoCompras)
+        .HasForeignKey(p => p.UtilizadorId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // Avaliacao → Utilizador (Cliente)
+    modelBuilder.Entity<Avaliacao>()
+        .HasOne(a => a.Cliente)
+        .WithMany()
+        .HasForeignKey(a => a.ClienteId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // Avaliacao → Filme
+    modelBuilder.Entity<Avaliacao>()
+        .HasOne(a => a.Filme)
+        .WithMany()
+        .HasForeignKey(a => a.FilmeId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // Acesso → Utilizador (Cliente)
+    modelBuilder.Entity<Acesso>()
+        .HasOne(a => a.Cliente)
+        .WithMany()
+        .HasForeignKey(a => a.ClienteId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // RF13: um Cliente só pode votar uma vez por filme
+    modelBuilder.Entity<Avaliacao>()
+        .HasIndex(a => new { a.ClienteId, a.FilmeId })
+        .IsUnique();
+}
 }
