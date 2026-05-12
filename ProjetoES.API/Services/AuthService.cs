@@ -34,7 +34,7 @@ public class AuthService
             Email = dto.Email,
             PasswordHash = hash,
             IsLogged = true,
-            Tipo = TipoUtilizador.Membro
+            Tipo = TipoUtilizador.Membro  // Registo cria sempre um Membro
         };
 
         if (dto.VisitanteId.HasValue)
@@ -43,7 +43,6 @@ public class AuthService
             if (visitante == null)
                 throw new ArgumentException("Visitante inválido.");
 
-            // Se já tem Email, significa que foi convertido para Membro/Utilizador
             if (!string.IsNullOrEmpty(visitante.Email))
                 throw new ArgumentException("Este visitante já foi convertido em utilizador.");
 
@@ -72,9 +71,14 @@ public class AuthService
         return GenerateToken(utilizador);
     }
 
+    // Chamado pelo MembroService
+    public AuthResponseDTO GenerateTokenPublico(Utilizador utilizador)
+        => GenerateToken(utilizador);
+
     private AuthResponseDTO GenerateToken(Utilizador usuario)
     {
-        var secret = _config["JwtSettings:Secret"] ?? throw new InvalidOperationException("JWT secret not configured");
+        var secret = _config["JwtSettings:Secret"]
+            ?? throw new InvalidOperationException("JWT secret not configured");
         var issuer = _config["JwtSettings:Issuer"] ?? "ProjetoES";
         var audience = _config["JwtSettings:Audience"] ?? "ProjetoESUsers";
         var expiresMinutes = int.TryParse(_config["JwtSettings:ExpiresMinutes"], out var m) ? m : 60;
@@ -83,12 +87,12 @@ public class AuthService
         {
             new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
-            new Claim(ClaimTypes.Role, "Cliente")
+            // FIX: usa o TipoUtilizador real — "Membro", "Cliente" ou "Administrador"
+            new Claim(ClaimTypes.Role, usuario.Tipo.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
         var expires = DateTime.UtcNow.AddMinutes(expiresMinutes);
 
         var token = new JwtSecurityToken(
@@ -99,8 +103,10 @@ public class AuthService
             signingCredentials: creds
         );
 
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return new AuthResponseDTO { Token = tokenString, ExpiresAt = expires };
+        return new AuthResponseDTO
+        {
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            ExpiresAt = expires
+        };
     }
 }

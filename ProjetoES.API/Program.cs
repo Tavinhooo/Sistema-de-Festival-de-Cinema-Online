@@ -36,6 +36,8 @@ builder.Services.AddScoped<ITmdbService, TmdbServiceAdapter>();
 // Auth DI
 builder.Services.AddScoped<AuthRepository>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<MembroRepository>();
+builder.Services.AddScoped<MembroService>();
 
 // JWT configuration
 var jwtSection = builder.Configuration.GetSection("JwtSettings");
