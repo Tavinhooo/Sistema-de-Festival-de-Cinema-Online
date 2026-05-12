@@ -58,6 +58,12 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
         .HasForeignKey(a => a.FilmeId)
         .OnDelete(DeleteBehavior.Restrict);
 
+    // Festival ↔ Filmes (many-to-many)
+    modelBuilder.Entity<Festival>()
+        .HasMany(f => f.Filmes)
+        .WithMany(fm => fm.Festivais)
+        .UsingEntity(j => j.ToTable("FestivalFilme"));
+
     // Acesso → Utilizador (Cliente)
     modelBuilder.Entity<Acesso>()
         .HasOne(a => a.Cliente)

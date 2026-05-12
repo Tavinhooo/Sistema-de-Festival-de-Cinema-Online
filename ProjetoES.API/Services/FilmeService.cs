@@ -108,7 +108,6 @@ public class FilmeService : IAvaliacaoObserver
         filmeExistente.DuracaoMinutos = filme.DuracaoMinutos;
         filmeExistente.PrecoBilhete = filme.PrecoBilhete;
         filmeExistente.PosterUrl = filme.PosterUrl;
-        filmeExistente.FestivalId = filme.FestivalId;
 
         _repository.AtualizarFilme(filmeExistente);
     }
