@@ -1,22 +1,20 @@
-using ProjetoES.API.Data;
 using ProjetoES.API.DTOs;
 using ProjetoES.API.Models;
 using ProjetoES.API.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace ProjetoES.API.Services
 {
     public class CheckoutService
     {
-        private readonly AppDbContext _context;
         private readonly CarrinhoRepository _carrinhoRepo;
         private readonly PedidoRepository _pedidoRepo;
+        private readonly AcessoRepository _acessoRepo;
 
-        public CheckoutService(AppDbContext context, CarrinhoRepository carrinhoRepo, PedidoRepository pedidoRepo)
+        public CheckoutService(CarrinhoRepository carrinhoRepo, PedidoRepository pedidoRepo, AcessoRepository acessoRepo)
         {
-            _context = context;
             _carrinhoRepo = carrinhoRepo;
             _pedidoRepo = pedidoRepo;
+            _acessoRepo = acessoRepo;
         }
 
         public PedidoResponseDTO Checkout(int carrinhoId, int memberId, string metodoPagamento)
@@ -49,10 +47,16 @@ namespace ProjetoES.API.Services
                 {
                     FilmeId = itemCarrinho.FilmeId,
                     Quantidade = itemCarrinho.Quantidade,
-                    PrecoUnitario = itemCarrinho.PrecoUnitario
+                    PrecoUnitario = itemCarrinho.PrecoUnitario,
+                    TipoAcesso = itemCarrinho.TipoAcesso,
+                    Status = "Pedido"
                 });
+            }
 
-                // Criar Acessos para cada quantidade de filme comprado
+            // Criar Acessos para cada quantidade de filme comprado
+            var acessos = new List<Acesso>();
+            foreach (var itemCarrinho in carrinho.Itens)
+            {
                 for (int i = 0; i < itemCarrinho.Quantidade; i++)
                 {
                     var acesso = new Acesso
@@ -64,13 +68,18 @@ namespace ProjetoES.API.Services
                         Estado = EstadoAcesso.Ativo,
                         TipoAcesso = "Bilhete"
                     };
-                    _context.Acessos.Add(acesso);
+                    acessos.Add(acesso);
                 }
             }
 
-            // Persistir pedido e acessos
+            // Persistir pedido (através do repository)
             _pedidoRepo.CriarPedido(pedido);
-            _context.SaveChanges();
+            
+            // Persistir acessos (através do repository)
+            if (acessos.Any())
+            {
+                _acessoRepo.CriarAcessos(acessos);
+            }
 
             // Limpar carrinho
             _carrinhoRepo.RemoverCarrinho(carrinhoId);

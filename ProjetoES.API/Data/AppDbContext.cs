@@ -12,7 +12,8 @@ public class AppDbContext : DbContext
     public DbSet<Filme> Filmes { get; set; }
     public DbSet<Sessao> Sessoes { get; set; }
     public DbSet<Carrinho> Carrinhos { get; set; }
-    public DbSet<ItemCarrinho> ItensCarrinho { get; set; }
+    public DbSet<Compra> Compras { get; set; }
+    public DbSet<ItemPedido> Itens { get; set; } // Items for Carrinho, Compra, and Pedido
     public DbSet<Acesso> Acessos { get; set; }
     // TPH base - todos os utilizadores estão numa tabela "Visitantes"
     public DbSet<UtilizadorBase> UtilizadoresBase { get; set; }
@@ -21,7 +22,6 @@ public class AppDbContext : DbContext
     [System.Obsolete("Use Utilizadores")]
     public DbSet<Membro> Membros { get; set; }
     public DbSet<Pedido> Pedidos { get; set; }
-    public DbSet<ItemPedido> ItensPedido { get; set; }
     public DbSet<Avaliacao> Avaliacoes { get; set; }
     public DbSet<ListaPessoal> ListaPessoais { get; set; }
 
