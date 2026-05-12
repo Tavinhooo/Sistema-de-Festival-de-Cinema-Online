@@ -40,8 +40,8 @@ public class AuthRepository
     public Utilizador ConverterVisitanteEmUtilizador(int visitanteId, Utilizador utilizador)
     {
         _context.Database.ExecuteSqlInterpolated($@"
-            UPDATE ""Visitantes""
-            SET ""Discriminator"" = 'Utilizador',
+                UPDATE ""Utilizadores""
+                SET ""Discriminator"" = 'Utilizador',
                 ""PrimeiroNome"" = {utilizador.PrimeiroNome},
                 ""UltimoNome"" = {utilizador.UltimoNome},
                 ""Email"" = {utilizador.Email},
