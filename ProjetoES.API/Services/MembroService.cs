@@ -46,11 +46,22 @@ public class MembroService
     // RU06 - Adicionar/atualizar morada de faturação
     public MembroPerfilDTO AtualizarMorada(int membroId, AtualizarMoradaDTO dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.MoradaFaturacao))
+        if (dto == null || dto.Morada == null)
             throw new ArgumentException("Morada de faturação não pode ser vazia.");
 
+        var m = dto.Morada;
+        if (string.IsNullOrWhiteSpace(m.MoradaFaturacao) || string.IsNullOrWhiteSpace(m.CodigoPostal) || string.IsNullOrWhiteSpace(m.Localidade))
+            throw new ArgumentException("Morada inválida: morada, código postal e localidade são obrigatórios.");
+
         var membro = ObterMembroOuErro(membroId);
-        membro.MoradaFaturacao = dto.MoradaFaturacao;
+        membro.MoradaFaturacao = new Morada
+        {
+            NomeDestinatario = m.NomeDestinatario ?? string.Empty,
+            MoradaFaturacao = m.MoradaFaturacao ?? string.Empty,
+            CodigoPostal = m.CodigoPostal ?? string.Empty,
+            Localidade = m.Localidade ?? string.Empty,
+            Pais = m.Pais ?? string.Empty
+        };
         _repo.AtualizarMembro(membro);
         return MapearParaDTO(membro);
     }
@@ -86,6 +97,13 @@ public class MembroService
         Email = u.Email,
         Tipo = u.Tipo.ToString(),
         MetodoPagamento = u.MetodoPagamento,
-        MoradaFaturacao = u.MoradaFaturacao
+        MoradaFaturacao = u.MoradaFaturacao == null ? null : new MoradaDTO
+        {
+            NomeDestinatario = u.MoradaFaturacao.NomeDestinatario,
+            MoradaFaturacao = u.MoradaFaturacao.MoradaFaturacao,
+            CodigoPostal = u.MoradaFaturacao.CodigoPostal,
+            Localidade = u.MoradaFaturacao.Localidade,
+            Pais = u.MoradaFaturacao.Pais
+        }
     };
 }

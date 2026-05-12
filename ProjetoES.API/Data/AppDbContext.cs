@@ -75,5 +75,18 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
     modelBuilder.Entity<Avaliacao>()
         .HasIndex(a => new { a.ClienteId, a.FilmeId })
         .IsUnique();
+
+    // Configure Morada as an owned type stored in the Utilizadores table
+    modelBuilder.Entity<Utilizador>(eb =>
+    {
+        eb.OwnsOne(u => u.MoradaFaturacao, mb =>
+        {
+            mb.Property(m => m.NomeDestinatario).HasColumnName("Morada_NomeDestinatario");
+            mb.Property(m => m.MoradaFaturacao).HasColumnName("Morada_MoradaFaturacao");
+            mb.Property(m => m.CodigoPostal).HasColumnName("Morada_CodigoPostal");
+            mb.Property(m => m.Localidade).HasColumnName("Morada_Localidade");
+            mb.Property(m => m.Pais).HasColumnName("Morada_Pais");
+        });
+    });
 }
 }

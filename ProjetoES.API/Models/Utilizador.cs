@@ -18,7 +18,7 @@ namespace ProjetoES.API.Models
         public TipoUtilizador Tipo { get; set; } = TipoUtilizador.Membro;
 
         // RU06 - Morada de faturação
-        public string? MoradaFaturacao { get; set; }
+        public Morada? MoradaFaturacao { get; set; }
 
         // Dados específicos de Cliente (quando Tipo >= Cliente)
         public DateTime? DataPrimeiraCompra { get; set; }
