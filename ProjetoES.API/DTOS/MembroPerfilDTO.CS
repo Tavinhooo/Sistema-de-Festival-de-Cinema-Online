@@ -8,5 +8,5 @@ public class MembroPerfilDTO
     public string Email { get; set; } = string.Empty;
     public string Tipo { get; set; } = string.Empty;
     public string? MetodoPagamento { get; set; }
-    public string? MoradaFaturacao { get; set; }
+    public MoradaDTO? MoradaFaturacao { get; set; }
 }

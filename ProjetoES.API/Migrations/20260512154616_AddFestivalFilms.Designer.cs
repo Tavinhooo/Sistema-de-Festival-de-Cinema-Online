@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjetoES.API.Data;
@@ -11,9 +12,11 @@ using ProjetoES.API.Data;
 namespace ProjetoES.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260512154616_AddFestivalFilms")]
+    partial class AddFestivalFilms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,13 +275,6 @@ namespace ProjetoES.API.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-<<<<<<< HEAD
-
-                    b.HasIndex("CarrinhoId");
-
-                    b.HasIndex("CompraId");
-=======
->>>>>>> f55a23f3e53de4c35a691b3b8e4364e0f87fd46b
 
                     b.HasIndex("CarrinhoId");
 
@@ -418,7 +414,7 @@ namespace ProjetoES.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Utilizadores", (string)null);
+                    b.ToTable("Visitantes", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("UtilizadorBase");
 
@@ -516,11 +512,6 @@ namespace ProjetoES.API.Migrations
                     b.HasOne("ProjetoES.API.Models.ListaPessoal", null)
                         .WithMany("Filmes")
                         .HasForeignKey("ListaPessoalId");
-<<<<<<< HEAD
-
-                    b.Navigation("Festival");
-=======
->>>>>>> f55a23f3e53de4c35a691b3b8e4364e0f87fd46b
                 });
 
             modelBuilder.Entity("ProjetoES.API.Models.ItemPedido", b =>

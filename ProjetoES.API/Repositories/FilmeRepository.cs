@@ -24,7 +24,7 @@ public class FilmeRepository
 
     public List<Filme> ObterFilmesPorFestival(int festivalId)
     {
-        return _context.Filmes.Where(f => f.FestivalId == festivalId).ToList();
+        return _context.Filmes.Where(f => f.Festivais.Any(fest => fest.Id == festivalId)).ToList();
     }
 
     public void AdicionarFilme(Filme filme)

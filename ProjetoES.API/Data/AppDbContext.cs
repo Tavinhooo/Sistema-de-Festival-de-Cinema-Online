@@ -59,6 +59,7 @@ public DbSet<Utilizador> UtilizadoresAutenticados { get; set; }
             .HasForeignKey(a => a.FilmeId)
             .OnDelete(DeleteBehavior.Restrict);
 
+<<<<<<< HEAD
         // Acesso → Utilizador (Cliente)
         modelBuilder.Entity<Acesso>()
             .HasOne(a => a.Cliente)
@@ -71,4 +72,37 @@ public DbSet<Utilizador> UtilizadoresAutenticados { get; set; }
             .HasIndex(a => new { a.ClienteId, a.FilmeId })
             .IsUnique();
     }
+=======
+    // Festival ↔ Filmes (many-to-many)
+    modelBuilder.Entity<Festival>()
+        .HasMany(f => f.Filmes)
+        .WithMany(fm => fm.Festivais)
+        .UsingEntity(j => j.ToTable("FestivalFilme"));
+
+    // Acesso → Utilizador (Cliente)
+    modelBuilder.Entity<Acesso>()
+        .HasOne(a => a.Cliente)
+        .WithMany()
+        .HasForeignKey(a => a.ClienteId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // RF13: um Cliente só pode votar uma vez por filme
+    modelBuilder.Entity<Avaliacao>()
+        .HasIndex(a => new { a.ClienteId, a.FilmeId })
+        .IsUnique();
+
+    // Configure Morada as an owned type stored in the Utilizadores table
+    modelBuilder.Entity<Utilizador>(eb =>
+    {
+        eb.OwnsOne(u => u.MoradaFaturacao, mb =>
+        {
+            mb.Property(m => m.NomeDestinatario).HasColumnName("Morada_NomeDestinatario");
+            mb.Property(m => m.MoradaFaturacao).HasColumnName("Morada_MoradaFaturacao");
+            mb.Property(m => m.CodigoPostal).HasColumnName("Morada_CodigoPostal");
+            mb.Property(m => m.Localidade).HasColumnName("Morada_Localidade");
+            mb.Property(m => m.Pais).HasColumnName("Morada_Pais");
+        });
+    });
+}
+>>>>>>> f55a23f3e53de4c35a691b3b8e4364e0f87fd46b
 }
