@@ -88,7 +88,7 @@ public class AuthService
             new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
             // FIX: usa o TipoUtilizador real — "Membro", "Cliente" ou "Administrador"
-            new Claim(ClaimTypes.Role, usuario.Tipo.ToString())
+            new Claim("role", usuario.Tipo.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));

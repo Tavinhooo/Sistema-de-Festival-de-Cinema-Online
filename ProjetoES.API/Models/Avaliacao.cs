@@ -1,17 +1,20 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace ProjetoES.API.Models
 {
     public class Avaliacao
     {
-        public int Id {get; set;}
-        public int ClienteID {get; set;}
-        public int FilmeID {get; set;}
-        public int Nota {get; set;}
-        public string Comentario {get; set;} = string.Empty;
-        public DateTime DataAvaliacao {get; set;}
-        public bool IsReportado {get; set;}
-        //public Cliente? Cliente {get; set;}
-        public Filme? Filme {get; set;}
+        public int Id { get; set; }
+
+        // Fix: casing consistente + navigation property
+        public int ClienteId { get; set; }
+        public virtual Utilizador? Cliente { get; set; }
+
+        public int FilmeId { get; set; }
+        public virtual Filme? Filme { get; set; }
+
+        // RF13: escala 1 a 10
+        public int Nota { get; set; }
+        public string Comentario { get; set; } = string.Empty;
+        public DateTime DataAvaliacao { get; set; } = DateTime.UtcNow;
+        public bool IsReportado { get; set; }
     }
 }

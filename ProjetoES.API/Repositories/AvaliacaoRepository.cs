@@ -2,7 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 namespace ProjetoES.API.Repositories;
-public class AvaliacaoRepository 
+
+public class AvaliacaoRepository
 {
     private readonly AppDbContext _context;
     public AvaliacaoRepository(AppDbContext context)
@@ -19,11 +20,11 @@ public class AvaliacaoRepository
     }
     public List<Avaliacao> ObterAvaliacoesPorFilme(int filmeId)
     {
-        return _context.Avaliacoes.Where(a => a.FilmeID == filmeId).ToList();
+        return _context.Avaliacoes.Where(a => a.FilmeId == filmeId).ToList();
     }
     public List<Avaliacao> ObterAvaliacoesPorCliente(int clienteId)
     {
-        return _context.Avaliacoes.Where(a => a.ClienteID == clienteId).ToList();
+        return _context.Avaliacoes.Where(a => a.ClienteId == clienteId).ToList();
     }
     public List<Avaliacao> ObterAvaliacoesReportadas()
     {
@@ -44,5 +45,5 @@ public class AvaliacaoRepository
         _context.Avaliacoes.Remove(avaliacao);
         _context.SaveChanges();
     }
-    
+
 }
