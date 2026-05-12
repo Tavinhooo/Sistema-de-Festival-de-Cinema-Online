@@ -71,7 +71,7 @@ public class CarrinhoRepository
 
     public void Limpar(Carrinho carrinho)
     {
-        _context.ItensCarrinho.RemoveRange(carrinho.Itens);
+        _context.Itens.RemoveRange(carrinho.Itens);
         _context.SaveChanges();
     }
 }

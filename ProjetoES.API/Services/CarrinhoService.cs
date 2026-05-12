@@ -83,13 +83,14 @@ public class CarrinhoService
         }
         else
         {
-            carrinho.Itens.Add(new ItemCarrinho
+            carrinho.Itens.Add(new ItemPedido
             {
                 FilmeId = dto.FilmeId,
                 Quantidade = dto.Quantidade,
                 PrecoUnitario = (double)filme.PrecoBilhete,
                 CarrinhoId = carrinho.Id,
-                TipoAcesso = dto.TipoAcesso
+                TipoAcesso = dto.TipoAcesso,
+                Status = "Carrinho"
             });
         }
 

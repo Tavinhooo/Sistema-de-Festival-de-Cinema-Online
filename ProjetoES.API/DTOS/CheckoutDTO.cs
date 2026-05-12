@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ProjetoES.API.DTOs
 {
     public class CheckoutRequestDTO
     {
         public int CarrinhoId { get; set; }
+
+        [Required]
+        [StringLength(50)]
         public string MetodoPagamento { get; set; } = string.Empty;
     }
 
