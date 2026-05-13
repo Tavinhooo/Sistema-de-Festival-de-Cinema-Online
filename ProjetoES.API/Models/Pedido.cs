@@ -19,7 +19,7 @@ namespace ProjetoES.API.Models
         public int Quantidade { get; set; }
 
 
-        public decimal PrecoTotal { get; set; }
+        public double PrecoTotal { get; set; }
         public EstadoPedido Estado { get; set; } = EstadoPedido.Pendente;
 
         public virtual ICollection<ItemPedido> Itens { get; set; } = new List<ItemPedido>();

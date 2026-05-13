@@ -27,7 +27,7 @@ namespace ProjetoES.API.DTOs
         public int MemberId { get; set; }
         public DateTime DataPedido { get; set; }
         public DateTime? DataPagamento { get; set; }
-        public double Total { get; set; }
+        public double PrecoTotal { get; set; }
         public string Estado { get; set; } = string.Empty;
         public List<ItemPedidoResponseDTO> Itens { get; set; } = new();
     }

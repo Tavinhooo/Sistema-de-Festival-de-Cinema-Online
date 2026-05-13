@@ -26,9 +26,9 @@ public class AvaliacaoService : IAvaliacaoObservable
 
     public void CriarAvaliacao(Avaliacao avaliacao)
     {
-        if (avaliacao.Nota < 1 || avaliacao.Nota > 5)
+        if (avaliacao.Classificacao < 1 || avaliacao.Classificacao > 5)
         {
-            throw new ArgumentException("A nota deve ser entre 1 e 5.");
+            throw new ArgumentException("A Classificacao deve ser entre 1 e 5.");
         }
         avaliacao.DataAvaliacao = DateTime.UtcNow;
         avaliacao.IsReportado = false;
@@ -37,9 +37,9 @@ public class AvaliacaoService : IAvaliacaoObservable
 
     public void EditarAvaliacao(Avaliacao avaliacao)
     {
-        if (avaliacao.Nota < 1 || avaliacao.Nota > 5)
+        if (avaliacao.Classificacao < 1 || avaliacao.Classificacao > 5)
         {
-            throw new ArgumentException("A nota deve ser entre 1 e 5.");
+            throw new ArgumentException("A Classificacao deve ser entre 1 e 5.");
         }
         _repository.AtualizarAvaliacao(avaliacao);
     }
@@ -53,7 +53,7 @@ public class AvaliacaoService : IAvaliacaoObservable
     {
         var avaliacoes = _repository.ObterAvaliacoesPorFilme(filmeId);
         if (avaliacoes.Count == 0) return 0;
-        return avaliacoes.Average(a => a.Nota);
+        return avaliacoes.Average(a => a.Classificacao);
     }
 
     public void ReportarAvaliacao(int id)

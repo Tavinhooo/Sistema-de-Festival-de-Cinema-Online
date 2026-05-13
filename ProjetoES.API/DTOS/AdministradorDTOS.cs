@@ -75,7 +75,7 @@ namespace ProjetoES.API.DTOs
         public int SessaoId { get; set; }
         public int Quantidade { get; set; }
         public string Estado { get; set; } = string.Empty;
-        public decimal PrecoTotal { get; set; }
+        public double PrecoTotal { get; set; }
     }
     public class AlterarTipoDTO
     {
