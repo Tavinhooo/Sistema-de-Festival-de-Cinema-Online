@@ -11,6 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins("http://localhost:5051", "https://localhost:7083")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 // PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -31,6 +38,7 @@ builder.Services.AddScoped<CarrinhoRepository>();
 builder.Services.AddScoped<CarrinhoService>();
 builder.Services.AddScoped<PedidoRepository>();
 builder.Services.AddScoped<CheckoutFacade>();
+builder.Services.AddScoped<StripeCheckoutService>();
 builder.Services.AddHttpClient<ITmdbApiClient, TmdbApiClient>();
 builder.Services.AddScoped<ITmdbService, TmdbServiceAdapter>();
 // Auth DI
@@ -73,6 +81,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
 app.UseHttpsRedirection();
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
