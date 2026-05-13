@@ -45,7 +45,7 @@ namespace ProjetoES.API.Services
                 UtilizadorId = utilizadorId,
                 DataPedido = DateTime.UtcNow,
                 DataPagamento = DateTime.UtcNow,
-                Total = (double)itensPedido.Sum(i => i.PrecoUnitario),
+                PrecoTotal = (double)itensPedido.Sum(i => i.PrecoUnitario),
                 Estado = EstadoPedido.Completo,
                 Itens = itensPedido
             };
@@ -64,7 +64,7 @@ namespace ProjetoES.API.Services
             var resultado = new CheckoutResultDTO
             {
                 PedidoId = pedido.Id,
-                Total = pedido.Total,
+                PrecoTotal = pedido.PrecoTotal,
                 Estado = pedido.Estado.ToString()
             };
 
