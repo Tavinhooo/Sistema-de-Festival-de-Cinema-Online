@@ -14,8 +14,12 @@ namespace ProjetoES.API.Models
 
         public DateTime DataPedido { get; set; } = DateTime.UtcNow;
         public DateTime? DataPagamento { get; set; }
+        public int SessaoId { get; set; }
+        public virtual Sessao? Sessao { get; set; }
+        public int Quantidade { get; set; }
 
-        public double Total { get; set; }
+
+        public double PrecoTotal { get; set; }
         public EstadoPedido Estado { get; set; } = EstadoPedido.Pendente;
 
         public virtual ICollection<ItemPedido> Itens { get; set; } = new List<ItemPedido>();

@@ -27,7 +27,7 @@ namespace ProjetoES.API.DTOs
         public int MemberId { get; set; }
         public DateTime DataPedido { get; set; }
         public DateTime? DataPagamento { get; set; }
-        public double Total { get; set; }
+        public double PrecoTotal { get; set; }
         public string Estado { get; set; } = string.Empty;
         public List<ItemPedidoResponseDTO> Itens { get; set; } = new();
     }
@@ -36,7 +36,7 @@ namespace ProjetoES.API.DTOs
     public class CheckoutResultDTO
     {
         public int PedidoId { get; set; }
-        public double Total { get; set; }
+        public double PrecoTotal { get; set; }
         public string Estado { get; set; } = string.Empty;
         // Preenchido apenas se foi promovido de Membro para Cliente
         public string? NovoToken { get; set; }

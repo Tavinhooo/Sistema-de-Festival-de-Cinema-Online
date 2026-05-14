@@ -27,8 +27,8 @@ namespace ProjetoES.API.Services
             if (carrinho.Itens == null || carrinho.Itens.Count == 0)
                 throw new ArgumentException("Carrinho vazio.");
 
-            // Calcular total
-            var total = carrinho.Itens.Sum(i => i.PrecoUnitario * i.Quantidade);
+            // Calcular PrecoTotal
+            var PrecoTotal = carrinho.Itens.Sum(i => i.PrecoUnitario * i.Quantidade);
 
             // Criar pedido
             var pedido = new Pedido
@@ -36,7 +36,7 @@ namespace ProjetoES.API.Services
                 UtilizadorId = memberId,
                 DataPedido = DateTime.UtcNow,
                 DataPagamento = DateTime.UtcNow,
-                Total = total,
+                PrecoTotal = PrecoTotal,
                 Estado = EstadoPedido.Completo
             };
 
@@ -96,7 +96,7 @@ namespace ProjetoES.API.Services
                 MemberId = pedido.UtilizadorId,   // DTO mantém o nome MemberId para não quebrar o frontend
                 DataPedido = pedido.DataPedido,
                 DataPagamento = pedido.DataPagamento,
-                Total = pedido.Total,
+                PrecoTotal = pedido.PrecoTotal,
                 Estado = pedido.Estado.ToString(),
                 Itens = pedido.Itens.Select(i => new ItemPedidoResponseDTO
                 {

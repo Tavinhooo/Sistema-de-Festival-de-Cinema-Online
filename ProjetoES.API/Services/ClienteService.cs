@@ -24,7 +24,7 @@ public class ClienteService
             PedidoId = p.Id,
             DataPedido = p.DataPedido,
             DataPagamento = p.DataPagamento,
-            Total = p.Total,
+            PrecoTotal = p.PrecoTotal,
             Estado = p.Estado.ToString(),
             Itens = p.Itens.Select(i => new ItemPedidoDTO
             {
@@ -63,7 +63,7 @@ public class ClienteService
         {
             ClienteId = clienteId,
             FilmeId = dto.FilmeId,
-            Nota = dto.Nota,
+            Classificacao = dto.Classificacao,
             Comentario = dto.Comentario,
             DataAvaliacao = DateTime.UtcNow
         };
@@ -74,7 +74,7 @@ public class ClienteService
         {
             Id = criada.Id,
             FilmeId = criada.FilmeId,
-            Nota = criada.Nota,
+            Classificacao = criada.Classificacao,
             Comentario = criada.Comentario,
             DataAvaliacao = criada.DataAvaliacao
         };
@@ -89,7 +89,7 @@ public class ClienteService
             Id = a.Id,
             FilmeId = a.FilmeId,
             FilmeTitulo = a.Filme?.Titulo,
-            Nota = a.Nota,
+            Classificacao = a.Classificacao,
             Comentario = a.Comentario,
             DataAvaliacao = a.DataAvaliacao
         }).ToList();

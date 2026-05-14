@@ -25,6 +25,8 @@ public class AppDbContext : DbContext
     public DbSet<Pedido> Pedidos { get; set; }
     public DbSet<Avaliacao> Avaliacoes { get; set; }
     public DbSet<ListaPessoal> ListaPessoais { get; set; }
+    public DbSet<Administrador> Administradores { get; set; }
+    public DbSet<LogAlteracaoAcesso> LogsAlteracaoAcessos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

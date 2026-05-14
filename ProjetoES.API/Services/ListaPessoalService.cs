@@ -34,11 +34,16 @@ public class ListaPessoalService : IListaPessoalService
     public void AdicionarFilme(int listaId, int filmeId)
     {
         var lista = GetOrThrow(listaId);
+
+        lista.Filmes ??= new List<Filme>(); 
+
         var strategy = ListaPessoalFactory.Criar(lista.Tipo);
+    
         if (lista.Filmes.Count >= strategy.LimiteMaximo)
         {
-            throw new InvalidOperationException($"A lista {strategy.NomeLista} atingiu o limite máximo de filmes.");
+            throw new InvalidOperationException($"A lista {strategy.NomeLista} atingiu o limite.");
         }
+
         var filme = _context.Filmes.Find(filmeId) ?? throw new ArgumentException("Filme não encontrado");
 
         lista.Filmes.Add(filme);
@@ -71,5 +76,5 @@ public class ListaPessoalService : IListaPessoalService
         _context.SaveChanges();
     }
 
-    public ListaPessoal? GetOrThrow(int id) => _repository.ObterPorId(id) ?? throw new ArgumentException("Lista não encontrada");
+    public ListaPessoal GetOrThrow(int id) => _repository.ObterPorId(id) ?? throw new ArgumentException("Lista não encontrada");
 }

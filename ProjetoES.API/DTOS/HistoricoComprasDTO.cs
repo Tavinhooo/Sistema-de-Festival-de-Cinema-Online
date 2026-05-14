@@ -5,7 +5,7 @@ public class HistoricoComprasDTO
     public int PedidoId { get; set; }
     public DateTime DataPedido { get; set; }
     public DateTime? DataPagamento { get; set; }
-    public double Total { get; set; }
+    public double PrecoTotal { get; set; }
     public string Estado { get; set; } = string.Empty;
     public List<ItemPedidoDTO> Itens { get; set; } = new();
 }
