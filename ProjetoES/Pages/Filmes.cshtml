@@ -44,22 +44,135 @@
             </button>
         </div>
 
-        <div class="card-grid">
-            @for (int i = 0; i < 15; i++)
-            {
-                <div class="card">
-                    <div class="shapes-placeholder">
-                        <div style="width: 100%; display:flex; justify-content:center;">
-                            <div class="shape-triangle"></div>
-                        </div>
-                        <div class="shape shape-star"></div>
-                        <div class="shape shape-square"></div>
-                    </div>
-                </div>
-            }
+        <div class="card-grid" id="films-grid">
+            <p id="films-loading">A carregar filmes...</p>
         </div>
 
     </main>
+
+    <script src="~/js/api-client.js"></script>
+    <script>
+        function getQueryParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function getFieldValue(source, keys, fallback = '') {
+            for (const key of keys) {
+                const value = source?.[key];
+                if (value !== undefined && value !== null && value !== '') {
+                    return value;
+                }
+            }
+
+            return fallback;
+        }
+
+        function getPoster(movie) {
+            return getFieldValue(movie, ['posterUrl', 'PosterUrl', 'posterUrlCompleto', 'PosterUrlCompleto', 'poster_path', 'posterPath'], '/images/default-poster.jpg');
+        }
+
+        function getTitle(movie) {
+            return getFieldValue(movie, ['titulo', 'Titulo', 'nome', 'Nome', 'title', 'Title'], 'Filme');
+        }
+
+        function getFestivalName(movie) {
+            return getFieldValue(movie, ['festivalNome', 'FestivalNome', 'nomeFestival', 'NomeFestival', 'festivalName', 'FestivalName']);
+        }
+
+        function getFestivalId(movie, fallbackFestivalId) {
+            const value = getFieldValue(movie, ['festivalId', 'FestivalId', 'idFestival', 'IdFestival'], fallbackFestivalId ?? null);
+            return value ? Number(value) : null;
+        }
+
+        function createFilmCard(f, selectedFestivalId = null) {
+            const festivalId = getFestivalId(f, selectedFestivalId ?? getQueryParam('festivalId'));
+            const festivalName = getFestivalName(f);
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.style.cursor = 'pointer';
+            div.style.position = 'relative';
+            div.style.overflow = 'hidden';
+            div.style.borderRadius = '20px';
+
+            const img = document.createElement('img');
+            img.src = getPoster(f);
+            img.alt = getTitle(f);
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.display = 'block';
+
+            const overlay = document.createElement('div');
+            overlay.style.position = 'absolute';
+            overlay.style.left = '0';
+            overlay.style.right = '0';
+            overlay.style.bottom = '0';
+            overlay.style.padding = '16px';
+            overlay.style.background = 'linear-gradient(180deg, transparent, rgba(0,0,0,0.8))';
+            overlay.style.color = 'white';
+            overlay.innerHTML = `<h3 style="margin:0 0 6px; font-size:1rem;">${getTitle(f)}</h3><p style="margin:0; font-size:.88rem; opacity:.9;">${festivalName || (festivalId ? `Festival ${festivalId}` : '')}</p>`;
+
+            div.appendChild(img);
+            div.appendChild(overlay);
+
+            div.addEventListener('click', () => {
+                const filmId = getFieldValue(f, ['id', 'Id'], null);
+                const target = festivalId ? `/Filme?id=${filmId}&festivalId=${festivalId}` : `/Filme?id=${filmId}`;
+                window.location.href = target;
+            });
+
+            return div;
+        }
+
+        async function loadFilmsForFestival() {
+            const grid = document.getElementById('films-grid');
+            const festivalParam = getQueryParam('festivalId');
+            const festivalId = festivalParam ? Number(festivalParam) : null;
+
+            // show skeleton immediately to avoid flicker of old content
+            const skeletonCount = 6;
+            const skeletonMarkup = Array.from({ length: skeletonCount }).map(() => `
+                <div class="skeleton-card">
+                    <div class="skeleton-line" style="width:70%"></div>
+                    <div class="skeleton-line" style="width:50%"></div>
+                    <div class="skeleton-line" style="width:60%"></div>
+                </div>
+            `).join('');
+            grid.innerHTML = skeletonMarkup;
+
+            try {
+                let filmes = [];
+                if (festivalId) {
+                    try {
+                        const festival = await ApiClient.getFestivalById(festivalId);
+                        document.querySelector('.section-title').textContent = getFieldValue(festival, ['nome', 'Nome', 'nomeFestival', 'NomeFestival'], `Festival ${festivalId}`);
+                    } catch {
+                        document.querySelector('.section-title').textContent = `Festival ${festivalId}`;
+                    }
+
+                    filmes = await ApiClient.getFilmesByFestival(festivalId);
+                } else {
+                    filmes = await ApiClient.getFilmes();
+                    document.querySelector('.section-title').textContent = 'Todos os Filmes';
+                }
+
+                if (!Array.isArray(filmes) || filmes.length === 0) {
+                    grid.innerHTML = '<p>Nenhum filme encontrado.</p>';
+                    return;
+                }
+
+                // replace skeleton with real content
+                grid.innerHTML = '';
+                filmes.forEach(f => grid.appendChild(createFilmCard(f, festivalId)));
+            } catch (err) {
+                console.error('Erro ao carregar filmes', err);
+                grid.innerHTML = '<p>Erro ao carregar filmes.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFilmsForFestival);
+    </script>
 
 </body>
 </html>

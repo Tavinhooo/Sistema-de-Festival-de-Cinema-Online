@@ -17,7 +17,6 @@ namespace ProjetoES.API.Models
 
         public int DuracaoMinutos { get; set; }
 
-        public decimal PrecoBilhete { get; set; }
         public double MediaAvaliacao { get; set; }
 
         // Para já vamos usar um Link da internet para a imagem para ser mais fácil

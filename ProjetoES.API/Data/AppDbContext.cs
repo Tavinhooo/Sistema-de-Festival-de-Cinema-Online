@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Festival> Festivais { get; set; }
     public DbSet<Filme> Filmes { get; set; }
+    public DbSet<FestivalFilme> FestivalFilmes { get; set; }
     public DbSet<Sessao> Sessoes { get; set; }
     public DbSet<Carrinho> Carrinhos { get; set; }
     public DbSet<Compra> Compras { get; set; }
@@ -59,7 +60,23 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Festival>()
             .HasMany(f => f.Filmes)
             .WithMany(fm => fm.Festivais)
-            .UsingEntity(j => j.ToTable("FestivalFilme"));
+            .UsingEntity<FestivalFilme>(
+                j => j
+                    .HasOne(ff => ff.Filme)
+                    .WithMany()
+                    .HasForeignKey(ff => ff.FilmeId),
+                j => j
+                    .HasOne(ff => ff.Festival)
+                    .WithMany()
+                    .HasForeignKey(ff => ff.FestivalId),
+                j =>
+                {
+                    j.ToTable("FestivalFilme");
+                    j.Property(ff => ff.FestivalId).HasColumnName("FestivaisId");
+                    j.Property(ff => ff.FilmeId).HasColumnName("FilmesId");
+                    j.HasKey(ff => new { ff.FestivalId, ff.FilmeId });
+                    j.Property(ff => ff.PrecoBilhete).HasColumnType("numeric(10,2)");
+                });
 
         modelBuilder.Entity<Acesso>()
             .HasOne(a => a.Cliente)

@@ -14,7 +14,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/filme.css" />
-    
     <link rel="stylesheet" href="~/css/modais.css" />
 </head>
 <body>
@@ -35,33 +34,26 @@
     </header>
 
     <main class="main-content">
-        
         <div class="movie-hero">
-            
             <div class="movie-info-col">
                 <div class="movie-header">
-                    <div class="movie-poster">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
-                        </div>
-                    </div>
+                    <div class="movie-poster" id="moviePoster"></div>
                     <div class="movie-details">
-                        <h1>Título do Filme</h1>
-                        <p>8.1 (Rating)</p>
-                        <p>Gêneros do Filme</p>
-                        <p>2026 &nbsp;&nbsp; 2h:12min &nbsp;&nbsp; +16</p>
+                        <h1 id="movieTitle">A carregar...</h1>
+                        <p id="movieRating">0.0 (Rating)</p>
+                        <p id="movieGenres"></p>
+                        <p id="movieMeta"></p>
+                        <p id="moviePrice" style="font-weight:800; color:#6b439b; font-size:1.1rem;"></p>
                     </div>
                 </div>
 
                 <div class="movie-buttons">
-                    <button class="btn-pill">Sinopse</button>
+                    <button class="btn-pill" id="btnSinopse">Sinopse</button>
                     <button class="btn-pill">Elenco e Realizador</button>
-                    <button class="btn-add-cart">Adicionar ao carrinho</button>
+                    <button class="btn-add-cart" id="btnAddToCart">Adicionar ao carrinho</button>
                 </div>
+
+                <div id="movieSynopsis" style="margin-top:24px; line-height:1.8; color:#444; display:none;"></div>
             </div>
 
             <div class="movie-trailer-col">
@@ -82,25 +74,11 @@
                     </div>
                 </div>
             </div>
-            
         </div>
 
         <div>
             <div class="section-badge">Relacionados</div>
-            <div class="card-row">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div class="card">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
-                        </div>
-                    </div>
-                }
-            </div>
+            <div class="card-row" id="relatedMovies"></div>
         </div>
 
         <div>
@@ -125,19 +103,15 @@
                 }
             </div>
         </div>
-
     </main>
 
     <div class="modal-overlay" id="modalAvaliacao">
         <div class="modal-box">
-            
             <div class="modal-header">
                 <h2>Avaliar Filme</h2>
                 <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
             </div>
-
-            <p style="font-size: 14px; color: #666;">Qual é a tua nota para o <strong>Título do Filme</strong>?</p>
-
+            <p style="font-size: 14px; color: #666;">Qual é a tua nota para o <strong id="modalMovieTitle">filme</strong>?</p>
             <div class="rating-scale">
                 <button class="rating-btn">1</button>
                 <button class="rating-btn">2</button>
@@ -150,79 +124,112 @@
                 <button class="rating-btn">9</button>
                 <button class="rating-btn">10</button>
             </div>
-
             <div class="modal-footer">
                 <button class="btn-cancel" type="button">Cancelar</button>
                 <button class="btn-submit" type="button">Submeter Avaliação</button>
             </div>
-
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalDenuncia">
-        <div class="modal-box">
-            
-            <div class="modal-header">
-                <h2>Denunciar Comentário</h2>
-                <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
-            </div>
-
-            <div class="form-group">
-                <label>Motivo da Denúncia</label>
-                <select>
-                    <option value="">Selecione um motivo...</option>
-                    <option value="spam">Spam ou Publicidade</option>
-                    <option value="ofensivo">Linguagem Ofensiva</option>
-                    <option value="spoiler">Contém Spoilers</option>
-                    <option value="outro">Outro motivo</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Detalhes Adicionais (Opcional)</label>
-                <textarea placeholder="Explique brevemente porque este comentário viola as regras..."></textarea>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn-cancel" type="button">Cancelar</button>
-                <button class="btn-submit" type="button" style="background-color: #e53935;">Denunciar</button>
-            </div>
-
-        </div>
-    </div>
-
+    <script src="~/js/api-client.js"></script>
     <script>
+        function getQueryParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function formatMinutes(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            return `${hours}h:${String(remainingMinutes).padStart(2, '0')}min`;
+        }
+
+        function renderPoster(url, title) {
+            const poster = document.getElementById('moviePoster');
+            poster.innerHTML = `<img src="${url}" alt="${title}" style="width:100%; height:100%; object-fit:cover; border-radius:20px;" />`;
+        }
+
+        async function loadFilm() {
+            const filmId = getQueryParam('id');
+            const festivalId = getQueryParam('festivalId');
+
+            try {
+                const filme = await ApiClient.getFilmeById(filmId, festivalId);
+                document.getElementById('movieTitle').textContent = filme.titulo || 'Filme';
+                document.getElementById('modalMovieTitle').textContent = filme.titulo || 'filme';
+                document.getElementById('movieRating').textContent = `${Number(filme.mediaAvaliacao || 0).toFixed(1)} (Rating)`;
+                document.getElementById('movieGenres').textContent = filme.genero || '';
+                document.getElementById('movieMeta').textContent = `${filme.ano || ''}   ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : ''}`;
+                document.getElementById('moviePrice').textContent = festivalId ? `Preço do bilhete: €${Number(filme.precoBilhete || 0).toFixed(2)}` : '';
+                document.getElementById('movieSynopsis').textContent = filme.sinopse || '';
+                renderPoster(filme.posterUrl || '/images/default-poster.jpg', filme.titulo || 'Filme');
+
+                const relatedMovies = document.getElementById('relatedMovies');
+                relatedMovies.innerHTML = '';
+
+                const btnAddToCart = document.getElementById('btnAddToCart');
+                btnAddToCart.addEventListener('click', async () => {
+                    try {
+                        if (!festivalId) {
+                            alert('Selecione um festival para adicionar este filme ao carrinho.');
+                            return;
+                        }
+
+                        const userId = ApiClient.getCurrentUserId();
+                        if (!userId) {
+                            window.location.href = '/Login';
+                            return;
+                        }
+
+                        let cart;
+                        try {
+                            cart = await ApiClient.getCartByUser(userId);
+                        } catch {
+                            cart = await ApiClient.createCart(userId);
+                        }
+
+                        await ApiClient.addToCart(cart.id, Number(filmId), 1, 'Aluguer Digital', Number(filme.precoBilhete || 0), Number(festivalId));
+                        alert('Filme adicionado ao carrinho.');
+                    } catch (error) {
+                        console.error(error);
+                        alert(error.message || 'Não foi possível adicionar ao carrinho.');
+                    }
+                });
+
+                document.getElementById('btnSinopse').addEventListener('click', () => {
+                    const synopsis = document.getElementById('movieSynopsis');
+                    synopsis.style.display = synopsis.style.display === 'none' ? 'block' : 'none';
+                });
+            } catch (error) {
+                console.error(error);
+                document.getElementById('movieTitle').textContent = 'Filme indisponível';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Elementos
             const btnAvaliar = document.getElementById('btnAbrirAvaliacao');
             const btnsDenunciar = document.querySelectorAll('.btn-reportar-comentario');
             const modalAvaliacao = document.getElementById('modalAvaliacao');
-            const modalDenuncia = document.getElementById('modalDenuncia');
             const botoesFechar = document.querySelectorAll('.btn-close, .btn-cancel');
 
-            // Abrir Avaliação
             if(btnAvaliar) {
                 btnAvaliar.addEventListener('click', function() {
                     modalAvaliacao.classList.add('active');
                 });
             }
 
-            // Abrir Denúncia
             btnsDenunciar.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    modalDenuncia.classList.add('active');
+                    // placeholder for report modal if needed later
                 });
             });
 
-            // Fechar qualquer modal
             botoesFechar.forEach(btn => {
                 btn.addEventListener('click', function() {
                     modalAvaliacao.classList.remove('active');
-                    modalDenuncia.classList.remove('active');
                 });
             });
-            
-            // Bónus: Selecionar a nota no modal de avaliação
+
             const ratingBtns = document.querySelectorAll('.rating-btn');
             ratingBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -230,6 +237,8 @@
                     this.classList.add('selected');
                 });
             });
+
+            loadFilm();
         });
     </script>
 

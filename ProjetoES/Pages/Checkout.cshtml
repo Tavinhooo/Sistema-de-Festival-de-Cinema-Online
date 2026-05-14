@@ -63,7 +63,8 @@
 
             </div>
 
-            <button type="button" class="btn-pay">Pagar X€</button>
+            <div id="payment-feedback" style="margin-top:16px; margin-bottom:12px; min-height:24px; font-size:0.95rem;"></div>
+            <button type="button" class="btn-pay" id="stripe-checkout-button">Pagar com Stripe</button>
         </aside>
 
         <main class="form-section">
@@ -154,6 +155,78 @@
         </main>
 
     </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const apiBaseUrl = 'http://localhost:5091';
+        const paymentFeedback = document.getElementById('payment-feedback');
+        const stripeCheckoutButton = document.getElementById('stripe-checkout-button');
+
+        function showPaymentMessage(message, isError) {
+            paymentFeedback.textContent = message;
+            paymentFeedback.style.color = isError ? '#8a1f1f' : '#135c2a';
+        }
+
+        function getAuthToken() {
+            return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+        }
+
+        stripeCheckoutButton.addEventListener('click', async function () {
+            const token = getAuthToken();
+
+            if (!token) {
+                showPaymentMessage('Precisa iniciar sessão antes de pagar.', true);
+                window.location.href = '/Login';
+                return;
+            }
+
+            stripeCheckoutButton.disabled = true;
+            showPaymentMessage('A preparar o pagamento...', false);
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/checkout/stripe/session`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const responseText = await response.text();
+                const data = responseText ? JSON.parse(responseText) : null;
+
+                if (!response.ok) {
+                    throw new Error(typeof data === 'string' ? data : responseText || 'Não foi possível criar a sessão da Stripe.');
+                }
+
+                const sessionId = data?.sessionId ?? data?.SessionId;
+                const publishableKey = data?.publishableKey ?? data?.PublishableKey;
+                const checkoutUrl = data?.checkoutUrl ?? data?.CheckoutUrl;
+
+                if (publishableKey && sessionId && window.Stripe) {
+                    const stripe = Stripe(publishableKey);
+                    const result = await stripe.redirectToCheckout({ sessionId });
+
+                    if (result.error) {
+                        throw new Error(result.error.message);
+                    }
+
+                    return;
+                }
+
+                if (checkoutUrl) {
+                    window.location.href = checkoutUrl;
+                    return;
+                }
+
+                throw new Error('A resposta da Stripe não continha dados de redirecionamento válidos.');
+            } catch (error) {
+                showPaymentMessage(error.message || 'Falha ao iniciar o pagamento.', true);
+            } finally {
+                stripeCheckoutButton.disabled = false;
+            }
+        });
+    </script>
 
 </body>
 </html>

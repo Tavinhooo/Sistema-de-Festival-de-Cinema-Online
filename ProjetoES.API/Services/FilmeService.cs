@@ -1,3 +1,4 @@
+using ProjetoES.API.DTOS;
 using ProjetoES.API.Models;
 using ProjetoES.API.Repositories;
 using ProjetoES.API.Interfaces;
@@ -32,12 +33,17 @@ public class FilmeService : IAvaliacaoObserver
         return _repository.ObterFilmePorId(id);
     }
 
-    public List<Filme> ObterFilmesPorFestival(int festivalId)
+    public List<FilmeFestivalDTO> ObterFilmesPorFestival(int festivalId)
     {
         return _repository.ObterFilmesPorFestival(festivalId);
     }
 
-    public void CriarFilme(Filme filme)
+    public FilmeFestivalDTO? ObterFilmePorFestival(int filmeId, int festivalId)
+    {
+        return _repository.ObterFilmePorFestival(filmeId, festivalId);
+    }
+
+    public void CriarFilme(Filme filme, int? festivalId = null, decimal? precoBilhete = null)
     {
         if (string.IsNullOrWhiteSpace(filme.Titulo))
         {
@@ -54,17 +60,22 @@ public class FilmeService : IAvaliacaoObserver
             throw new ArgumentException("A duração do filme deve ser superior a 0 minutos.");
         }
 
-        if (filme.PrecoBilhete < 0)
-        {
-            throw new ArgumentException("O preço do bilhete não pode ser negativo.");
-        }
-
         if (string.IsNullOrWhiteSpace(filme.PosterUrl))
         {
             throw new ArgumentException("A URL do poster é obrigatória.");
         }
 
-        _repository.AdicionarFilme(filme);
+        _repository.AdicionarFilme(filme, festivalId, precoBilhete);
+    }
+
+    public void VincularFilmeAoFestival(int filmeId, int festivalId, decimal precoBilhete)
+    {
+        _repository.VincularFilmeAoFestival(filmeId, festivalId, precoBilhete);
+    }
+
+    public void DesvincularFilmeDeFestival(int filmeId, int festivalId)
+    {
+        _repository.DesvincularFilmeDeFestival(filmeId, festivalId);
     }
 
     public void AtualizarFilme(int id, Filme filme)
@@ -90,11 +101,6 @@ public class FilmeService : IAvaliacaoObserver
             throw new ArgumentException("A duração do filme deve ser superior a 0 minutos.");
         }
 
-        if (filme.PrecoBilhete < 0)
-        {
-            throw new ArgumentException("O preço do bilhete não pode ser negativo.");
-        }
-
         if (string.IsNullOrWhiteSpace(filme.PosterUrl))
         {
             throw new ArgumentException("A URL do poster é obrigatória.");
@@ -106,7 +112,6 @@ public class FilmeService : IAvaliacaoObserver
         filmeExistente.Genero = filme.Genero;
         filmeExistente.Ano = filme.Ano;
         filmeExistente.DuracaoMinutos = filme.DuracaoMinutos;
-        filmeExistente.PrecoBilhete = filme.PrecoBilhete;
         filmeExistente.PosterUrl = filme.PosterUrl;
 
         _repository.AtualizarFilme(filmeExistente);

@@ -14,11 +14,13 @@ namespace ProjetoES.API.Controllers
     {
         private readonly CheckoutFacade _checkoutFacade;
         private readonly PedidoRepository _pedidoRepository;
+        private readonly StripeCheckoutService _stripeCheckoutService;
 
-        public CheckoutController(CheckoutFacade checkoutFacade, PedidoRepository pedidoRepository)
+        public CheckoutController(CheckoutFacade checkoutFacade, PedidoRepository pedidoRepository, StripeCheckoutService stripeCheckoutService)
         {
             _checkoutFacade = checkoutFacade;
             _pedidoRepository = pedidoRepository;
+            _stripeCheckoutService = stripeCheckoutService;
         }
 
         private int ObterUtilizadorIdDoToken()
@@ -37,6 +39,30 @@ namespace ProjetoES.API.Controllers
                 var utilizadorId = ObterUtilizadorIdDoToken();
                 var resultado = _checkoutFacade.ProcessarCheckout(utilizadorId, dto.MetodoPagamento);
                 return Created(string.Empty, resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // POST: api/checkout/stripe/session
+        [HttpPost("stripe/session")]
+        public IActionResult CriarStripeSession()
+        {
+            try
+            {
+                var utilizadorId = ObterUtilizadorIdDoToken();
+                var session = _stripeCheckoutService.CriarSessao(utilizadorId);
+                return Ok(session);
             }
             catch (InvalidOperationException ex)
             {
