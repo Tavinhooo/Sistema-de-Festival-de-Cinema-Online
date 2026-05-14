@@ -16,6 +16,21 @@ public class FestivalService
         return _repository.ObterTodosFestivais();
     }
 
+    public List<Festival> ObterFestivaisADecorrer()
+    {
+        return _repository.ObterFestivaisADecorrer();
+    }
+
+    public List<Festival> ObterFestivaisFuturos()
+    {
+        return _repository.ObterFestivaisFuturos();
+    }
+
+    public List<Festival> ObterFestivaisDisponiveisParaFilmes()
+    {
+        return _repository.ObterFestivaisDisponiveisParaFilmes();
+    }
+
     public Festival? ObterFestivalPorId(int id)
     {
         return _repository.ObterFestivalPorId(id);

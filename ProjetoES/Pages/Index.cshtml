@@ -76,13 +76,10 @@
         const upcomingContainer = document.getElementById('upcoming-festivals');
 
         try {
-            const festivais = await ApiClient.getFestivais();
-            if (!Array.isArray(festivais)) return;
-
-            // Simple split: festivals that are ongoing vs future
-            const now = new Date();
-            const ongoing = festivais.filter(f => new Date(f.dataInicio) <= now && new Date(f.dataFim) >= now);
-            const upcoming = festivais.filter(f => new Date(f.dataInicio) > now);
+            const [ongoing, upcoming] = await Promise.all([
+                ApiClient.getFestivaisADecorrer(),
+                ApiClient.getFestivaisProximos()
+            ]);
 
             function createCard(f) {
                 const div = document.createElement('div');

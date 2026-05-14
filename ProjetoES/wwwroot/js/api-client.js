@@ -135,6 +135,9 @@ const ApiClient = (() => {
 
         // Festivals methods
         getFestivais: () => request('GET', '/api/festivais'),
+        getFestivaisADecorrer: () => request('GET', '/api/festivais/a-decorrer'),
+        getFestivaisProximos: () => request('GET', '/api/festivais/proximos'),
+        getFestivaisDisponiveisParaFilmes: () => request('GET', '/api/festivais/disponiveis-para-filmes'),
         getFestivalById: (id) => request('GET', `/api/festivais/${id}`),
 
         // Utility methods

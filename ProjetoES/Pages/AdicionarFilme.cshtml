@@ -407,7 +407,7 @@
 
     async function loadFestivals() {
         try {
-            const festivals = await ApiClient.getFestivais();
+            const festivals = await ApiClient.getFestivaisDisponiveisParaFilmes();
             festivalSelect.innerHTML = '<option value="">-- Seleciona o festival --</option>';
 
             festivals.forEach(festival => {
