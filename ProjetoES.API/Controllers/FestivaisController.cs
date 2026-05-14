@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProjetoES.API.DTOs;
 using ProjetoES.API.Models;
 using ProjetoES.API.Services;
 
@@ -15,20 +16,38 @@ public class FestivaisController : ControllerBase
         _service = service;
     }
     [HttpGet]
-    public ActionResult<List<Festival>> ObterTodosFestivais()
+    public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais()
     {
-        List<Festival> festivais = _service.ObterTodosFestivais();
+        List<FestivalResponseDTO> festivais = _service.ObterTodosFestivais()
+            .Select(festival => new FestivalResponseDTO
+            {
+                Id = festival.Id,
+                Nome = festival.Nome,
+                DataInicio = festival.DataInicio,
+                DataFim = festival.DataFim,
+                Estado = festival.Estado.ToString()
+            })
+            .ToList();
+
         return Ok(festivais);
     }
     [HttpGet("{id}")]
-    public ActionResult<Festival> ObterFestivalPorId(int id)
+    public ActionResult<FestivalResponseDTO> ObterFestivalPorId(int id)
     {
         Festival? festival = _service.ObterFestivalPorId(id);
         if (festival == null)
         {
             return NotFound();
         }
-        return Ok(festival);
+
+        return Ok(new FestivalResponseDTO
+        {
+            Id = festival.Id,
+            Nome = festival.Nome,
+            DataInicio = festival.DataInicio,
+            DataFim = festival.DataFim,
+            Estado = festival.Estado.ToString()
+        });
     }
     [HttpPost]
     public ActionResult CriarFestival(Festival festival)

@@ -120,7 +120,7 @@
 
                 ApiClient.setToken(token, remember); // remember = use localStorage
                 showLoginMessage('Login concluído. A redirecionar...', false);
-                setTimeout(() => window.location.href = '/Checkout', 1500);
+                setTimeout(() => window.location.href = '/', 1500);
             } catch (error) {
                 showLoginMessage(error.message || 'Erro ao iniciar sessão.', true);
             }
@@ -166,7 +166,7 @@
                 storage.setItem('authToken', token);
 
                 showLoginMessage('Login concluído. A redirecionar...', false);
-                window.location.href = '/Checkout';
+                window.location.href = '/';
             } catch (error) {
                 showLoginMessage(error.message || 'Não foi possível iniciar sessão.', true);
             }

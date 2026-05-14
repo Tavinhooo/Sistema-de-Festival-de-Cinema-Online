@@ -216,9 +216,6 @@ namespace ProjetoES.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("PrecoBilhete")
-                        .HasColumnType("numeric");
-
                     b.Property<string>("Sinopse")
                         .IsRequired()
                         .HasColumnType("text");

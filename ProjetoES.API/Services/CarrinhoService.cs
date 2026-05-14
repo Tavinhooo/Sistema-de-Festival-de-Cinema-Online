@@ -62,6 +62,11 @@ public class CarrinhoService
             throw new ArgumentException("A quantidade tem de ser superior a zero.");
         }
 
+        if (dto.FestivalId <= 0)
+        {
+            throw new ArgumentException("O festival é obrigatório.");
+        }
+
         var carrinho = _repository.ObterCarrinhoPorId(carrinhoId);
         if (carrinho == null)
         {
@@ -74,11 +79,13 @@ public class CarrinhoService
             throw new ArgumentException("Filme inválido.");
         }
 
-        var itemExistente = carrinho.Itens.FirstOrDefault(i => i.FilmeId == dto.FilmeId && i.TipoAcesso == dto.TipoAcesso);
+        var precoFestival = _filmeRepository.ObterPrecoBilheteFestival(dto.FilmeId, dto.FestivalId);
+
+        var itemExistente = carrinho.Itens.FirstOrDefault(i => i.FilmeId == dto.FilmeId && i.FestivalId == dto.FestivalId && i.TipoAcesso == dto.TipoAcesso);
         if (itemExistente != null)
         {
             itemExistente.Quantidade += dto.Quantidade;
-            itemExistente.PrecoUnitario = (double)filme.PrecoBilhete;
+            itemExistente.PrecoUnitario = (double)precoFestival;
             itemExistente.TipoAcesso = dto.TipoAcesso;
         }
         else
@@ -86,8 +93,9 @@ public class CarrinhoService
             carrinho.Itens.Add(new ItemPedido
             {
                 FilmeId = dto.FilmeId,
+                FestivalId = dto.FestivalId,
                 Quantidade = dto.Quantidade,
-                PrecoUnitario = (double)filme.PrecoBilhete,
+                PrecoUnitario = (double)precoFestival,
                 CarrinhoId = carrinho.Id,
                 TipoAcesso = dto.TipoAcesso,
                 Status = "Carrinho"
@@ -129,6 +137,7 @@ public class CarrinhoService
             Id = item.Id,
             FilmeId = item.FilmeId,
             FilmeTitulo = item.Filme?.Titulo ?? string.Empty,
+            FestivalId = item.FestivalId,
             Quantidade = item.Quantidade,
             TipoAcesso = item.TipoAcesso,
             PrecoUnitario = item.PrecoUnitario,

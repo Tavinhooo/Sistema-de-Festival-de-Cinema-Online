@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="~/css/index.css" />
+    <link rel="stylesheet" href="~/css/filmes.css" />
 </head>
 <body>
 
@@ -40,41 +41,83 @@
         
         <section>
             <h2 class="section-title">Festivais a decorrer...</h2>
-            <div class="card-row">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div class="card">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
-                        </div>
-                    </div>
-                }
+            <div class="card-row" id="current-festivals">
+                <!-- skeletons to avoid flash of unrelated server content -->
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
             </div>
         </section>
 
         <section>
             <h2 class="section-title">Próximos Festivais</h2>
-            <div class="card-row">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div class="card">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
-                        </div>
-                    </div>
-                }
+            <div class="card-row" id="upcoming-festivals">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
             </div>
         </section>
 
     </main>
 
 </body>
+<script src="~/js/api-client.js"></script>
+<script>
+    async function renderFestivais() {
+        const currentContainer = document.getElementById('current-festivals');
+        const upcomingContainer = document.getElementById('upcoming-festivals');
+
+        try {
+            const festivais = await ApiClient.getFestivais();
+            if (!Array.isArray(festivais)) return;
+
+            // Simple split: festivals that are ongoing vs future
+            const now = new Date();
+            const ongoing = festivais.filter(f => new Date(f.dataInicio) <= now && new Date(f.dataFim) >= now);
+            const upcoming = festivais.filter(f => new Date(f.dataInicio) > now);
+
+            function createCard(f) {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.style.cursor = 'pointer';
+                div.title = f.nome || f.nomeFestival || 'Ver filmes deste festival';
+
+                const title = document.createElement('h3');
+                title.textContent = f.nome || f.nomeFestival || 'Festival';
+                const dates = document.createElement('p');
+                const d1 = new Date(f.dataInicio).toLocaleDateString();
+                const d2 = new Date(f.dataFim).toLocaleDateString();
+                dates.textContent = `${d1} — ${d2}`;
+
+                div.appendChild(title);
+                div.appendChild(dates);
+
+                // Redirect to Filmes page with festivalId query parameter
+                const festivalId = f.id ?? f.Id ?? f.festivalId ?? f.idFestival;
+                if (festivalId) {
+                    div.addEventListener('click', () => {
+                        window.location.href = `/Filmes?festivalId=${festivalId}`;
+                    });
+                }
+
+                return div;
+            }
+
+            currentContainer.innerHTML = '';
+            ongoing.forEach(f => currentContainer.appendChild(createCard(f)));
+
+            upcomingContainer.innerHTML = '';
+            upcoming.forEach(f => upcomingContainer.appendChild(createCard(f)));
+        } catch (err) {
+            console.error('Falha ao carregar festivais', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderFestivais);
+</script>
+</html>
 </html>

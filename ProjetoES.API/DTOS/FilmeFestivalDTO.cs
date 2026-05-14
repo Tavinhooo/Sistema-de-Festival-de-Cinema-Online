@@ -1,0 +1,16 @@
+namespace ProjetoES.API.DTOS;
+
+public class FilmeFestivalDTO
+{
+    public int Id { get; set; }
+    public string Titulo { get; set; } = string.Empty;
+    public string Sinopse { get; set; } = string.Empty;
+    public string Genero { get; set; } = string.Empty;
+    public int Ano { get; set; }
+    public int DuracaoMinutos { get; set; }
+    public double MediaAvaliacao { get; set; }
+    public string PosterUrl { get; set; } = string.Empty;
+    public int FestivalId { get; set; }
+    public string FestivalNome { get; set; } = string.Empty;
+    public decimal PrecoBilhete { get; set; }
+}

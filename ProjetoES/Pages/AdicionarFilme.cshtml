@@ -1,0 +1,467 @@
+@page
+@{
+    ViewData["Title"] = "Importar Filme";
+}
+
+<style>
+    .film-import-shell {
+        min-height: 100vh;
+        padding: 40px 20px 64px;
+        background:
+            radial-gradient(circle at top left, rgba(122, 92, 188, 0.16), transparent 28%),
+            radial-gradient(circle at top right, rgba(232, 181, 104, 0.14), transparent 24%),
+            linear-gradient(180deg, #faf8ff 0%, #f5f2fa 100%);
+        font-family: 'Inter', sans-serif;
+        color: #1f1b29;
+    }
+
+    .film-import-card {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(119, 89, 177, 0.12);
+        border-radius: 28px;
+        box-shadow: 0 22px 60px rgba(24, 16, 40, 0.12);
+        overflow: hidden;
+    }
+
+    .film-import-hero {
+        padding: 28px 32px;
+        background: linear-gradient(135deg, #251433 0%, #50316f 60%, #6c4aa4 100%);
+        color: white;
+    }
+
+    .film-import-hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 800;
+    }
+
+    .film-import-hero p {
+        margin: 0;
+        max-width: 72ch;
+        opacity: 0.88;
+        line-height: 1.6;
+    }
+
+    .film-import-body {
+        padding: 32px;
+    }
+
+    .toolbar,
+    .form-grid {
+        display: grid;
+        gap: 16px;
+    }
+
+    .toolbar {
+        grid-template-columns: 1fr auto;
+        margin-bottom: 20px;
+    }
+
+    .search-input,
+    .field,
+    .select,
+    .textarea {
+        width: 100%;
+        border: 1px solid #ddd9e6;
+        border-radius: 16px;
+        background: white;
+        padding: 14px 16px;
+        font: inherit;
+        transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .search-input:focus,
+    .field:focus,
+    .select:focus,
+    .textarea:focus {
+        outline: none;
+        border-color: #7b57b8;
+        box-shadow: 0 0 0 4px rgba(123, 87, 184, 0.14);
+    }
+
+    .primary-btn,
+    .ghost-btn {
+        border: 0;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+
+    .primary-btn {
+        background: linear-gradient(135deg, #7b57b8, #50316f);
+        color: white;
+        box-shadow: 0 16px 24px rgba(79, 48, 111, 0.22);
+    }
+
+    .ghost-btn {
+        background: #f0ebfb;
+        color: #432b66;
+    }
+
+    .primary-btn:hover,
+    .ghost-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .notice {
+        display: none;
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        font-weight: 600;
+    }
+
+    .notice.success {
+        display: block;
+        background: #edf7ee;
+        color: #185a2f;
+        border: 1px solid #bfe1c5;
+    }
+
+    .notice.error {
+        display: block;
+        background: #ffecec;
+        color: #872626;
+        border: 1px solid #f4bcbc;
+    }
+
+    .results-row {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        padding: 4px 2px 18px;
+        margin: 18px 0 28px;
+        scroll-snap-type: x proximity;
+    }
+
+    .result-card {
+        min-width: 140px;
+        max-width: 140px;
+        cursor: pointer;
+        scroll-snap-align: start;
+        border-radius: 18px;
+        background: white;
+        border: 1px solid #ece6f5;
+        box-shadow: 0 12px 24px rgba(31, 19, 56, 0.08);
+        overflow: hidden;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .result-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 30px rgba(31, 19, 56, 0.12);
+    }
+
+    .result-card img {
+        display: block;
+        width: 100%;
+        height: 210px;
+        object-fit: cover;
+        background: #f1edf8;
+    }
+
+    .result-card p {
+        margin: 0;
+        padding: 10px 10px 12px;
+        font-size: .85rem;
+        font-weight: 700;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .section-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0 0 12px;
+        color: #2b2038;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .full {
+        grid-column: 1 / -1;
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: .9rem;
+        font-weight: 700;
+        color: #4d425f;
+    }
+
+    .helper {
+        margin-top: 8px;
+        font-size: .84rem;
+        color: #6f6782;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    @@media (max-width: 860px) {
+        .toolbar,
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="film-import-shell">
+    <div class="film-import-card">
+        <div class="film-import-hero">
+            <h1>Importar Filme</h1>
+            <p>Pesquisa um filme no TMDB, preenche os dados automaticamente e guarda-o diretamente no API. Por agora esta página é pública, sem validação de administrador.</p>
+        </div>
+
+        <div class="film-import-body">
+            <div id="message" class="notice"></div>
+
+            <div class="toolbar">
+                <input id="tmdbQuery" class="search-input" type="search" placeholder="Ex: The Matrix, Interstellar, Parasite" />
+                <button type="button" class="primary-btn" id="searchBtn">Pesquisar TMDB</button>
+            </div>
+
+            <h2 class="section-title">Resultados TMDB</h2>
+            <div id="loadingResults" class="helper" style="display:none;">A procurar filmes...</div>
+            <div id="tmdbResults" class="results-row"></div>
+
+            <h2 class="section-title">Dados do filme</h2>
+            <form id="filmForm">
+                <div class="form-grid">
+                    <div class="full">
+                        <label class="field-label" for="festivalId">Festival</label>
+                        <select id="festivalId" class="select"></select>
+                    </div>
+
+                    <div class="full">
+                        <label class="field-label" for="titulo">Título</label>
+                        <input id="titulo" class="field" type="text" required />
+                    </div>
+
+                    <div class="full">
+                        <label class="field-label" for="sinopse">Sinopse</label>
+                        <textarea id="sinopse" class="textarea" rows="4" required></textarea>
+                    </div>
+
+                    <div class="full">
+                        <label class="field-label" for="posterUrl">URL do Poster</label>
+                        <input id="posterUrl" class="field" type="url" required />
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="ano">Ano</label>
+                        <input id="ano" class="field" type="number" min="1900" max="2100" required />
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="genero">Género</label>
+                        <input id="genero" class="field" type="text" required />
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="duracao">Duração (min)</label>
+                        <input id="duracao" class="field" type="number" min="1" required />
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="precoBilhete">Preço do bilhete (€)</label>
+                        <input id="precoBilhete" class="field" type="number" step="0.01" min="0" required />
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="primary-btn">Guardar Filme</button>
+                    <button type="button" class="ghost-btn" id="clearBtn">Limpar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tmdbResults = document.getElementById('tmdbResults');
+    const loadingResults = document.getElementById('loadingResults');
+    const messageBox = document.getElementById('message');
+    const festivalSelect = document.getElementById('festivalId');
+
+    function showMessage(text, type) {
+        messageBox.className = `notice ${type}`;
+        messageBox.textContent = text;
+    }
+
+    function clearMessage() {
+        messageBox.className = 'notice';
+        messageBox.textContent = '';
+    }
+
+    function getPosterUrl(posterPath) {
+        return posterPath ? `https://image.tmdb.org/t/p/w500${posterPath}` : '/images/default-poster.jpg';
+    }
+
+    function getYear(releaseDate) {
+        return releaseDate ? releaseDate.substring(0, 4) : new Date().getFullYear();
+    }
+
+    function getMovieTitle(movie) {
+        return movie.titulo || movie.title || movie.nome || movie.name || 'Filme';
+    }
+
+    function getMovieOverview(movie) {
+        return movie.sinopse || movie.overview || movie.description || '';
+    }
+
+    function getMoviePoster(movie) {
+        return movie.posterUrlCompleto || (movie.posterPath ? `https://image.tmdb.org/t/p/w500${movie.posterPath}` : null) || movie.poster_path || '/images/default-poster.jpg';
+    }
+
+    function getMovieReleaseYear(movie) {
+        return getYear(movie.dataLancamento || movie.releaseDate || movie.release_date);
+    }
+
+    function populateFormFromMovie(movie, details) {
+        document.getElementById('titulo').value = getMovieTitle(movie);
+        document.getElementById('sinopse').value = getMovieOverview(movie);
+        document.getElementById('posterUrl').value = getMoviePoster(movie);
+        document.getElementById('ano').value = getMovieReleaseYear(movie);
+        document.getElementById('genero').value = details?.generosString || movie.genre_names?.join(', ') || movie.generosString || 'Desconhecido';
+        document.getElementById('duracao').value = details?.duracao || movie.runtime || 0;
+        document.getElementById('titulo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderSearchResults(results) {
+        if (!Array.isArray(results) || results.length === 0) {
+            tmdbResults.innerHTML = '<div class="helper">Nenhum filme encontrado.</div>';
+            return;
+        }
+
+        tmdbResults.innerHTML = results.map(movie => `
+            <article class="result-card" data-movie-id="${movie.id}">
+                <img src="${getMoviePoster(movie)}" alt="${getMovieTitle(movie)}" />
+                <p title="${getMovieTitle(movie)}">${getMovieTitle(movie)}</p>
+            </article>
+        `).join('');
+
+        tmdbResults.querySelectorAll('.result-card').forEach(card => {
+            card.addEventListener('click', async () => {
+                const movieId = card.dataset.movieId;
+                const movie = results.find(item => String(item.id) === movieId);
+                if (!movie) return;
+
+                try {
+                    showMessage('A carregar detalhes do filme...', '');
+                    const details = await ApiClient.getTmdbMovieDetails(movie.id);
+                    clearMessage();
+                    populateFormFromMovie(movie, details);
+                } catch (error) {
+                    clearMessage();
+                    populateFormFromMovie(movie);
+                    showMessage('Os detalhes extra não puderam ser carregados, mas o filme foi preenchido.', 'success');
+                }
+            });
+        });
+    }
+
+    async function loadFestivals() {
+        try {
+            const festivals = await ApiClient.getFestivais();
+            festivalSelect.innerHTML = '<option value="">-- Seleciona o festival --</option>';
+
+            festivals.forEach(festival => {
+                const option = document.createElement('option');
+                option.value = festival.id;
+                option.textContent = festival.nome;
+                festivalSelect.appendChild(option);
+            });
+
+            const queryParams = new URLSearchParams(window.location.search);
+            const festivalId = queryParams.get('festivalId');
+            if (festivalId) {
+                festivalSelect.value = festivalId;
+            }
+        } catch (error) {
+            console.error(error);
+            festivalSelect.innerHTML = '<option value="">Não foi possível carregar os festivais</option>';
+        }
+    }
+
+    async function searchTmdb() {
+        const query = document.getElementById('tmdbQuery').value.trim();
+        if (!query) {
+            showMessage('Escreve um termo de pesquisa primeiro.', 'error');
+            return;
+        }
+
+        clearMessage();
+        loadingResults.style.display = 'block';
+        tmdbResults.innerHTML = '';
+
+        try {
+            const results = await ApiClient.searchTmdbMovies(query);
+            renderSearchResults(results);
+        } catch (error) {
+            console.error(error);
+            tmdbResults.innerHTML = '<div class="helper">Erro ao pesquisar TMDB.</div>';
+        } finally {
+            loadingResults.style.display = 'none';
+        }
+    }
+
+    async function submitFilm(event) {
+        event.preventDefault();
+        clearMessage();
+
+        const payload = {
+            festivalId: festivalSelect.value ? Number(festivalSelect.value) : null,
+            titulo: document.getElementById('titulo').value.trim(),
+            sinopse: document.getElementById('sinopse').value.trim(),
+            posterUrl: document.getElementById('posterUrl').value.trim(),
+            ano: Number(document.getElementById('ano').value),
+            genero: document.getElementById('genero').value.trim(),
+            duracaoMinutos: Number(document.getElementById('duracao').value),
+            precoBilhete: Number(document.getElementById('precoBilhete').value)
+        };
+
+        try {
+            await ApiClient.createFilme(payload);
+            showMessage('Filme guardado com sucesso.', 'success');
+            document.getElementById('filmForm').reset();
+        } catch (error) {
+            console.error(error);
+            showMessage(error.message || 'Não foi possível guardar o filme.', 'error');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('searchBtn').addEventListener('click', searchTmdb);
+        document.getElementById('tmdbQuery').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchTmdb();
+            }
+        });
+        document.getElementById('filmForm').addEventListener('submit', submitFilm);
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('filmForm').reset();
+            clearMessage();
+        });
+
+        loadFestivals();
+    });
+</script>

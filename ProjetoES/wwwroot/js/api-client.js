@@ -3,7 +3,9 @@
 
 const ApiClient = (() => {
     // Configuration
-    const API_BASE_URL = 'http://localhost:5091';
+    const API_BASE_URL = window.location.protocol === 'https:'
+        ? 'https://localhost:7266'
+        : 'http://localhost:5091';
     const TOKEN_KEYS = ['authToken']; // localStorage/sessionStorage keys to check
 
     // Get the JWT token from storage (check both localStorage and sessionStorage)
@@ -88,20 +90,25 @@ const ApiClient = (() => {
 
         // Films methods
         getFilmes: () => request('GET', '/api/filmes'),
-        getFilmeById: (id) => request('GET', `/api/filmes/${id}`),
+        getFilmeById: (id, festivalId = null) => request('GET', festivalId ? `/api/filmes/${id}/festival/${festivalId}` : `/api/filmes/${id}`),
+        getFilmesByFestival: (festivalId) => request('GET', `/api/filmes/festival/${festivalId}`),
+        searchTmdbMovies: (query) => request('GET', `/api/filmes/tmdb/pesquisa?query=${encodeURIComponent(query)}`),
+        getTmdbMovieDetails: (tmdbId) => request('GET', `/api/filmes/tmdb/detalhes/${tmdbId}`),
+        createFilme: (filme) => request('POST', '/api/filmes', filme),
 
         // Cart methods
         getCarts: () => request('GET', '/api/carrinhos'),
         getCartByUser: (userId) => request('GET', `/api/carrinhos/${userId}`),
         createCart: (utilizadorId) =>
             request('POST', '/api/carrinhos', { utilizadorId }),
-        addToCart: (carrinhoId, filmeId, quantidade, tipoAcesso, precoUnitario) =>
+        addToCart: (carrinhoId, filmeId, quantidade, tipoAcesso, precoUnitario, festivalId) =>
             request('POST', '/api/carrinhos/adicionar-item', {
                 carrinhoId,
                 filmeId,
                 quantidade,
                 tipoAcesso,
-                precoUnitario
+                precoUnitario,
+                festivalId
             }),
         removeFromCart: (itemId) =>
             request('DELETE', `/api/carrinhos/remover-item/${itemId}`),
@@ -130,6 +137,21 @@ const ApiClient = (() => {
         clearToken: () => {
             localStorage.removeItem('authToken');
             sessionStorage.removeItem('authToken');
+        },
+        getCurrentUserId: () => {
+            const token = getAuthToken();
+            if (!token) return null;
+
+            const payload = token.split('.')[1];
+            if (!payload) return null;
+
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
+            const json = atob(paddedBase64);
+            const claims = JSON.parse(json);
+            const userId = claims.sub ?? claims.nameid ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+            const parsed = Number(userId);
+            return Number.isFinite(parsed) ? parsed : null;
         }
     };
 })();
