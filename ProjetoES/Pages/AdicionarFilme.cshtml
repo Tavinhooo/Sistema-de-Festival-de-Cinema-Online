@@ -227,70 +227,74 @@
     <div class="film-import-card">
         <div class="film-import-hero">
             <h1>Importar Filme</h1>
-            <p>Pesquisa um filme no TMDB, preenche os dados automaticamente e guarda-o diretamente no API. Por agora esta página é pública, sem validação de administrador.</p>
+            <p>Esta área é reservada a administradores. Pesquisa um filme no TMDB, preenche os dados automaticamente e guarda-o no API com o festival escolhido.</p>
         </div>
 
         <div class="film-import-body">
             <div id="message" class="notice"></div>
 
-            <div class="toolbar">
-                <input id="tmdbQuery" class="search-input" type="search" placeholder="Ex: The Matrix, Interstellar, Parasite" />
-                <button type="button" class="primary-btn" id="searchBtn">Pesquisar TMDB</button>
+            <div id="adminGuard" class="helper" style="display:none; padding: 18px 0; font-weight: 700;"></div>
+
+            <div id="adminContent">
+                <div class="toolbar">
+                    <input id="tmdbQuery" class="search-input" type="search" placeholder="Ex: The Matrix, Interstellar, Parasite" />
+                    <button type="button" class="primary-btn" id="searchBtn">Pesquisar TMDB</button>
+                </div>
+
+                <h2 class="section-title">Resultados TMDB</h2>
+                <div id="loadingResults" class="helper" style="display:none;">A procurar filmes...</div>
+                <div id="tmdbResults" class="results-row"></div>
+
+                <h2 class="section-title">Dados do filme</h2>
+                <form id="filmForm">
+                    <div class="form-grid">
+                        <div class="full">
+                            <label class="field-label" for="festivalId">Festival</label>
+                            <select id="festivalId" class="select"></select>
+                        </div>
+
+                        <div class="full">
+                            <label class="field-label" for="titulo">Título</label>
+                            <input id="titulo" class="field" type="text" required />
+                        </div>
+
+                        <div class="full">
+                            <label class="field-label" for="sinopse">Sinopse</label>
+                            <textarea id="sinopse" class="textarea" rows="4" required></textarea>
+                        </div>
+
+                        <div class="full">
+                            <label class="field-label" for="posterUrl">URL do Poster</label>
+                            <input id="posterUrl" class="field" type="url" required />
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="ano">Ano</label>
+                            <input id="ano" class="field" type="number" min="1900" max="2100" required />
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="genero">Género</label>
+                            <input id="genero" class="field" type="text" required />
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="duracao">Duração (min)</label>
+                            <input id="duracao" class="field" type="number" min="1" required />
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="precoBilhete">Preço do bilhete (€)</label>
+                            <input id="precoBilhete" class="field" type="number" step="0.01" min="0" required />
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="primary-btn">Guardar Filme</button>
+                        <button type="button" class="ghost-btn" id="clearBtn">Limpar</button>
+                    </div>
+                </form>
             </div>
-
-            <h2 class="section-title">Resultados TMDB</h2>
-            <div id="loadingResults" class="helper" style="display:none;">A procurar filmes...</div>
-            <div id="tmdbResults" class="results-row"></div>
-
-            <h2 class="section-title">Dados do filme</h2>
-            <form id="filmForm">
-                <div class="form-grid">
-                    <div class="full">
-                        <label class="field-label" for="festivalId">Festival</label>
-                        <select id="festivalId" class="select"></select>
-                    </div>
-
-                    <div class="full">
-                        <label class="field-label" for="titulo">Título</label>
-                        <input id="titulo" class="field" type="text" required />
-                    </div>
-
-                    <div class="full">
-                        <label class="field-label" for="sinopse">Sinopse</label>
-                        <textarea id="sinopse" class="textarea" rows="4" required></textarea>
-                    </div>
-
-                    <div class="full">
-                        <label class="field-label" for="posterUrl">URL do Poster</label>
-                        <input id="posterUrl" class="field" type="url" required />
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="ano">Ano</label>
-                        <input id="ano" class="field" type="number" min="1900" max="2100" required />
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="genero">Género</label>
-                        <input id="genero" class="field" type="text" required />
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="duracao">Duração (min)</label>
-                        <input id="duracao" class="field" type="number" min="1" required />
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="precoBilhete">Preço do bilhete (€)</label>
-                        <input id="precoBilhete" class="field" type="number" step="0.01" min="0" required />
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button type="submit" class="primary-btn">Guardar Filme</button>
-                    <button type="button" class="ghost-btn" id="clearBtn">Limpar</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -300,6 +304,29 @@
     const loadingResults = document.getElementById('loadingResults');
     const messageBox = document.getElementById('message');
     const festivalSelect = document.getElementById('festivalId');
+    const adminContent = document.getElementById('adminContent');
+    const adminGuard = document.getElementById('adminGuard');
+
+    function showAdminOnlyMessage(message) {
+        adminContent.style.display = 'none';
+        adminGuard.style.display = 'block';
+        adminGuard.textContent = message;
+    }
+
+    function ensureAdminAccess() {
+        if (!ApiClient.isAuthenticated()) {
+            window.location.href = '/Login';
+            return false;
+        }
+
+        const role = ApiClient.getCurrentUserRole();
+        if (role !== 'Administrador') {
+            showAdminOnlyMessage('Apenas administradores podem importar filmes.');
+            return false;
+        }
+
+        return true;
+    }
 
     function showMessage(text, type) {
         messageBox.className = `notice ${type}`;
@@ -449,6 +476,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        if (!ensureAdminAccess()) {
+            return;
+        }
+
         document.getElementById('searchBtn').addEventListener('click', searchTmdb);
         document.getElementById('tmdbQuery').addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {

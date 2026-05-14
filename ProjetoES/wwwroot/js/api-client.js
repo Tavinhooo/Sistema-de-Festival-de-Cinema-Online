@@ -133,10 +133,30 @@ const ApiClient = (() => {
         setToken: (token, useLocalStorage = true) => {
             const storage = useLocalStorage ? localStorage : sessionStorage;
             storage.setItem('authToken', token);
+
+            // Also decode and persist user id and role for easier client-side checks
+            try {
+                const payload = token.split('.')[1];
+                const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+                const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
+                const json = atob(paddedBase64);
+                const claims = JSON.parse(json);
+                const userId = claims.sub ?? claims.nameid ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+                const role = claims.role ?? claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? null;
+
+                if (userId) storage.setItem('userId', String(userId));
+                if (role) storage.setItem('userRole', String(role));
+            } catch (e) {
+                // ignore decoding errors
+            }
         },
         clearToken: () => {
             localStorage.removeItem('authToken');
             sessionStorage.removeItem('authToken');
+            localStorage.removeItem('userId');
+            sessionStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            sessionStorage.removeItem('userRole');
         },
         getCurrentUserId: () => {
             const token = getAuthToken();
@@ -152,6 +172,19 @@ const ApiClient = (() => {
             const userId = claims.sub ?? claims.nameid ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
             const parsed = Number(userId);
             return Number.isFinite(parsed) ? parsed : null;
+        },
+        getCurrentUserRole: () => {
+            const token = getAuthToken();
+            if (!token) return null;
+
+            const payload = token.split('.')[1];
+            if (!payload) return null;
+
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
+            const json = atob(paddedBase64);
+            const claims = JSON.parse(json);
+            return claims.role ?? claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? null;
         }
     };
 })();

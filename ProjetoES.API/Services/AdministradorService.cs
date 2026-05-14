@@ -34,6 +34,7 @@ namespace ProjetoES.API.Services
             {
                 var novoFilme = MapearFilmeDeDTO(dto);
                 var criado = await _repository.CriarFilme(novoFilme);
+                await SincronizarFilmeComFestivalAsync(criado.Id, dto);
                 return MapearFilmeParaDTO(criado);
             }
             else // atualizar
@@ -42,6 +43,7 @@ namespace ProjetoES.API.Services
                     ?? throw new KeyNotFoundException("Filme não encontrado.");
                 AtualizarFilmeDeDTO(filmeExistente, dto);
                 var atualizado = await _repository.AtualizarFilme(filmeExistente);
+                await SincronizarFilmeComFestivalAsync(atualizado.Id, dto);
                 return MapearFilmeParaDTO(atualizado);
             }
         }
@@ -187,9 +189,7 @@ namespace ProjetoES.API.Services
             Titulo = dto.Titulo,
             Sinopse = dto.Sinopse,
             DuracaoMinutos = dto.DuracaoMinutos,
-            PrecoBilhete = dto.PrecoBilhete,
-            PosterUrl = dto.PosterUrl,
-            FestivalId = dto.FestivalId
+            PosterUrl = dto.PosterUrl
         };
 
         private void AtualizarFilmeDeDTO(Filme filme, FilmeDTO dto)
@@ -197,21 +197,27 @@ namespace ProjetoES.API.Services
             filme.Titulo = dto.Titulo;
             filme.Sinopse = dto.Sinopse;
             filme.DuracaoMinutos = dto.DuracaoMinutos;
-            filme.PrecoBilhete = dto.PrecoBilhete;
             filme.PosterUrl = dto.PosterUrl;
-            filme.FestivalId = dto.FestivalId;
         }
 
-        private FilmeDTO MapearFilmeParaDTO(Filme f) => new()
+        private FilmeDTO MapearFilmeParaDTO(Filme f)
         {
-            Id = f.Id,
-            Titulo = f.Titulo,
-            Sinopse = f.Sinopse,
-            DuracaoMinutos = f.DuracaoMinutos,
-            PrecoBilhete = f.PrecoBilhete,
-            PosterUrl = f.PosterUrl,
-            FestivalId = f.FestivalId
-        };
+            var ligacaoFestival = _context.FestivalFilmes
+                .AsNoTracking()
+                .FirstOrDefault(ff => ff.FilmeId == f.Id);
+
+            return new FilmeDTO
+            {
+                Id = f.Id,
+                Titulo = f.Titulo,
+                Sinopse = f.Sinopse,
+                DuracaoMinutos = f.DuracaoMinutos,
+                PrecoBilhete = ligacaoFestival?.PrecoBilhete ?? 0m,
+                PosterUrl = f.PosterUrl,
+                FestivalId = ligacaoFestival?.FestivalId ?? 0,
+                MediaAvaliacao = f.MediaAvaliacao
+            };
+        }
 
         private Festival MapearFestivalDeDTO(FestivalDTO dto) => new()
         {
@@ -227,6 +233,42 @@ namespace ProjetoES.API.Services
             festival.Descricao = dto.Descricao;
             festival.DataInicio = dto.DataInicio;
             festival.DataFim = dto.DataFim;
+        }
+
+        private async Task SincronizarFilmeComFestivalAsync(int filmeId, FilmeDTO dto)
+        {
+            if (dto.FestivalId <= 0)
+            {
+                return;
+            }
+
+            var festival = await _context.Festivais.FirstOrDefaultAsync(f => f.Id == dto.FestivalId);
+            if (festival == null)
+            {
+                throw new KeyNotFoundException("Festival não encontrado.");
+            }
+
+            if (dto.PrecoBilhete <= 0)
+            {
+                throw new ArgumentException("O preço do bilhete é obrigatório.");
+            }
+
+            var ligacao = await _context.FestivalFilmes.FirstOrDefaultAsync(ff => ff.FestivalId == dto.FestivalId && ff.FilmeId == filmeId);
+            if (ligacao == null)
+            {
+                _context.FestivalFilmes.Add(new FestivalFilme
+                {
+                    FestivalId = dto.FestivalId,
+                    FilmeId = filmeId,
+                    PrecoBilhete = dto.PrecoBilhete
+                });
+            }
+            else
+            {
+                ligacao.PrecoBilhete = dto.PrecoBilhete;
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         private FestivalDTO MapearFestivalParaDTO(Festival f) => new()

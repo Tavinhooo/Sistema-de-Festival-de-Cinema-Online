@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoES.API.DTOS;
 using ProjetoES.API.Interfaces;
@@ -90,6 +91,7 @@ public class FilmesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public ActionResult<FilmeResponseDTO> CriarFilme([FromBody] CreateFilmeDTO dto)
     {
         try
@@ -114,6 +116,7 @@ public class FilmesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Administrador")]
     public ActionResult<FilmeResponseDTO> AtualizarFilme(int id, [FromBody] UpdateFilmeDTO dto)
     {
         try
@@ -145,6 +148,7 @@ public class FilmesController : ControllerBase
     }
 
     [HttpPut("{id}/festival/{festivalId}")]
+    [Authorize(Roles = "Administrador")]
     public ActionResult VincularFilmeAoFestival(int id, int festivalId, [FromBody] VincularFilmeFestivalDTO dto)
     {
         try
@@ -159,6 +163,7 @@ public class FilmesController : ControllerBase
     }
 
     [HttpDelete("{id}/festival/{festivalId}")]
+    [Authorize(Roles = "Administrador")]
     public ActionResult DesvincularFilmeDeFestival(int id, int festivalId)
     {
         try
@@ -173,6 +178,7 @@ public class FilmesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Administrador")]
     public ActionResult EliminarFilme(int id)
     {
         Filme? filme = _service.ObterFilmePorId(id);
