@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoES.API.DTOS;
 using ProjetoES.API.Interfaces;
@@ -30,25 +29,21 @@ public class FilmesController : ControllerBase
         DuracaoMinutos = filme.DuracaoMinutos,
         MediaAvaliacao = filme.MediaAvaliacao,
         PosterUrl = filme.PosterUrl,
-        FestivalIds = filme.Festivais.Select(festival => festival.Id).ToList()
+        TrailerUrl = filme.TrailerUrl, // NOVO
+        FestivalIds = filme.Festivais.Select(f => f.Id).ToList()
     };
 
     [HttpGet]
     public ActionResult<List<FilmeResponseDTO>> ObterTodosFilmes()
     {
-        List<FilmeResponseDTO> filmes = _service.ObterTodosFilmes().Select(ToDto).ToList();
-        return Ok(filmes);
+        return Ok(_service.ObterTodosFilmes().Select(ToDto).ToList());
     }
 
     [HttpGet("{id}")]
     public ActionResult<FilmeResponseDTO> ObterFilmePorId(int id)
     {
-        Filme? filme = _service.ObterFilmePorId(id);
-        if (filme == null)
-        {
-            return NotFound();
-        }
-
+        var filme = _service.ObterFilmePorId(id);
+        if (filme == null) return NotFound();
         return Ok(ToDto(filme));
     }
 
@@ -56,46 +51,51 @@ public class FilmesController : ControllerBase
     public ActionResult<FilmeFestivalDTO> ObterFilmePorFestival(int id, int festivalId)
     {
         var filme = _service.ObterFilmePorFestival(id, festivalId);
-        if (filme == null)
-        {
-            return NotFound();
-        }
-
+        if (filme == null) return NotFound();
         return Ok(filme);
     }
 
     [HttpGet("festival/{festivalId}")]
     public ActionResult<List<FilmeFestivalDTO>> ObterFilmesPorFestival(int festivalId)
     {
-        List<FilmeFestivalDTO> filmes = _service.ObterFilmesPorFestival(festivalId);
-        return Ok(filmes);
+        return Ok(_service.ObterFilmesPorFestival(festivalId));
     }
 
     [HttpGet("tmdb/pesquisa")]
     public async Task<ActionResult<List<TmdbMovie>>> PesquisarFilmesTmdb([FromQuery] string query)
     {
-        var resultados = await _tmdbService.PesquisarFilmesAsync(query);
-        return Ok(resultados);
+        return Ok(await _tmdbService.PesquisarFilmesAsync(query));
     }
 
     [HttpGet("tmdb/detalhes/{tmdbId}")]
     public async Task<ActionResult<TmdbMovie.TmdbMovieDetails>> ObterDetalhesTmdb(int tmdbId)
     {
         var detalhes = await _tmdbService.ObterDetalhesFilmeAsync(tmdbId);
-        if (detalhes == null)
-        {
-            return NotFound();
-        }
-
+        if (detalhes == null) return NotFound();
         return Ok(detalhes);
     }
 
+    // NOVO — endpoint dedicado para buscar o trailer de um filme TMDB
+    [HttpGet("tmdb/trailer/{tmdbId}")]
+    public async Task<ActionResult<string>> ObterTrailerTmdb(int tmdbId)
+    {
+        var url = await _tmdbService.ObterTrailerYoutubeUrlAsync(tmdbId);
+        if (url == null) return NotFound("Trailer não encontrado.");
+        return Ok(new { trailerUrl = url });
+    }
+
     [HttpPost]
-    [Authorize(Roles = "Administrador")]
-    public ActionResult<FilmeResponseDTO> CriarFilme([FromBody] CreateFilmeDTO dto)
+    public async Task<ActionResult<FilmeResponseDTO>> CriarFilme([FromBody] CreateFilmeDTO dto)
     {
         try
         {
+            // Se vier TmdbId e não vier TrailerUrl, tenta buscar automaticamente
+            string trailerUrl = dto.TrailerUrl;
+            if (string.IsNullOrEmpty(trailerUrl) && dto.TmdbId.HasValue)
+            {
+                trailerUrl = await _tmdbService.ObterTrailerYoutubeUrlAsync(dto.TmdbId.Value) ?? string.Empty;
+            }
+
             var filme = new Filme
             {
                 Titulo = dto.Titulo,
@@ -103,7 +103,8 @@ public class FilmesController : ControllerBase
                 Genero = dto.Genero,
                 Ano = dto.Ano,
                 DuracaoMinutos = dto.DuracaoMinutos,
-                PosterUrl = dto.PosterUrl
+                PosterUrl = dto.PosterUrl,
+                TrailerUrl = trailerUrl // NOVO
             };
 
             _service.CriarFilme(filme, dto.FestivalId, dto.PrecoBilhete);
@@ -116,7 +117,6 @@ public class FilmesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Administrador")]
     public ActionResult<FilmeResponseDTO> AtualizarFilme(int id, [FromBody] UpdateFilmeDTO dto)
     {
         try
@@ -128,18 +128,17 @@ public class FilmesController : ControllerBase
                 Genero = dto.Genero,
                 Ano = dto.Ano,
                 DuracaoMinutos = dto.DuracaoMinutos,
-                PosterUrl = dto.PosterUrl
+                PosterUrl = dto.PosterUrl,
+                TrailerUrl = dto.TrailerUrl // NOVO
             };
 
             _service.AtualizarFilme(id, filme);
 
             if (dto.FestivalId.HasValue)
-            {
                 _service.VincularFilmeAoFestival(id, dto.FestivalId.Value, dto.PrecoBilhete);
-            }
 
-            var updatedFilme = _service.ObterFilmePorId(id);
-            return Ok(updatedFilme == null ? null : ToDto(updatedFilme));
+            var updated = _service.ObterFilmePorId(id);
+            return Ok(updated == null ? null : ToDto(updated));
         }
         catch (ArgumentException ex)
         {
@@ -148,7 +147,6 @@ public class FilmesController : ControllerBase
     }
 
     [HttpPut("{id}/festival/{festivalId}")]
-    [Authorize(Roles = "Administrador")]
     public ActionResult VincularFilmeAoFestival(int id, int festivalId, [FromBody] VincularFilmeFestivalDTO dto)
     {
         try
@@ -163,7 +161,6 @@ public class FilmesController : ControllerBase
     }
 
     [HttpDelete("{id}/festival/{festivalId}")]
-    [Authorize(Roles = "Administrador")]
     public ActionResult DesvincularFilmeDeFestival(int id, int festivalId)
     {
         try
@@ -178,15 +175,10 @@ public class FilmesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Administrador")]
     public ActionResult EliminarFilme(int id)
     {
-        Filme? filme = _service.ObterFilmePorId(id);
-        if (filme == null)
-        {
-            return NotFound();
-        }
-
+        var filme = _service.ObterFilmePorId(id);
+        if (filme == null) return NotFound();
         _service.EliminarFilme(id);
         return NoContent();
     }

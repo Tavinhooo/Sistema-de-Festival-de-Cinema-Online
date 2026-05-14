@@ -9,5 +9,6 @@ public class UpdateFilmeDTO
     public int DuracaoMinutos { get; set; }
     public decimal PrecoBilhete { get; set; }
     public string PosterUrl { get; set; } = string.Empty;
+    public string TrailerUrl { get; set; } = string.Empty;
     public int? FestivalId { get; set; }
 }

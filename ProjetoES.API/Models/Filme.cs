@@ -21,6 +21,7 @@ namespace ProjetoES.API.Models
 
         // Para já vamos usar um Link da internet para a imagem para ser mais fácil
         public string PosterUrl { get; set; } = string.Empty;
+        public string TrailerUrl { get; set; } = string.Empty;
         public int FestivalId { get; set; }
 
         public virtual ICollection<Festival> Festivais { get; set; } = new List<Festival>();

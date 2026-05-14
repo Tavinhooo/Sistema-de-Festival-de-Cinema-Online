@@ -10,5 +10,6 @@ public class FilmeResponseDTO
     public int DuracaoMinutos { get; set; }
     public double MediaAvaliacao { get; set; }
     public string PosterUrl { get; set; } = string.Empty;
+    public string TrailerUrl { get; set; } = string.Empty;
     public List<int> FestivalIds { get; set; } = new();
 }

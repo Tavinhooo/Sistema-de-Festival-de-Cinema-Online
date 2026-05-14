@@ -106,6 +106,8 @@ const ApiClient = (() => {
         getTmdbMovieDetails: (tmdbId) => request('GET', `/api/filmes/tmdb/detalhes/${tmdbId}`),
         createFilme: (filme) => request('POST', '/api/filmes', filme),
 
+        getTrailerTmdb: (tmdbId) => request('GET', `/api/filmes/tmdb/trailer/${tmdbId}`),
+
         // Cart methods
         getCarts: () => request('GET', '/api/carrinhos'),
         getCartByUser: (userId) => request('GET', `/api/carrinhos/${userId}`),

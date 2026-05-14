@@ -40,6 +40,7 @@ public class FilmeRepository
                 DuracaoMinutos = ff.Filme.DuracaoMinutos,
                 MediaAvaliacao = ff.Filme.MediaAvaliacao,
                 PosterUrl = ff.Filme.PosterUrl,
+                TrailerUrl = ff.Filme.TrailerUrl,
                 FestivalId = ff.FestivalId,
                 FestivalNome = ff.Festival.Nome,
                 PrecoBilhete = ff.PrecoBilhete
@@ -157,6 +158,7 @@ public class FilmeRepository
                 DuracaoMinutos = ff.Filme.DuracaoMinutos,
                 MediaAvaliacao = ff.Filme.MediaAvaliacao,
                 PosterUrl = ff.Filme.PosterUrl,
+                TrailerUrl = ff.Filme.TrailerUrl,
                 FestivalId = ff.FestivalId,
                 FestivalNome = ff.Festival.Nome,
                 PrecoBilhete = ff.PrecoBilhete

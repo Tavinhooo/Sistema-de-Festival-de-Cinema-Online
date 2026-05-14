@@ -113,6 +113,7 @@ public class FilmeService : IAvaliacaoObserver
         filmeExistente.Ano = filme.Ano;
         filmeExistente.DuracaoMinutos = filme.DuracaoMinutos;
         filmeExistente.PosterUrl = filme.PosterUrl;
+        filmeExistente.TrailerUrl = filme.TrailerUrl;
 
         _repository.AtualizarFilme(filmeExistente);
     }
