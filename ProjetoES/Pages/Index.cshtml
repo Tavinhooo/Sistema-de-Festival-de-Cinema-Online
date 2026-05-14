@@ -30,7 +30,7 @@
             <i class="fas fa-search"></i>
         </div>
 
-        <div class="nav-actions">
+        <div class="nav-actions" id="navActions">
             <i class="fas fa-shopping-cart cart-icon"></i>
             <a class="btn btn-signin" asp-page="/Login">Sign in</a>
             <a class="btn btn-register" asp-page="/Register">Register</a>
@@ -67,6 +67,10 @@
 </body>
 <script src="~/js/api-client.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        ApiClient.renderAuthNavigation('#navActions');
+    });
+
     async function renderFestivais() {
         const currentContainer = document.getElementById('current-festivals');
         const upcomingContainer = document.getElementById('upcoming-festivals');

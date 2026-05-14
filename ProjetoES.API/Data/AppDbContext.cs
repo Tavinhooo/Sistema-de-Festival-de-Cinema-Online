@@ -33,7 +33,7 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<UtilizadorBase>()
-            .ToTable("Visitantes")
+            .ToTable("Utilizadores")
             .HasDiscriminator<string>("Discriminator")
             .HasValue<Visitante>("Visitante")
             .HasValue<Utilizador>("Utilizador")

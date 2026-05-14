@@ -82,6 +82,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+    options.MapInboundClaims = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -119,24 +120,36 @@ using (var scope = app.Services.CreateScope())
     
     context.Database.Migrate();
 
-    // Look for the admin specifically in the Utilizador set
-    if (!context.Set<Utilizador>().Any(u => u.Email == "admin@festival.com"))
+    var adminEmail = "admin@festival.com";
+    var adminPasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123!");
+    var admin = context.Set<Utilizador>().FirstOrDefault(u => u.Email == adminEmail);
+
+    if (admin == null)
     {
-        var admin = new Utilizador
+        admin = new Utilizador
         {
             PrimeiroNome = "Administrador",
             UltimoNome = "Principal",
-            Email = "admin@festival.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123!"),
-            
-            // This is the critical part: we set the role to Admin!
+            Email = adminEmail,
+            PasswordHash = adminPasswordHash,
             Tipo = TipoUtilizador.Administrador,
-            DataPromocaoAdmin = DateTime.UtcNow
+            DataPromocaoAdmin = DateTime.UtcNow,
+            IsLogged = false
         };
 
         context.Add(admin);
         context.SaveChanges();
         Console.WriteLine("✅ SUCCESS: Default Admin created (Email: admin@festival.com | Password: Admin@123!)");
+    }
+    else if (admin.Tipo != TipoUtilizador.Administrador)
+    {
+        admin.PrimeiroNome = "Administrador";
+        admin.UltimoNome = "Principal";
+        admin.PasswordHash = adminPasswordHash;
+        admin.Tipo = TipoUtilizador.Administrador;
+        admin.DataPromocaoAdmin = admin.DataPromocaoAdmin ?? DateTime.UtcNow;
+        context.SaveChanges();
+        Console.WriteLine("✅ SUCCESS: Existing admin account promoted to Administrador (Email: admin@festival.com)");
     }
 }
 

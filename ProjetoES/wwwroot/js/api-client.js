@@ -8,6 +8,16 @@ const ApiClient = (() => {
         : 'http://localhost:5091';
     const TOKEN_KEYS = ['authToken']; // localStorage/sessionStorage keys to check
 
+    const decodeTokenClaims = (token) => {
+        const payload = token?.split('.')[1];
+        if (!payload) return null;
+
+        const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+        const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
+        const json = atob(paddedBase64);
+        return JSON.parse(json);
+    };
+
     // Get the JWT token from storage (check both localStorage and sessionStorage)
     const getAuthToken = () => {
         for (const key of TOKEN_KEYS) {
@@ -136,16 +146,15 @@ const ApiClient = (() => {
 
             // Also decode and persist user id and role for easier client-side checks
             try {
-                const payload = token.split('.')[1];
-                const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-                const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
-                const json = atob(paddedBase64);
-                const claims = JSON.parse(json);
+                const claims = decodeTokenClaims(token);
+                if (!claims) return;
                 const userId = claims.sub ?? claims.nameid ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
                 const role = claims.role ?? claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? null;
+                const userName = claims.name ?? claims.unique_name ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] ?? claims.email ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] ?? null;
 
                 if (userId) storage.setItem('userId', String(userId));
                 if (role) storage.setItem('userRole', String(role));
+                if (userName) storage.setItem('userName', String(userName));
             } catch (e) {
                 // ignore decoding errors
             }
@@ -157,18 +166,15 @@ const ApiClient = (() => {
             sessionStorage.removeItem('userId');
             localStorage.removeItem('userRole');
             sessionStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            sessionStorage.removeItem('userName');
         },
         getCurrentUserId: () => {
             const token = getAuthToken();
             if (!token) return null;
 
-            const payload = token.split('.')[1];
-            if (!payload) return null;
-
-            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-            const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
-            const json = atob(paddedBase64);
-            const claims = JSON.parse(json);
+            const claims = decodeTokenClaims(token);
+            if (!claims) return null;
             const userId = claims.sub ?? claims.nameid ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
             const parsed = Number(userId);
             return Number.isFinite(parsed) ? parsed : null;
@@ -177,14 +183,54 @@ const ApiClient = (() => {
             const token = getAuthToken();
             if (!token) return null;
 
-            const payload = token.split('.')[1];
-            if (!payload) return null;
-
-            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-            const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
-            const json = atob(paddedBase64);
-            const claims = JSON.parse(json);
+            const claims = decodeTokenClaims(token);
+            if (!claims) return null;
             return claims.role ?? claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? null;
+        },
+        getCurrentUserName: () => {
+            const token = getAuthToken();
+            if (!token) return null;
+
+            const claims = decodeTokenClaims(token);
+            if (!claims) return null;
+
+            return claims.name ?? claims.unique_name ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] ?? claims.email ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] ?? null;
+        },
+        renderAuthNavigation: (containerSelector = '.nav-actions') => {
+            const container = document.querySelector(containerSelector);
+            if (!container) return;
+
+            const isAuthenticated = ApiClient.isAuthenticated();
+
+            if (!isAuthenticated) {
+                container.innerHTML = `
+                    <i class="fas fa-shopping-cart cart-icon"></i>
+                    <a class="btn btn-signin" href="/Login">Sign in</a>
+                    <a class="btn btn-register" href="/Register">Register</a>
+                `;
+                return;
+            }
+
+            const userName = ApiClient.getCurrentUserName() || 'Utilizador';
+            const role = ApiClient.getCurrentUserRole();
+            const adminLink = role === 'Administrador'
+                ? '<a class="btn btn-register" href="/AdicionarFilme">Importar Filme</a>'
+                : '';
+
+            container.innerHTML = `
+                <i class="fas fa-shopping-cart cart-icon"></i>
+                ${adminLink}
+                <span class="btn btn-signin" style="cursor: default; pointer-events: none;">${userName}</span>
+                <button type="button" class="btn btn-register" data-logout-btn>Logout</button>
+            `;
+
+            const logoutButton = container.querySelector('[data-logout-btn]');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    ApiClient.clearToken();
+                    window.location.href = '/';
+                });
+            }
         }
     };
 })();

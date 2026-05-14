@@ -118,9 +118,9 @@
                     throw new Error('Resposta de login não contém token.');
                 }
 
-                ApiClient.setToken(token, remember); // remember = use localStorage
+                ApiClient.setToken(token, remember);
                 showLoginMessage('Login concluído. A redirecionar...', false);
-                setTimeout(() => window.location.href = '/', 1500);
+                setTimeout(() => window.location.href = '/', 1000);
             } catch (error) {
                 showLoginMessage(error.message || 'Erro ao iniciar sessão.', true);
             }
@@ -128,48 +128,4 @@
     </script>
 
 </body>
-</html>
-            loginMessage.style.background = isError ? '#ffe8e8' : '#e7f7ec';
-            loginMessage.style.color = isError ? '#8a1f1f' : '#135c2a';
-            loginMessage.style.border = isError ? '1px solid #f2b8b8' : '1px solid #b7e1c1';
-        }
-
-        loginForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
-
-            try {
-                const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const responseText = await response.text();
-                const data = responseText ? JSON.parse(responseText) : null;
-
-                if (!response.ok) {
-                    throw new Error(typeof data === 'string' ? data : responseText || 'Falha no login.');
-                }
-
-                const token = data?.token ?? data?.Token;
-                if (!token) {
-                    throw new Error('A resposta de login não devolveu token.');
-                }
-
-                const storage = remember ? localStorage : sessionStorage;
-                storage.setItem('authToken', token);
-
-                showLoginMessage('Login concluído. A redirecionar...', false);
-                window.location.href = '/';
-            } catch (error) {
-                showLoginMessage(error.message || 'Não foi possível iniciar sessão.', true);
-            }
-        });
-    </script>
 </html>
