@@ -71,4 +71,49 @@ public class FestivalRepository
             _context.SaveChanges();
         }
     }
+
+    public List<Festival> FiltrarFestivais(string? nome = null, DateTime? dataInicio = null, DateTime? dataFim = null, string? local = null)
+    {
+        var query = _context.Festivais.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(nome))
+        {
+            query = query.Where(f => f.Nome.ToLower().Contains(nome.ToLower()));
+        }
+
+        if (dataInicio.HasValue)
+        {
+            query = query.Where(f => f.DataInicio >= dataInicio.Value);
+        }
+
+        if (dataFim.HasValue)
+        {
+            query = query.Where(f => f.DataFim <= dataFim.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(local))
+        {
+            query = query.Where(f => f.Local.ToLower().Contains(local.ToLower()));
+        }
+
+        return query.OrderBy(f => f.DataInicio).ToList();
+    }
+
+    public List<Festival> ObterFestivaisADecorrer()
+    {
+        var now = DateTime.UtcNow;
+        return _context.Festivais
+            .Where(f => f.DataInicio <= now && f.DataFim >= now)
+            .OrderBy(f => f.DataInicio)
+            .ToList();
+    }
+
+    public List<Festival> ObterFestivaisFuturos()
+    {
+        var now = DateTime.UtcNow;
+        return _context.Festivais
+            .Where(f => f.DataInicio > now)
+            .OrderBy(f => f.DataInicio)
+            .ToList();
+    }
 }

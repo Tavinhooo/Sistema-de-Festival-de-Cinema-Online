@@ -8,6 +8,7 @@ namespace ProjetoES.API.Models
         public DateTime DataFim { get; set; }
         public EstadoFestival  Estado { get; set; }
         public string Descricao { get; set; } = string.Empty;
+        public string Local { get; set; } = string.Empty;
         
         // Navigation: films in this festival
         public virtual ICollection<Filme> Filmes { get; set; } = new List<Filme>();

@@ -1,0 +1,384 @@
+@page
+@{
+    ViewData["Title"] = "Festivais";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProjetoES</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="~/css/filmes.css" />
+    <style>
+        .filter-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(119, 89, 177, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1f1b29;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 12px;
+            border: 1px solid rgba(119, 89, 177, 0.2);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #1f1b29;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #7759b1;
+            box-shadow: 0 0 0 3px rgba(119, 89, 177, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-filter-apply,
+        .btn-filter-clear {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-filter-apply {
+            background: linear-gradient(135deg, #7759b1 0%, #8a6dce 100%);
+            color: white;
+        }
+
+        .btn-filter-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(119, 89, 177, 0.3);
+        }
+
+        .btn-filter-clear {
+            background: white;
+            color: #7759b1;
+            border: 1px solid #7759b1;
+        }
+
+        .btn-filter-clear:hover {
+            background: rgba(119, 89, 177, 0.05);
+        }
+
+        .festival-card {
+            background: white;
+            border: 1px solid rgba(119, 89, 177, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .festival-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(119, 89, 177, 0.15);
+            border-color: #7759b1;
+        }
+
+        .festival-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f1b29;
+            margin: 0;
+        }
+
+        .festival-dates {
+            font-size: 13px;
+            color: #7759b1;
+            font-weight: 600;
+        }
+
+        .festival-location {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .festival-description {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .festival-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .status-ativo {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+        }
+
+        .status-futuro {
+            background: rgba(33, 150, 243, 0.15);
+            color: #1565c0;
+        }
+
+        .status-cancelado {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+        }
+
+        .status-arquivado {
+            background: rgba(158, 158, 158, 0.15);
+            color: #424242;
+        }
+
+        .festivals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 48px 20px;
+            color: #999;
+        }
+
+        .no-results i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-brands fa-figma"></i>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" placeholder="Pesquisa Geral">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="nav-actions" id="navActions">
+            <i class="fas fa-shopping-cart cart-icon"></i>
+            <a class="btn btn-signin" asp-page="/Login">Sign in</a>
+            <a class="btn btn-register" asp-page="/Register">Register</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+        <div class="page-header">
+            <h2 class="section-title">Procurar Festivais</h2>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-panel">
+            <div class="filter-group">
+                <label for="filterNome">Nome do Festival</label>
+                <input type="text" id="filterNome" placeholder="Ex: Cinema de Autor">
+            </div>
+
+            <div class="filter-group">
+                <label for="filterLocal">Local</label>
+                <input type="text" id="filterLocal" placeholder="Ex: Lisboa, Porto">
+            </div>
+
+            <div class="filter-group">
+                <label for="filterDataInicio">Data de Início (a partir de)</label>
+                <input type="date" id="filterDataInicio">
+            </div>
+
+            <div class="filter-group">
+                <label for="filterDataFim">Data de Fim (até)</label>
+                <input type="date" id="filterDataFim">
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn-filter-apply" id="btnAplicarFiltros">
+                    <i class="fas fa-search"></i> Pesquisar
+                </button>
+                <button class="btn-filter-clear" id="btnLimparFiltros">
+                    <i class="fas fa-times"></i> Limpar
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid de Festivais -->
+        <div class="festivals-grid" id="festivals-grid">
+            <div class="no-results">
+                <i class="fas fa-hourglass-start"></i>
+                <p>A carregar festivais...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="~/js/api-client.js"></script>
+    <script>
+        const filterNome = document.getElementById('filterNome');
+        const filterLocal = document.getElementById('filterLocal');
+        const filterDataInicio = document.getElementById('filterDataInicio');
+        const filterDataFim = document.getElementById('filterDataFim');
+        const btnAplicarFiltros = document.getElementById('btnAplicarFiltros');
+        const btnLimparFiltros = document.getElementById('btnLimparFiltros');
+        const festivalsGrid = document.getElementById('festivals-grid');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ApiClient.renderAuthNavigation('#navActions');
+            carregarFestivais();
+        });
+
+        async function carregarFestivais() {
+            try {
+                festivalsGrid.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>A carregar festivais...</p>
+                    </div>
+                `;
+
+                const festivais = await ApiClient.getFestivais();
+                renderizarFestivais(festivais);
+            } catch (err) {
+                console.error('Erro ao carregar festivais', err);
+                festivalsGrid.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Erro ao carregar festivais. Tente novamente.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function aplicarFiltros() {
+            try {
+                festivalsGrid.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>A procurar festivais...</p>
+                    </div>
+                `;
+
+                const nome = filterNome.value.trim() || null;
+                const local = filterLocal.value.trim() || null;
+                const dataInicio = filterDataInicio.value || null;
+                const dataFim = filterDataFim.value || null;
+
+                const festivais = await ApiClient.filtrarFestivais(nome, dataInicio, dataFim, local);
+                renderizarFestivais(festivais);
+            } catch (err) {
+                console.error('Erro ao filtrar festivais', err);
+                festivalsGrid.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Erro ao filtrar festivais. Tente novamente.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderizarFestivais(festivais) {
+            if (!Array.isArray(festivais) || festivais.length === 0) {
+                festivalsGrid.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <i class="fas fa-search"></i>
+                        <p>Nenhum festival encontrado com esses critérios.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            festivalsGrid.innerHTML = festivais.map(f => {
+                const dataInicio = new Date(f.dataInicio).toLocaleDateString('pt-PT');
+                const dataFim = new Date(f.dataFim).toLocaleDateString('pt-PT');
+                const estado = f.estado || 'Futuro';
+                const statusClass = `status-${estado.toLowerCase()}`;
+                
+                return `
+                    <div class="festival-card" onclick="irParaFestival(${f.id})">
+                        <h3 class="festival-title">${f.nome || 'Festival'}</h3>
+                        <p class="festival-dates">
+                            <i class="fas fa-calendar"></i> ${dataInicio} — ${dataFim}
+                        </p>
+                        ${f.local ? `<p class="festival-location"><i class="fas fa-map-marker-alt"></i> ${f.local}</p>` : ''}
+                        ${f.descricao ? `<p class="festival-description">${f.descricao}</p>` : ''}
+                        <span class="festival-status ${statusClass}">${estado}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function irParaFestival(festivalId) {
+            window.location.href = `/Filmes?festivalId=${festivalId}`;
+        }
+
+        function limparFiltros() {
+            filterNome.value = '';
+            filterLocal.value = '';
+            filterDataInicio.value = '';
+            filterDataFim.value = '';
+            carregarFestivais();
+        }
+
+        btnAplicarFiltros.addEventListener('click', aplicarFiltros);
+        btnLimparFiltros.addEventListener('click', limparFiltros);
+
+        // Permitir Enter para aplicar filtros
+        [filterNome, filterLocal, filterDataInicio, filterDataFim].forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') aplicarFiltros();
+            });
+        });
+    </script>
+
+</body>
+</html>
