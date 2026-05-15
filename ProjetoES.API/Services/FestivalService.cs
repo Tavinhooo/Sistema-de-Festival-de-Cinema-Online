@@ -2,6 +2,7 @@ using ProjetoES.API.Models;
 using ProjetoES.API.Repositories;
 
 namespace ProjetoES.API.Services;
+
 public class FestivalService
 {
     private readonly FestivalRepository _repository;
@@ -39,17 +40,15 @@ public class FestivalService
     public void CriarFestival(Festival festival)
     {
         if (string.IsNullOrWhiteSpace(festival.Nome))
-        {
             throw new ArgumentException("O nome do festival é obrigatório.");
-        }
         if (festival.DataInicio >= festival.DataFim)
-        {
             throw new ArgumentException("A data de início deve ser anterior à data de fim.");
-        }
-        if (festival.DataInicio < DateTime.Now)
-        {
+        if (festival.DataInicio < DateTime.UtcNow)
             throw new ArgumentException("A data de início deve ser no futuro.");
-        }
+
+        festival.DataInicio = DateTime.SpecifyKind(festival.DataInicio, DateTimeKind.Utc);
+        festival.DataFim = DateTime.SpecifyKind(festival.DataFim, DateTimeKind.Utc);
+
         _repository.AdicionarFestival(festival);
     }
     public void RemoverFestival(int id)
@@ -59,27 +58,19 @@ public class FestivalService
 
     public void AtualizarFestival(int id, Festival festival)
     {
-        var existingFestival = _repository.ObterFestivalPorId(id);
-        if (existingFestival == null)
-        {
-            throw new ArgumentException("Festival não encontrado.");
-        }
+        var existingFestival = _repository.ObterFestivalPorId(id)
+            ?? throw new ArgumentException("Festival não encontrado.");
+
         if (string.IsNullOrWhiteSpace(festival.Nome))
-        {
             throw new ArgumentException("O nome do festival é obrigatório.");
-        }
         if (festival.DataInicio >= festival.DataFim)
-        {
             throw new ArgumentException("A data de início deve ser anterior à data de fim.");
-        }
-        if (festival.DataInicio < DateTime.Now)
-        {
+        if (festival.DataInicio < DateTime.UtcNow)
             throw new ArgumentException("A data de início deve ser no futuro.");
-        }
-        // Atualiza as propriedades do festival existente
+
         existingFestival.Nome = festival.Nome;
-        existingFestival.DataInicio = festival.DataInicio;
-        existingFestival.DataFim = festival.DataFim;
+        existingFestival.DataInicio = DateTime.SpecifyKind(festival.DataInicio, DateTimeKind.Utc);
+        existingFestival.DataFim = DateTime.SpecifyKind(festival.DataFim, DateTimeKind.Utc);
 
         _repository.UpdateFestival(existingFestival);
     }
