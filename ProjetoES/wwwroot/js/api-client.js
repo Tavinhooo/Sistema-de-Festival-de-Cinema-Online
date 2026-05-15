@@ -207,7 +207,9 @@ const ApiClient = (() => {
 
             if (!isAuthenticated) {
                 container.innerHTML = `
-                    <i class="fas fa-shopping-cart cart-icon"></i>
+                    <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
+                        <i class="fas fa-shopping-cart cart-icon"></i>
+                    </a>
                     <a class="btn btn-signin" href="/Login">Sign in</a>
                     <a class="btn btn-register" href="/Register">Register</a>
                 `;
@@ -221,7 +223,9 @@ const ApiClient = (() => {
                 : '';
 
             container.innerHTML = `
-                <i class="fas fa-shopping-cart cart-icon"></i>
+                <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
+                    <i class="fas fa-shopping-cart cart-icon"></i>
+                </a>
                 ${adminLink}
                 <span class="btn btn-signin" style="cursor: default; pointer-events: none;">${userName}</span>
                 <button type="button" class="btn btn-register" data-logout-btn>Logout</button>
