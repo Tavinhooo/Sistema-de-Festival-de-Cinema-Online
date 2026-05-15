@@ -70,7 +70,7 @@ namespace ProjetoES.API.Services
                 var festivalExistente = await _repository.ObterFestivalPorId(dto.Id)
                     ?? throw new KeyNotFoundException("Festival não encontrado.");
 
-                if (festivalExistente.DataInicio <= DateTime.UtcNow)
+                if (festivalExistente.DataInicio <= DateOnly.FromDateTime(DateTime.UtcNow))
                     throw new InvalidOperationException("Não é possível editar festival já iniciado.");
 
                 AtualizarFestivalDeDTO(festivalExistente, dto);
@@ -85,7 +85,7 @@ namespace ProjetoES.API.Services
             var festival = await _repository.ObterFestivalPorId(festivalId)
                 ?? throw new KeyNotFoundException("Festival não encontrado.");
 
-            if (festival.DataInicio <= DateTime.UtcNow)
+            if (festival.DataInicio <= DateOnly.FromDateTime(DateTime.UtcNow))
                 throw new InvalidOperationException("Não é possível cancelar festival já iniciado.");
 
             await _repository.EliminarFestival(festivalId);

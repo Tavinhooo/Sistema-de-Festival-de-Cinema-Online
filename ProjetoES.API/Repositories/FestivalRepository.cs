@@ -19,7 +19,7 @@ public class FestivalRepository
 
     public List<Festival> ObterFestivaisADecorrer()
     {
-        var now = DateTime.UtcNow;
+        var now = DateOnly.FromDateTime(DateTime.UtcNow);
         return _context.Festivais
             .Where(f => f.DataInicio <= now && f.DataFim >= now)
             .OrderBy(f => f.DataInicio)
@@ -28,7 +28,7 @@ public class FestivalRepository
 
     public List<Festival> ObterFestivaisFuturos()
     {
-        var now = DateTime.UtcNow;
+        var now = DateOnly.FromDateTime(DateTime.UtcNow);
         return _context.Festivais
             .Where(f => f.DataInicio > now)
             .OrderBy(f => f.DataInicio)
@@ -37,7 +37,7 @@ public class FestivalRepository
 
     public List<Festival> ObterFestivaisDisponiveisParaFilmes()
     {
-        var now = DateTime.UtcNow;
+        var now = DateOnly.FromDateTime(DateTime.UtcNow);
         return _context.Festivais
             .Where(f => f.DataInicio >= now)
             .OrderBy(f => f.DataInicio)
@@ -71,7 +71,7 @@ public class FestivalRepository
         }
     }
 
-    public List<Festival> FiltrarFestivais(string? nome = null, DateTime? dataInicio = null, DateTime? dataFim = null, string? local = null)
+    public List<Festival> FiltrarFestivais(string? nome = null, DateOnly ? dataInicio = null, DateOnly  ? dataFim = null, string? local = null)
     {
         var query = _context.Festivais.AsQueryable();
 

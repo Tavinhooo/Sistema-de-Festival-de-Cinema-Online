@@ -37,7 +37,7 @@ public class FestivalService
         return _repository.ObterFestivalPorId(id);
     }
 
-    public List<Festival> FiltrarFestivais(string? nome = null, DateTime? dataInicio = null, DateTime? dataFim = null, string? local = null)
+    public List<Festival> FiltrarFestivais(string? nome = null, DateOnly? dataInicio = null, DateOnly? dataFim = null, string? local = null)
     {
         return _repository.FiltrarFestivais(nome, dataInicio, dataFim, local);
     }
@@ -48,12 +48,10 @@ public class FestivalService
             throw new ArgumentException("O nome do festival é obrigatório.");
         if (festival.DataInicio >= festival.DataFim)
             throw new ArgumentException("A data de início deve ser anterior à data de fim.");
-        if (festival.DataInicio < DateTime.UtcNow)
+        if (festival.DataInicio < DateOnly.FromDateTime(DateTime.UtcNow))
             throw new ArgumentException("A data de início deve ser no futuro.");
-
-        festival.DataInicio = DateTime.SpecifyKind(festival.DataInicio, DateTimeKind.Utc);
-        festival.DataFim = DateTime.SpecifyKind(festival.DataFim, DateTimeKind.Utc);
-
+        if (string.IsNullOrWhiteSpace(festival.Local))
+            throw new ArgumentException("O local do festival é obrigatório.");
         _repository.AdicionarFestival(festival);
     }
 
@@ -71,12 +69,15 @@ public class FestivalService
             throw new ArgumentException("O nome do festival é obrigatório.");
         if (festival.DataInicio >= festival.DataFim)
             throw new ArgumentException("A data de início deve ser anterior à data de fim.");
-        if (festival.DataInicio < DateTime.UtcNow)
+        if (festival.DataInicio < DateOnly.FromDateTime(DateTime.UtcNow))
             throw new ArgumentException("A data de início deve ser no futuro.");
+        if (string.IsNullOrWhiteSpace(festival.Local))
+            throw new ArgumentException("O local do festival é obrigatório.");
 
         existingFestival.Nome = festival.Nome;
-        existingFestival.DataInicio = DateTime.SpecifyKind(festival.DataInicio, DateTimeKind.Utc);
-        existingFestival.DataFim = DateTime.SpecifyKind(festival.DataFim, DateTimeKind.Utc);
+        existingFestival.DataInicio =festival.DataInicio;
+        existingFestival.DataFim = festival.DataFim;
+        existingFestival.Local = festival.Local;
 
         _repository.UpdateFestival(existingFestival);
     }

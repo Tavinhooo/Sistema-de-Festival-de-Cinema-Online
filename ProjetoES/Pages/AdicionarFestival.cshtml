@@ -166,6 +166,11 @@
                             <label class="field-label" for="descricao">Descrição</label>
                             <textarea id="descricao" class="textarea" rows="4" placeholder="Descreve o festival..." required></textarea>
                         </div>
+                        
+                        <div class="full">
+                            <label class="field-label" for="local">Local</label>
+                            <input id="local" class="field" type="text" placeholder="Ex: Lisboa, Porto" required />
+                        </div>
 
                         <div>
                             <label class="field-label" for="dataInicio">Data de Início</label>
@@ -229,6 +234,7 @@
         const payload = {
             nome: document.getElementById('nome').value.trim(),
             descricao: document.getElementById('descricao').value.trim(),
+            local: document.getElementById('local').value.trim(),
             dataInicio: dataInicio,
             dataFim: dataFim,
             estado: Number(document.getElementById('estado').value)

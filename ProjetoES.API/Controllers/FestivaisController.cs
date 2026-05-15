@@ -17,7 +17,7 @@ public class FestivaisController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais(string? nome, DateTime? dataInicio, DateTime? dataFim, string? local)
+    public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais(string? nome, DateOnly? dataInicio, DateOnly? dataFim, string? local)
     {
         List<FestivalResponseDTO> festivais;
 
@@ -30,7 +30,8 @@ public class FestivaisController : ControllerBase
                     Nome = festival.Nome,
                     DataInicio = festival.DataInicio,
                     DataFim = festival.DataFim,
-                    Estado = festival.Estado.ToString()
+                    Estado = festival.Estado.ToString(),
+                    Local = festival.Local
                 })
                 .ToList();
         }
@@ -43,7 +44,8 @@ public class FestivaisController : ControllerBase
                     Nome = festival.Nome,
                     DataInicio = festival.DataInicio,
                     DataFim = festival.DataFim,
-                    Estado = festival.Estado.ToString()
+                    Estado = festival.Estado.ToString(),
+                    Local = festival.Local
                 })
                 .ToList();
         }
@@ -61,7 +63,8 @@ public class FestivaisController : ControllerBase
                 Nome = festival.Nome,
                 DataInicio = festival.DataInicio,
                 DataFim = festival.DataFim,
-                Estado = festival.Estado.ToString()
+                Estado = festival.Estado.ToString(),
+                Local = festival.Local
             })
             .ToList();
 
@@ -78,7 +81,8 @@ public class FestivaisController : ControllerBase
                 Nome = festival.Nome,
                 DataInicio = festival.DataInicio,
                 DataFim = festival.DataFim,
-                Estado = festival.Estado.ToString()
+                Estado = festival.Estado.ToString(),
+                Local = festival.Local
             })
             .ToList();
 
@@ -95,7 +99,8 @@ public class FestivaisController : ControllerBase
                 Nome = festival.Nome,
                 DataInicio = festival.DataInicio,
                 DataFim = festival.DataFim,
-                Estado = festival.Estado.ToString()
+                Estado = festival.Estado.ToString(),
+                Local = festival.Local
             })
             .ToList();
 
