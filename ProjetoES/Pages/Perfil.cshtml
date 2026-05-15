@@ -15,16 +15,7 @@
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="logo"><i class="fa-brands fa-figma"></i></div>
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisar nos meus filmes...">
-        </div>
-        <div class="nav-actions">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            <div class="avatar-circle" style="width:35px; height:35px; font-size:14px; margin:0;">JJ</div>
-        </div>
-    </header>
+    @await Html.PartialAsync("_Header")
 
     <div class="profile-container">
         <aside class="profile-sidebar">
