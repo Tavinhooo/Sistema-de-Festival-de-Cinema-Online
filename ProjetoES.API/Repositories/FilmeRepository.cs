@@ -43,7 +43,9 @@ public class FilmeRepository
                 TrailerUrl = ff.Filme.TrailerUrl,
                 FestivalId = ff.FestivalId,
                 FestivalNome = ff.Festival.Nome,
-                PrecoBilhete = ff.PrecoBilhete
+                PrecoBilhete = ff.PrecoBilhete,
+                Realizador = ff.Filme.Realizador,
+                Elenco = ff.Filme.Elenco
             })
             .ToList();
     }
@@ -161,7 +163,9 @@ public class FilmeRepository
                 TrailerUrl = ff.Filme.TrailerUrl,
                 FestivalId = ff.FestivalId,
                 FestivalNome = ff.Festival.Nome,
-                PrecoBilhete = ff.PrecoBilhete
+                PrecoBilhete = ff.PrecoBilhete,
+                Realizador = ff.Filme.Realizador,
+                Elenco = ff.Filme.Elenco
             })
             .FirstOrDefault();
     }

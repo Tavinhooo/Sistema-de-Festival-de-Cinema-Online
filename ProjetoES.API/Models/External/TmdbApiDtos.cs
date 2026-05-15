@@ -61,3 +61,33 @@ public class TmdbMovieApiDto
     [JsonPropertyName("poster_path")]
     public string PosterPath { get; set; } = string.Empty;
 }
+
+public class TmdbCreditsApiResponse
+{
+    [JsonPropertyName("cast")]
+    public List<TmdbCastMemberApiDto> Cast { get; set; } = new();
+
+    [JsonPropertyName("crew")]
+    public List<TmdbCrewMemberApiDto> Crew { get; set; } = new();
+}
+
+public class TmdbCastMemberApiDto
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("character")]
+    public string Character { get; set; } = string.Empty;
+
+    [JsonPropertyName("order")]
+    public int Order { get; set; }
+}
+
+public class TmdbCrewMemberApiDto
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("job")]
+    public string Job { get; set; } = string.Empty;
+}

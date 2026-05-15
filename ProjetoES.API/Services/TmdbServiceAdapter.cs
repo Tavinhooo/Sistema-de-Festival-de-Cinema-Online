@@ -60,4 +60,20 @@ public class TmdbServiceAdapter : ITmdbService
 
         return $"https://www.youtube.com/embed/{trailer.Key}";
     }
+
+    public async Task<(string realizador, string elenco)> ObterCreditosAsync(int tmdbId)
+    {
+        var credits = await _tmdbApiClient.GetMovieCreditsAsync(tmdbId);
+        if (credits == null) return (string.Empty, string.Empty);
+
+        var realizador = credits.Crew
+            .FirstOrDefault(c => c.Job == "Director")?.Name ?? string.Empty;
+
+        var elenco = string.Join(", ", credits.Cast
+            .OrderBy(c => c.Order)
+            .Take(5)
+            .Select(c => c.Name));
+
+        return (realizador, elenco);
+    }
 }

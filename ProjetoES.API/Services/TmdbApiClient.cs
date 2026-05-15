@@ -54,4 +54,15 @@ public class TmdbApiClient : ITmdbApiClient
         var json = await response.Content.ReadAsStringAsync(cancellationToken);
         return JsonSerializer.Deserialize<TmdbVideoApiResponse>(json);
     }
+    public async Task<TmdbCreditsApiResponse?> GetMovieCreditsAsync(int tmdbId, CancellationToken cancellationToken = default)
+    {
+        var url = $"movie/{tmdbId}/credits?api_key={_apiKey}&language=pt-PT";
+        var response = await _httpClient.GetAsync(url, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+        return JsonSerializer.Deserialize<TmdbCreditsApiResponse>(json);
+    }
 }

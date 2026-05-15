@@ -19,7 +19,7 @@ public class FilmeService : IAvaliacaoObserver
     public void AtualizarMediaAvaliacao(int filmeId)
     {
         var filme = _repository.ObterFilmePorId(filmeId);
-        if(filme == null) return;
+        if (filme == null) return;
         filme.MediaAvaliacao = _avaliacaoService.CalcularMediaAvaliacao(filmeId);
         _repository.AtualizarFilme(filme);
     }
@@ -114,6 +114,8 @@ public class FilmeService : IAvaliacaoObserver
         filmeExistente.DuracaoMinutos = filme.DuracaoMinutos;
         filmeExistente.PosterUrl = filme.PosterUrl;
         filmeExistente.TrailerUrl = filme.TrailerUrl;
+        filmeExistente.Realizador = filme.Realizador;
+        filmeExistente.Elenco = filme.Elenco;
 
         _repository.AtualizarFilme(filmeExistente);
     }

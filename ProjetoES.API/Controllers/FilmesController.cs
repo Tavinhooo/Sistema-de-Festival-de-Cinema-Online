@@ -29,7 +29,9 @@ public class FilmesController : ControllerBase
         DuracaoMinutos = filme.DuracaoMinutos,
         MediaAvaliacao = filme.MediaAvaliacao,
         PosterUrl = filme.PosterUrl,
-        TrailerUrl = filme.TrailerUrl, // NOVO
+        TrailerUrl = filme.TrailerUrl, 
+        Realizador = filme.Realizador, 
+        Elenco = filme.Elenco,
         FestivalIds = filme.Festivais.Select(f => f.Id).ToList()
     };
 
@@ -84,37 +86,44 @@ public class FilmesController : ControllerBase
         return Ok(new { trailerUrl = url });
     }
 
-    [HttpPost]
-    public async Task<ActionResult<FilmeResponseDTO>> CriarFilme([FromBody] CreateFilmeDTO dto)
+[HttpPost]
+public async Task<ActionResult<FilmeResponseDTO>> CriarFilme([FromBody] CreateFilmeDTO dto)
+{
+    try
     {
-        try
+        string trailerUrl = dto.TrailerUrl;
+        string realizador = string.Empty;
+        string elenco = string.Empty;
+
+        if (dto.TmdbId.HasValue)
         {
-            // Se vier TmdbId e não vier TrailerUrl, tenta buscar automaticamente
-            string trailerUrl = dto.TrailerUrl;
-            if (string.IsNullOrEmpty(trailerUrl) && dto.TmdbId.HasValue)
-            {
+            if (string.IsNullOrEmpty(trailerUrl))
                 trailerUrl = await _tmdbService.ObterTrailerYoutubeUrlAsync(dto.TmdbId.Value) ?? string.Empty;
-            }
 
-            var filme = new Filme
-            {
-                Titulo = dto.Titulo,
-                Sinopse = dto.Sinopse,
-                Genero = dto.Genero,
-                Ano = dto.Ano,
-                DuracaoMinutos = dto.DuracaoMinutos,
-                PosterUrl = dto.PosterUrl,
-                TrailerUrl = trailerUrl // NOVO
-            };
-
-            _service.CriarFilme(filme, dto.FestivalId, dto.PrecoBilhete);
-            return CreatedAtAction(nameof(ObterFilmePorId), new { id = filme.Id }, ToDto(filme));
+            (realizador, elenco) = await _tmdbService.ObterCreditosAsync(dto.TmdbId.Value);
         }
-        catch (ArgumentException ex)
+
+        var filme = new Filme
         {
-            return BadRequest(ex.Message);
-        }
+            Titulo = dto.Titulo,
+            Sinopse = dto.Sinopse,
+            Genero = dto.Genero,
+            Ano = dto.Ano,
+            DuracaoMinutos = dto.DuracaoMinutos,
+            PosterUrl = dto.PosterUrl,
+            TrailerUrl = trailerUrl,
+            Realizador = realizador,
+            Elenco = elenco
+        };
+
+        _service.CriarFilme(filme, dto.FestivalId, dto.PrecoBilhete);
+        return CreatedAtAction(nameof(ObterFilmePorId), new { id = filme.Id }, ToDto(filme));
     }
+    catch (ArgumentException ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
 
     [HttpPut("{id}")]
     public ActionResult<FilmeResponseDTO> AtualizarFilme(int id, [FromBody] UpdateFilmeDTO dto)
@@ -129,7 +138,7 @@ public class FilmesController : ControllerBase
                 Ano = dto.Ano,
                 DuracaoMinutos = dto.DuracaoMinutos,
                 PosterUrl = dto.PosterUrl,
-                TrailerUrl = dto.TrailerUrl // NOVO
+                TrailerUrl = dto.TrailerUrl 
             };
 
             _service.AtualizarFilme(id, filme);
