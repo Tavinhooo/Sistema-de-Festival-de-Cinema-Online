@@ -20,7 +20,8 @@ public class ClienteController : ControllerBase
 
     private int ObterClienteIdDoToken()
     {
-        var sub = User.FindFirstValue(ClaimTypes.NameIdentifier)
+        var sub = User.FindFirstValue("sub")
+            ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? throw new UnauthorizedAccessException("Token inválido.");
         return int.Parse(sub);
     }
@@ -70,6 +71,33 @@ public class ClienteController : ControllerBase
             var id = ObterClienteIdDoToken();
             return Ok(_service.ObterAvaliacoes(id));
         }
+        catch (ArgumentException ex) { return NotFound(ex.Message); }
+    }
+
+    // PUT api/cliente/avaliacoes/{id} — RF15.2
+    [HttpPut("avaliacoes/{id}")]
+    public ActionResult<AvaliacaoResponseDTO> EditarAvaliacao(int id, CriarAvaliacaoDTO dto)
+    {
+        try
+        {
+            var clienteId = ObterClienteIdDoToken();
+            return Ok(_service.EditarAvaliacao(clienteId, id, dto));
+        }
+        catch (UnauthorizedAccessException ex) { return Forbid(ex.Message); }
+        catch (ArgumentException ex) { return BadRequest(ex.Message); }
+    }
+
+    // DELETE api/cliente/avaliacoes/{id} — RF15.2
+    [HttpDelete("avaliacoes/{id}")]
+    public ActionResult EliminarAvaliacao(int id)
+    {
+        try
+        {
+            var clienteId = ObterClienteIdDoToken();
+            _service.EliminarAvaliacao(clienteId, id);
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException ex) { return Forbid(ex.Message); }
         catch (ArgumentException ex) { return NotFound(ex.Message); }
     }
 }

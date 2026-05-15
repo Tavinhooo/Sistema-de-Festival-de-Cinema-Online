@@ -20,7 +20,10 @@ public class AvaliacaoRepository
     }
     public List<Avaliacao> ObterAvaliacoesPorFilme(int filmeId)
     {
-        return _context.Avaliacoes.Where(a => a.FilmeId == filmeId).ToList();
+        return _context.Avaliacoes
+            .Include(a => a.Cliente)
+            .Where(a => a.FilmeId == filmeId)
+            .ToList();
     }
     public List<Avaliacao> ObterAvaliacoesPorCliente(int clienteId)
     {

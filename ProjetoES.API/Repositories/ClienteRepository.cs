@@ -70,4 +70,29 @@ public class ClienteRepository
     {
         return _context.Set<Utilizador>().FirstOrDefault(u => u.Id == id);
     }
+
+    // RF15.2 - Editar/apagar próprias avaliações
+    public Avaliacao? ObterAvaliacaoPorId(int id)
+    {
+        return _context.Set<Avaliacao>()
+            .Include(a => a.Filme)
+            .FirstOrDefault(a => a.Id == id);
+    }
+
+    public Avaliacao AtualizarAvaliacao(Avaliacao avaliacao)
+    {
+        _context.Set<Avaliacao>().Update(avaliacao);
+        _context.SaveChanges();
+        return avaliacao;
+    }
+
+    public void EliminarAvaliacao(int id)
+    {
+        var avaliacao = _context.Set<Avaliacao>().Find(id);
+        if (avaliacao != null)
+        {
+            _context.Set<Avaliacao>().Remove(avaliacao);
+            _context.SaveChanges();
+        }
+    }
 }

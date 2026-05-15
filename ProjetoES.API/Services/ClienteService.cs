@@ -109,4 +109,41 @@ public class ClienteService
         // Emite novo JWT com role "Cliente"
         return _authService.GenerateTokenPublico(utilizador);
     }
+
+    // RF15.2 - Editar própria avaliação
+    public AvaliacaoResponseDTO EditarAvaliacao(int clienteId, int avaliacaoId, CriarAvaliacaoDTO dto)
+    {
+        var avaliacao = _repo.ObterAvaliacaoPorId(avaliacaoId)
+            ?? throw new ArgumentException("Avaliação não encontrada.");
+
+        if (avaliacao.ClienteId != clienteId)
+            throw new UnauthorizedAccessException("Não podes editar a avaliação de outro utilizador.");
+
+        avaliacao.Classificacao = dto.Classificacao;
+        avaliacao.Comentario = dto.Comentario;
+
+        var atualizada = _repo.AtualizarAvaliacao(avaliacao);
+
+        return new AvaliacaoResponseDTO
+        {
+            Id = atualizada.Id,
+            FilmeId = atualizada.FilmeId,
+            FilmeTitulo = atualizada.Filme?.Titulo,
+            Classificacao = atualizada.Classificacao,
+            Comentario = atualizada.Comentario,
+            DataAvaliacao = atualizada.DataAvaliacao
+        };
+    }
+
+    // RF15.2 - Apagar própria avaliação
+    public void EliminarAvaliacao(int clienteId, int avaliacaoId)
+    {
+        var avaliacao = _repo.ObterAvaliacaoPorId(avaliacaoId)
+            ?? throw new ArgumentException("Avaliação não encontrada.");
+
+        if (avaliacao.ClienteId != clienteId)
+            throw new UnauthorizedAccessException("Não podes apagar a avaliação de outro utilizador.");
+
+        _repo.EliminarAvaliacao(avaliacaoId);
+    }
 }
