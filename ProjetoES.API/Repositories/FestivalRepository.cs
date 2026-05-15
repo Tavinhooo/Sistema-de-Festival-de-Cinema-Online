@@ -98,4 +98,22 @@ public class FestivalRepository
 
         return query.OrderBy(f => f.DataInicio).ToList();
     }
+
+    public List<Festival> ObterFestivaisADecorrer()
+    {
+        var now = DateTime.UtcNow;
+        return _context.Festivais
+            .Where(f => f.DataInicio <= now && f.DataFim >= now)
+            .OrderBy(f => f.DataInicio)
+            .ToList();
+    }
+
+    public List<Festival> ObterFestivaisFuturos()
+    {
+        var now = DateTime.UtcNow;
+        return _context.Festivais
+            .Where(f => f.DataInicio > now)
+            .OrderBy(f => f.DataInicio)
+            .ToList();
+    }
 }
