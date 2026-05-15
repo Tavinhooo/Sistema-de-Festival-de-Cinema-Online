@@ -85,7 +85,7 @@
         </div>
 
         <div>
-            <div class="section-badge">Relacionados</div>
+            <div class="section-badge">Outros filmes deste festival</div>
             <div class="card-row" id="relatedMovies"></div>
         </div>
 
@@ -195,20 +195,20 @@
                                 const card = document.createElement('div');
                                 card.className = 'review-card';
                                 card.innerHTML = `
-                                        <div class="review-header" style="justify-content: space-between; width: 100%;">
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <span>${a.clienteNome || 'Utilizador'}</span>
-                                                <i class="far fa-star"></i> ${a.classificacao}
-                                            </div>
-                                            <div style="display: flex; gap: 8px; align-items: center;">
-                                                ${podeApagar ? `<button class="btn-apagar-avaliacao" data-id="${a.id}" style="background:none; border:none; color:#e57373; cursor:pointer;" title="Apagar"><i class="fas fa-trash"></i></button>` : ''}
-                                                <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
-                                                    <i class="fas fa-flag"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="review-body">${a.comentario || ''}</div>
-                                    `;
+                                                                            <div class="review-header" style="justify-content: space-between; width: 100%;">
+                                                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                                                    <span>${a.clienteNome || 'Utilizador'}</span>
+                                                                                    <i class="far fa-star"></i> ${a.classificacao}
+                                                                                </div>
+                                                                                <div style="display: flex; gap: 8px; align-items: center;">
+                                                                                    ${podeApagar ? `<button class="btn-apagar-avaliacao" data-id="${a.id}" style="background:none; border:none; color:#e57373; cursor:pointer;" title="Apagar"><i class="fas fa-trash"></i></button>` : ''}
+                                                                                    <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
+                                                                                        <i class="fas fa-flag"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="review-body">${a.comentario || ''}</div>
+                                                                        `;
 
                                 card.querySelector('.btn-apagar-avaliacao')?.addEventListener('click', async () => {
                                     if (!confirm('Tens a certeza que queres apagar esta avaliação?')) return;
@@ -263,8 +263,43 @@
                             document.getElementById('movieRealizer').textContent = filme.realizador ? `🎬 Realizador: ${filme.realizador}` : 'Realizador: Desconhecido';
                             document.getElementById('movieCast').textContent = filme.elenco ? `🎭 Elenco: ${filme.elenco}` : 'Elenco: Desconhecido';
 
-                            document.getElementById('relatedMovies').innerHTML = '';
+                            async function loadRelatedMovies(festivalId, currentFilmId) {
+                                try {
+                                    const filmes = await ApiClient.getFilmesByFestival(festivalId);
+                                    const row = document.getElementById('relatedMovies');
+                                    row.innerHTML = '';
 
+                                    const outros = filmes.filter(f => f.id !== Number(currentFilmId));
+
+                                    if (outros.length === 0) {
+                                        row.innerHTML = '<p style="color:#888; font-size:14px;">Não há outros filmes neste festival.</p>';
+                                        return;
+                                    }
+
+                                    outros.forEach(f => {
+                                        const card = document.createElement('div');
+                                        card.className = 'card';
+                                        card.style.cursor = 'pointer';
+                                        card.style.overflow = 'hidden';
+                                        card.style.position = 'relative';
+                                        card.innerHTML = `
+                                        <img src="${f.posterUrl || '/images/default-poster.jpg'}" 
+                                             alt="${f.titulo}" 
+                                             style="width:100%; height:100%; object-fit:cover; border-radius:20px;" />
+                                        <div style="position:absolute; bottom:0; left:0; right:0; padding:10px 12px; background:linear-gradient(transparent, rgba(0,0,0,0.7)); border-radius:0 0 20px 20px;">
+                                            <p style="color:white; font-size:13px; font-weight:700; margin:0;">${f.titulo}</p>
+                                        </div>
+                                    `;
+                                        card.addEventListener('click', () => {
+                                            window.location.href = `/Filme?id=${f.id}&festivalId=${festivalId}`;
+                                        });
+                                        row.appendChild(card);
+                                    });
+                                } catch (error) {
+                                    console.error('Erro ao carregar filmes relacionados:', error);
+                                }
+                            }
+                            if (festivalId) await loadRelatedMovies(festivalId, filmId);
                             await loadReviews(filmId);
 
                             const btnAddToCart = document.getElementById('btnAddToCart');
