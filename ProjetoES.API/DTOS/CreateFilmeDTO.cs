@@ -10,4 +10,6 @@ public class CreateFilmeDTO
     public int DuracaoMinutos { get; set; }
     public decimal PrecoBilhete { get; set; }
     public string PosterUrl { get; set; } = string.Empty;
+    public string TrailerUrl { get; set; } = string.Empty; // NOVO
+    public int? TmdbId { get; set; }
 }

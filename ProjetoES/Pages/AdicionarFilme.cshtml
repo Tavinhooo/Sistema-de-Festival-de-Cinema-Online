@@ -176,6 +176,11 @@
         text-overflow: ellipsis;
     }
 
+    .result-card.selected {
+        border: 2px solid #7b57b8;
+        box-shadow: 0 0 0 4px rgba(123, 87, 184, 0.18);
+    }
+
     .section-title {
         font-size: 1.05rem;
         font-weight: 800;
@@ -300,6 +305,9 @@
 </div>
 
 <script>
+    // Guarda o tmdbId do filme selecionado
+    let selectedTmdbId = null;
+
     const tmdbResults = document.getElementById('tmdbResults');
     const loadingResults = document.getElementById('loadingResults');
     const messageBox = document.getElementById('message');
@@ -391,6 +399,13 @@
                 const movie = results.find(item => String(item.id) === movieId);
                 if (!movie) return;
 
+                // Guarda o tmdbId do filme selecionado
+                selectedTmdbId = movie.id;
+
+                // Destaca o card selecionado
+                tmdbResults.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+
                 try {
                     showMessage('A carregar detalhes do filme...', '');
                     const details = await ApiClient.getTmdbMovieDetails(movie.id);
@@ -436,6 +451,7 @@
         }
 
         clearMessage();
+        selectedTmdbId = null;
         loadingResults.style.display = 'block';
         tmdbResults.innerHTML = '';
 
@@ -462,13 +478,16 @@
             ano: Number(document.getElementById('ano').value),
             genero: document.getElementById('genero').value.trim(),
             duracaoMinutos: Number(document.getElementById('duracao').value),
-            precoBilhete: Number(document.getElementById('precoBilhete').value)
+            precoBilhete: Number(document.getElementById('precoBilhete').value),
+            tmdbId: selectedTmdbId  // Envia o tmdbId para o backend buscar o trailer
         };
 
         try {
             await ApiClient.createFilme(payload);
             showMessage('Filme guardado com sucesso.', 'success');
             document.getElementById('filmForm').reset();
+            selectedTmdbId = null;
+            tmdbResults.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
         } catch (error) {
             console.error(error);
             showMessage(error.message || 'Não foi possível guardar o filme.', 'error');
@@ -490,6 +509,8 @@
         document.getElementById('filmForm').addEventListener('submit', submitFilm);
         document.getElementById('clearBtn').addEventListener('click', () => {
             document.getElementById('filmForm').reset();
+            selectedTmdbId = null;
+            tmdbResults.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
             clearMessage();
         });
 

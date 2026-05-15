@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjetoES.API.Data;
@@ -11,9 +12,11 @@ using ProjetoES.API.Data;
 namespace ProjetoES.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260514232204_AddTrailerUrlAndPrecoBilhete")]
+    partial class AddTrailerUrlAndPrecoBilhete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,10 +214,6 @@ namespace ProjetoES.API.Migrations
                     b.Property<int>("DuracaoMinutos")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Elenco")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("FestivalId")
                         .HasColumnType("integer");
 
@@ -229,10 +228,6 @@ namespace ProjetoES.API.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<string>("PosterUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Realizador")
                         .IsRequired()
                         .HasColumnType("text");
 

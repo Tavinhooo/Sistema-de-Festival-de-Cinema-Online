@@ -40,9 +40,12 @@ public class FilmeRepository
                 DuracaoMinutos = ff.Filme.DuracaoMinutos,
                 MediaAvaliacao = ff.Filme.MediaAvaliacao,
                 PosterUrl = ff.Filme.PosterUrl,
+                TrailerUrl = ff.Filme.TrailerUrl,
                 FestivalId = ff.FestivalId,
                 FestivalNome = ff.Festival.Nome,
-                PrecoBilhete = ff.PrecoBilhete
+                PrecoBilhete = ff.PrecoBilhete,
+                Realizador = ff.Filme.Realizador,
+                Elenco = ff.Filme.Elenco
             })
             .ToList();
     }
@@ -157,9 +160,12 @@ public class FilmeRepository
                 DuracaoMinutos = ff.Filme.DuracaoMinutos,
                 MediaAvaliacao = ff.Filme.MediaAvaliacao,
                 PosterUrl = ff.Filme.PosterUrl,
+                TrailerUrl = ff.Filme.TrailerUrl,
                 FestivalId = ff.FestivalId,
                 FestivalNome = ff.Festival.Nome,
-                PrecoBilhete = ff.PrecoBilhete
+                PrecoBilhete = ff.PrecoBilhete,
+                Realizador = ff.Filme.Realizador,
+                Elenco = ff.Filme.Elenco
             })
             .FirstOrDefault();
     }
