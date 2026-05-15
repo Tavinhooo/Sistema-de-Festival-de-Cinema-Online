@@ -16,18 +16,36 @@ public class FestivaisController : ControllerBase
         _service = service;
     }
     [HttpGet]
-    public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais()
+    public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais(string? nome, DateTime? dataInicio, DateTime? dataFim, string? local)
     {
-        List<FestivalResponseDTO> festivais = _service.ObterTodosFestivais()
-            .Select(festival => new FestivalResponseDTO
-            {
-                Id = festival.Id,
-                Nome = festival.Nome,
-                DataInicio = festival.DataInicio,
-                DataFim = festival.DataFim,
-                Estado = festival.Estado.ToString()
-            })
-            .ToList();
+        List<FestivalResponseDTO> festivais;
+
+        if (!string.IsNullOrWhiteSpace(nome) || dataInicio.HasValue || dataFim.HasValue || !string.IsNullOrWhiteSpace(local))
+        {
+            festivais = _service.FiltrarFestivais(nome, dataInicio, dataFim, local)
+                .Select(festival => new FestivalResponseDTO
+                {
+                    Id = festival.Id,
+                    Nome = festival.Nome,
+                    DataInicio = festival.DataInicio,
+                    DataFim = festival.DataFim,
+                    Estado = festival.Estado.ToString()
+                })
+                .ToList();
+        }
+        else
+        {
+            festivais = _service.ObterTodosFestivais()
+                .Select(festival => new FestivalResponseDTO
+                {
+                    Id = festival.Id,
+                    Nome = festival.Nome,
+                    DataInicio = festival.DataInicio,
+                    DataFim = festival.DataFim,
+                    Estado = festival.Estado.ToString()
+                })
+                .ToList();
+        }
 
         return Ok(festivais);
     }
@@ -48,6 +66,40 @@ public class FestivaisController : ControllerBase
             DataFim = festival.DataFim,
             Estado = festival.Estado.ToString()
         });
+    }
+
+    [HttpGet("decorrer")]
+    public ActionResult<List<FestivalResponseDTO>> ObterFestivaisADecorrer()
+    {
+        var festivais = _service.ObterFestivaisADecorrer()
+            .Select(festival => new FestivalResponseDTO
+            {
+                Id = festival.Id,
+                Nome = festival.Nome,
+                DataInicio = festival.DataInicio,
+                DataFim = festival.DataFim,
+                Estado = festival.Estado.ToString()
+            })
+            .ToList();
+
+        return Ok(festivais);
+    }
+
+    [HttpGet("proximos")]
+    public ActionResult<List<FestivalResponseDTO>> ObterFestivaisProximos()
+    {
+        var festivais = _service.ObterFestivaisFuturos()
+            .Select(festival => new FestivalResponseDTO
+            {
+                Id = festival.Id,
+                Nome = festival.Nome,
+                DataInicio = festival.DataInicio,
+                DataFim = festival.DataFim,
+                Estado = festival.Estado.ToString()
+            })
+            .ToList();
+
+        return Ok(festivais);
     }
     [HttpPost]
     public ActionResult CriarFestival(Festival festival)

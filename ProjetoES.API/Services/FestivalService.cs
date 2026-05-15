@@ -68,4 +68,19 @@ public class FestivalService
 
         _repository.UpdateFestival(existingFestival);
     }
+
+    public List<Festival> FiltrarFestivais(string? nome = null, DateTime? dataInicio = null, DateTime? dataFim = null, string? local = null)
+    {
+        return _repository.FiltrarFestivais(nome, dataInicio, dataFim, local);
+    }
+
+    public List<Festival> ObterFestivaisADecorrer()
+    {
+        return _repository.ObterFestivaisADecorrer();
+    }
+
+    public List<Festival> ObterFestivaisFuturos()
+    {
+        return _repository.ObterFestivaisFuturos();
+    }
 }

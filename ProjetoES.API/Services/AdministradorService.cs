@@ -187,7 +187,6 @@ namespace ProjetoES.API.Services
             Titulo = dto.Titulo,
             Sinopse = dto.Sinopse,
             DuracaoMinutos = dto.DuracaoMinutos,
-            PrecoBilhete = dto.PrecoBilhete,
             PosterUrl = dto.PosterUrl,
             FestivalId = dto.FestivalId
         };
@@ -197,7 +196,6 @@ namespace ProjetoES.API.Services
             filme.Titulo = dto.Titulo;
             filme.Sinopse = dto.Sinopse;
             filme.DuracaoMinutos = dto.DuracaoMinutos;
-            filme.PrecoBilhete = dto.PrecoBilhete;
             filme.PosterUrl = dto.PosterUrl;
             filme.FestivalId = dto.FestivalId;
         }
@@ -208,7 +206,6 @@ namespace ProjetoES.API.Services
             Titulo = f.Titulo,
             Sinopse = f.Sinopse,
             DuracaoMinutos = f.DuracaoMinutos,
-            PrecoBilhete = f.PrecoBilhete,
             PosterUrl = f.PosterUrl,
             FestivalId = f.FestivalId
         };
