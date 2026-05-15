@@ -48,5 +48,11 @@ public class AvaliacaoRepository
         _context.Avaliacoes.Remove(avaliacao);
         _context.SaveChanges();
     }
+    public Avaliacao? ObterAvaliacaoPorIdComCliente(int id)
+{
+    return _context.Avaliacoes
+        .Include(a => a.Cliente)
+        .FirstOrDefault(a => a.Id == id);
+}
 
 }

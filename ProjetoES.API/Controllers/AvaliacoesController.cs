@@ -33,4 +33,24 @@ public class AvaliacoesController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpPost("{id}/reportar")]
+    public ActionResult ReportarAvaliacao(int id)
+    {
+        var avaliacao = _repository.ObterAvaliacaoPorId(id);
+        if (avaliacao == null) return NotFound();
+        avaliacao.IsReportado = true;
+        _repository.AtualizarAvaliacao(avaliacao);
+        return NoContent();
+    }
+
+    [HttpPost("{id}/ignorar-report")]
+    public ActionResult IgnorarReport(int id)
+    {
+        var avaliacao = _repository.ObterAvaliacaoPorId(id);
+        if (avaliacao == null) return NotFound();
+        avaliacao.IsReportado = false;
+        _repository.AtualizarAvaliacao(avaliacao);
+        return NoContent();
+    }
 }

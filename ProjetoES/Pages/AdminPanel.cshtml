@@ -1,0 +1,557 @@
+@page
+@{
+    ViewData["Title"] = "Painel de Administração";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProjetoES</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: #f5f2fa;
+            color: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .logo img { width: 200px; height: 77px; object-fit: contain; display: block; }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+            margin: 0 40px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px;
+            padding-right: 40px;
+            border-radius: 25px;
+            border: none;
+            background-color: #f3eff7;
+            font-size: 14px;
+            color: #555;
+            outline: none;
+        }
+
+        .search-container i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 14px;
+        }
+
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-dark { background-color: #2b2b2b; color: white; }
+
+        /* MAIN */
+        .main-content { padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+        /* HERO */
+        .admin-hero {
+            background: linear-gradient(135deg, #251433 0%, #50316f 60%, #6c4aa4 100%);
+            border-radius: 24px;
+            padding: 32px 40px;
+            color: white;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .admin-hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+        .admin-hero p { opacity: 0.85; font-size: 15px; }
+
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover { transform: translateY(-2px); }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.purple { background: #f0ebfb; color: #7b57b8; }
+        .stat-icon.red { background: #ffecec; color: #e57373; }
+        .stat-icon.green { background: #edf7ee; color: #4caf50; }
+        .stat-icon.orange { background: #fff3e0; color: #ff9800; }
+
+        .stat-info h3 { font-size: 1.6rem; font-weight: 800; color: #1a1a1a; }
+        .stat-info p { font-size: 13px; color: #888; font-weight: 600; }
+
+        /* QUICK ACTIONS */
+        .section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #2b2038;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .badge {
+            background: #f0ebfb;
+            color: #7b57b8;
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-alert {
+            background: #ffecec;
+            color: #e57373;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #7b57b8, #50316f);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: #432b66;
+            border: 1px solid #e0d8f0;
+        }
+
+        /* REPORTED REVIEWS */
+        .panel-section {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+        }
+
+        .reported-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .reported-card {
+            border: 1px solid #f0ebfb;
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .reported-card:hover { border-color: #c4a8e8; }
+
+        .reported-card.removing {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .reported-info { flex: 1; }
+
+        .reported-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .reported-author {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .reported-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 700;
+            color: #7b57b8;
+            font-size: 14px;
+        }
+
+        .reported-film {
+            font-size: 12px;
+            background: #f0ebfb;
+            color: #7b57b8;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .reported-comment {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+
+        .reported-date {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .reported-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+        .btn-action {
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action:hover { transform: translateY(-1px); }
+
+        .btn-delete { background: #ffecec; color: #c62828; }
+        .btn-delete:hover { background: #ffcdd2; }
+
+        .btn-ignore { background: #f0ebfb; color: #432b66; }
+        .btn-ignore:hover { background: #e0d4f5; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+        }
+
+        .empty-state i { font-size: 40px; margin-bottom: 12px; display: block; color: #d8d0e8; }
+        .empty-state p { font-size: 15px; font-weight: 600; }
+
+        .loading-state {
+            text-align: center;
+            padding: 30px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* NOTIFICATION DOT */
+        .notif-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #e57373;
+            border-radius: 50%;
+            margin-left: 6px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a asp-page="/Index" class="logo" aria-label="Ir para a página inicial">
+            <img src="~/images/logo.png" alt="Logo do festival" />
+        </a>
+        <div class="search-container">
+            <input type="text" placeholder="Pesquisa Geral">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a class="btn btn-dark" asp-page="/Login">Sign in</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- HERO -->
+        <div class="admin-hero">
+            <div>
+                <h1>Painel de Administração</h1>
+                <p>Bem-vindo, <strong id="adminName">Administrador</strong>. Gere o festival a partir daqui.</p>
+            </div>
+            <i class="fas fa-shield-alt" style="font-size: 48px; opacity: 0.3;"></i>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-film"></i></div>
+                <div class="stat-info">
+                    <h3 id="statFilmes">—</h3>
+                    <p>Filmes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-calendar-star"></i></div>
+                <div class="stat-info">
+                    <h3 id="statFestivais">—</h3>
+                    <p>Festivais</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 id="statUtilizadores">—</h3>
+                    <p>Utilizadores</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="fas fa-flag"></i></div>
+                <div class="stat-info">
+                    <h3 id="statReportadas">—</h3>
+                    <p>Avaliações Reportadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <p class="section-title"><i class="fas fa-bolt"></i> Ações Rápidas</p>
+        <div class="quick-actions">
+            <a href="/AdicionarFilme" class="action-btn primary">
+                <i class="fas fa-plus-circle"></i> Importar Filme
+            </a>
+            <a href="/Index" class="action-btn secondary">
+                <i class="fas fa-home"></i> Ver Site
+            </a>
+        </div>
+
+        <!-- REPORTED REVIEWS -->
+        <div class="panel-section">
+            <p class="section-title">
+                <i class="fas fa-flag"></i> Avaliações Reportadas
+                <span class="badge badge-alert" id="reportedBadge" style="display:none;"></span>
+            </p>
+            <div class="reported-list" id="reportedList">
+                <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="~/js/api-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            ApiClient.renderAuthNavigation('#navActions');
+
+            // Verifica se é admin
+            if (!ApiClient.isAuthenticated() || ApiClient.getCurrentUserRole() !== 'Administrador') {
+                window.location.href = '/Login';
+                return;
+            }
+
+            loadDashboard();
+        });
+
+        async function loadDashboard() {
+            const adminId = ApiClient.getCurrentUserId();
+
+            // Carrega nome do admin
+            try {
+                const utilizadores = await ApiClient.get(`/api/admin/${adminId}/utilizadores`);
+                const admin = utilizadores.find(u => u.id === adminId);
+                if (admin) {
+                    document.getElementById('adminName').textContent = `${admin.primeiroNome} ${admin.ultimoNome}`;
+                }
+
+                // Stats utilizadores
+                document.getElementById('statUtilizadores').textContent = utilizadores.length;
+            } catch (e) { console.error(e); }
+
+            // Stats filmes
+            try {
+                const filmes = await ApiClient.getFilmes();
+                document.getElementById('statFilmes').textContent = filmes.length;
+            } catch (e) { console.error(e); }
+
+            // Stats festivais
+            try {
+                const festivais = await ApiClient.getFestivais();
+                document.getElementById('statFestivais').textContent = festivais.length;
+            } catch (e) { console.error(e); }
+
+            // Avaliações reportadas
+            await loadReportedReviews(adminId);
+        }
+
+        async function loadReportedReviews(adminId) {
+            const list = document.getElementById('reportedList');
+            const badge = document.getElementById('reportedBadge');
+
+            try {
+                const avaliacoes = await ApiClient.get(`/api/admin/${adminId}/avaliacoes`);
+                const reportadas = avaliacoes.filter(a => a.isReportado);
+
+                document.getElementById('statReportadas').textContent = reportadas.length;
+
+                if (reportadas.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>Sem avaliações reportadas. Tudo limpo!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                badge.textContent = reportadas.length;
+                badge.style.display = 'inline-block';
+
+                list.innerHTML = '';
+                reportadas.forEach(a => {
+                    const card = document.createElement('div');
+                    card.className = 'reported-card';
+                    card.id = `report-${a.id}`;
+                    card.innerHTML = `
+                        <div class="reported-info">
+                            <div class="reported-meta">
+                                <span class="reported-author">${a.clienteId || 'Utilizador'}</span>
+                                <span class="reported-rating"><i class="far fa-star"></i> ${a.classificacao}</span>
+                                <span class="reported-film">Filme #${a.filmeId}</span>
+                            </div>
+                            <div class="reported-comment">${a.comentario || '<em>Sem comentário</em>'}</div>
+                            <div class="reported-date">${new Date(a.dataAvaliacao).toLocaleDateString('pt-PT')}</div>
+                        </div>
+                        <div class="reported-actions">
+                            <button class="btn-action btn-delete" onclick="apagarAvaliacao(${adminId}, ${a.id})">
+                                <i class="fas fa-trash"></i> Apagar
+                            </button>
+                            <button class="btn-action btn-ignore" onclick="ignorarReport(${adminId}, ${a.id})">
+                                <i class="fas fa-times"></i> Ignorar
+                            </button>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (e) {
+                console.error(e);
+                list.innerHTML = '<div class="loading-state">Erro ao carregar avaliações reportadas.</div>';
+            }
+        }
+
+        async function apagarAvaliacao(adminId, avaliacaoId) {
+            if (!confirm('Tens a certeza que queres apagar esta avaliação?')) return;
+            try {
+                await ApiClient.delete(`/api/admin/${adminId}/avaliacoes/${avaliacaoId}`);
+                removeCard(avaliacaoId);
+            } catch (e) {
+                alert(e.message || 'Erro ao apagar avaliação.');
+            }
+        }
+
+        async function ignorarReport(adminId, avaliacaoId) {
+            try {
+                await ApiClient.post(`/api/avaliacoes/${avaliacaoId}/ignorar-report`, {});
+                removeCard(avaliacaoId);
+            } catch (e) {
+                alert(e.message || 'Erro ao ignorar denúncia.');
+            }
+        }
+
+        function removeCard(avaliacaoId) {
+            const card = document.getElementById(`report-${avaliacaoId}`);
+            if (card) {
+                card.classList.add('removing');
+                setTimeout(() => {
+                    card.remove();
+                    const list = document.getElementById('reportedList');
+                    const badge = document.getElementById('reportedBadge');
+                    const remaining = list.querySelectorAll('.reported-card').length;
+                    document.getElementById('statReportadas').textContent = remaining;
+                    if (remaining === 0) {
+                        badge.style.display = 'none';
+                        list.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-check-circle"></i>
+                                <p>Sem avaliações reportadas. Tudo limpo!</p>
+                            </div>
+                        `;
+                    } else {
+                        badge.textContent = remaining;
+                    }
+                }, 300);
+            }
+        }
+    </script>
+
+</body>
+</html>

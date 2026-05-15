@@ -195,20 +195,20 @@
                                 const card = document.createElement('div');
                                 card.className = 'review-card';
                                 card.innerHTML = `
-                            <div class="review-header" style="justify-content: space-between; width: 100%;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span>${a.clienteNome || 'Utilizador'}</span>
-                                    <i class="far fa-star"></i> ${a.classificacao}
-                                </div>
-                                <div style="display: flex; gap: 8px; align-items: center;">
-                                    ${podeApagar ? `<button class="btn-apagar-avaliacao" data-id="${a.id}" style="background:none; border:none; color:#e57373; cursor:pointer;" title="Apagar"><i class="fas fa-trash"></i></button>` : ''}
-                                    <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
-                                        <i class="fas fa-flag"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="review-body">${a.comentario || ''}</div>
-                        `;
+                                        <div class="review-header" style="justify-content: space-between; width: 100%;">
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <span>${a.clienteNome || 'Utilizador'}</span>
+                                                <i class="far fa-star"></i> ${a.classificacao}
+                                            </div>
+                                            <div style="display: flex; gap: 8px; align-items: center;">
+                                                ${podeApagar ? `<button class="btn-apagar-avaliacao" data-id="${a.id}" style="background:none; border:none; color:#e57373; cursor:pointer;" title="Apagar"><i class="fas fa-trash"></i></button>` : ''}
+                                                <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
+                                                    <i class="fas fa-flag"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="review-body">${a.comentario || ''}</div>
+                                    `;
 
                                 card.querySelector('.btn-apagar-avaliacao')?.addEventListener('click', async () => {
                                     if (!confirm('Tens a certeza que queres apagar esta avaliação?')) return;
@@ -221,6 +221,20 @@
                                         await loadReviews(filmId);
                                     } catch (error) {
                                         alert(error.message || 'Não foi possível apagar a avaliação.');
+                                    }
+                                });
+
+                                card.querySelector('.btn-reportar-comentario')?.addEventListener('click', async () => {
+                                    if (!ApiClient.isAuthenticated()) {
+                                        alert('Tens de estar autenticado para denunciar uma avaliação.');
+                                        return;
+                                    }
+                                    if (!confirm('Queres denunciar esta avaliação?')) return;
+                                    try {
+                                        await ApiClient.post(`/api/avaliacoes/${a.id}/reportar`, {});
+                                        alert('Avaliação denunciada. O administrador irá analisá-la.');
+                                    } catch (error) {
+                                        alert(error.message || 'Não foi possível denunciar a avaliação.');
                                     }
                                 });
 

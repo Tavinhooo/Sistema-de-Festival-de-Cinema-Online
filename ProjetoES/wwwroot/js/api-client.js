@@ -221,9 +221,8 @@ const ApiClient = (() => {
             const userName = ApiClient.getCurrentUserName() || 'Utilizador';
             const role = ApiClient.getCurrentUserRole();
             const adminLink = role === 'Administrador'
-                ? '<a class="btn btn-register" href="/AdicionarFilme">Importar Filme</a>'
+                ? '<a class="btn btn-register" href="/AdminPanel">Painel Admin</a>'
                 : '';
-
             container.innerHTML = `
                 <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
                     <i class="fas fa-shopping-cart cart-icon"></i>
