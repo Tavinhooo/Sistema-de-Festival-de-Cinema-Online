@@ -414,7 +414,7 @@
     <script src="~/js/api-client.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            ApiClient.renderAuthNavigation('#navActions');
+            ApiClient.renderAuthNavigation('navActions');
 
             // Verifica se é admin
             if (!ApiClient.isAuthenticated() || ApiClient.getCurrentUserRole() !== 'Administrador') {

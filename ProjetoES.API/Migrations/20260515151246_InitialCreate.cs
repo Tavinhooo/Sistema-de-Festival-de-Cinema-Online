@@ -54,7 +54,8 @@ namespace ProjetoES.API.Migrations
                     DataInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DataFim = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Estado = table.Column<int>(type: "integer", nullable: false),
-                    Descricao = table.Column<string>(type: "text", nullable: false)
+                    Descricao = table.Column<string>(type: "text", nullable: false),
+                    Local = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,7 +63,7 @@ namespace ProjetoES.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Visitantes",
+                name: "Utilizadores",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -85,7 +86,7 @@ namespace ProjetoES.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Visitantes", x => x.Id);
+                    table.PrimaryKey("PK_Utilizadores", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,9 +103,9 @@ namespace ProjetoES.API.Migrations
                 {
                     table.PrimaryKey("PK_ListaPessoais", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ListaPessoais_Visitantes_UtilizadorId",
+                        name: "FK_ListaPessoais_Utilizadores_UtilizadorId",
                         column: x => x.UtilizadorId,
-                        principalTable: "Visitantes",
+                        principalTable: "Utilizadores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -122,6 +123,9 @@ namespace ProjetoES.API.Migrations
                     DuracaoMinutos = table.Column<int>(type: "integer", nullable: false),
                     MediaAvaliacao = table.Column<double>(type: "double precision", nullable: false),
                     PosterUrl = table.Column<string>(type: "text", nullable: false),
+                    TrailerUrl = table.Column<string>(type: "text", nullable: false),
+                    Realizador = table.Column<string>(type: "text", nullable: false),
+                    Elenco = table.Column<string>(type: "text", nullable: false),
                     FestivalId = table.Column<int>(type: "integer", nullable: false),
                     ListaPessoalId = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -158,9 +162,9 @@ namespace ProjetoES.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Acessos_Visitantes_ClienteId",
+                        name: "FK_Acessos_Utilizadores_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Visitantes",
+                        principalTable: "Utilizadores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -188,9 +192,9 @@ namespace ProjetoES.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Avaliacoes_Visitantes_ClienteId",
+                        name: "FK_Avaliacoes_Utilizadores_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Visitantes",
+                        principalTable: "Utilizadores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -273,14 +277,14 @@ namespace ProjetoES.API.Migrations
                         principalTable: "Acessos",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_LogsAlteracaoAcessos_Visitantes_AdministradorId",
+                        name: "FK_LogsAlteracaoAcessos_Utilizadores_AdministradorId",
                         column: x => x.AdministradorId,
-                        principalTable: "Visitantes",
+                        principalTable: "Utilizadores",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_LogsAlteracaoAcessos_Visitantes_UtilizadorId",
+                        name: "FK_LogsAlteracaoAcessos_Utilizadores_UtilizadorId",
                         column: x => x.UtilizadorId,
-                        principalTable: "Visitantes",
+                        principalTable: "Utilizadores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -309,9 +313,9 @@ namespace ProjetoES.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Pedidos_Visitantes_UtilizadorId",
+                        name: "FK_Pedidos_Utilizadores_UtilizadorId",
                         column: x => x.UtilizadorId,
-                        principalTable: "Visitantes",
+                        principalTable: "Utilizadores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -502,7 +506,7 @@ namespace ProjetoES.API.Migrations
                 name: "ListaPessoais");
 
             migrationBuilder.DropTable(
-                name: "Visitantes");
+                name: "Utilizadores");
         }
     }
 }

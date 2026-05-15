@@ -4,9 +4,9 @@ using ProjetoES.API.Models;
 using ProjetoES.API.Services;
 
 namespace ProjetoES.API.Controllers;
+
 [ApiController]
 [Route("api/festivais")]
-
 public class FestivaisController : ControllerBase
 {
     private readonly FestivalService _service;
@@ -15,6 +15,7 @@ public class FestivaisController : ControllerBase
     {
         _service = service;
     }
+
     [HttpGet]
     public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais(string? nome, DateTime? dataInicio, DateTime? dataFim, string? local)
     {
@@ -53,7 +54,7 @@ public class FestivaisController : ControllerBase
     [HttpGet("a-decorrer")]
     public ActionResult<List<FestivalResponseDTO>> ObterFestivaisADecorrer()
     {
-        List<FestivalResponseDTO> festivais = _service.ObterFestivaisADecorrer()
+        var festivais = _service.ObterFestivaisADecorrer()
             .Select(festival => new FestivalResponseDTO
             {
                 Id = festival.Id,
@@ -70,7 +71,7 @@ public class FestivaisController : ControllerBase
     [HttpGet("proximos")]
     public ActionResult<List<FestivalResponseDTO>> ObterFestivaisFuturos()
     {
-        List<FestivalResponseDTO> festivais = _service.ObterFestivaisFuturos()
+        var festivais = _service.ObterFestivaisFuturos()
             .Select(festival => new FestivalResponseDTO
             {
                 Id = festival.Id,
@@ -87,7 +88,7 @@ public class FestivaisController : ControllerBase
     [HttpGet("disponiveis-para-filmes")]
     public ActionResult<List<FestivalResponseDTO>> ObterFestivaisDisponiveisParaFilmes()
     {
-        List<FestivalResponseDTO> festivais = _service.ObterFestivaisDisponiveisParaFilmes()
+        var festivais = _service.ObterFestivaisDisponiveisParaFilmes()
             .Select(festival => new FestivalResponseDTO
             {
                 Id = festival.Id,
@@ -106,9 +107,7 @@ public class FestivaisController : ControllerBase
     {
         Festival? festival = _service.ObterFestivalPorId(id);
         if (festival == null)
-        {
             return NotFound();
-        }
 
         return Ok(new FestivalResponseDTO
         {
@@ -120,39 +119,6 @@ public class FestivaisController : ControllerBase
         });
     }
 
-    [HttpGet("decorrer")]
-    public ActionResult<List<FestivalResponseDTO>> ObterFestivaisADecorrer()
-    {
-        var festivais = _service.ObterFestivaisADecorrer()
-            .Select(festival => new FestivalResponseDTO
-            {
-                Id = festival.Id,
-                Nome = festival.Nome,
-                DataInicio = festival.DataInicio,
-                DataFim = festival.DataFim,
-                Estado = festival.Estado.ToString()
-            })
-            .ToList();
-
-        return Ok(festivais);
-    }
-
-    [HttpGet("proximos")]
-    public ActionResult<List<FestivalResponseDTO>> ObterFestivaisProximos()
-    {
-        var festivais = _service.ObterFestivaisFuturos()
-            .Select(festival => new FestivalResponseDTO
-            {
-                Id = festival.Id,
-                Nome = festival.Nome,
-                DataInicio = festival.DataInicio,
-                DataFim = festival.DataFim,
-                Estado = festival.Estado.ToString()
-            })
-            .ToList();
-
-        return Ok(festivais);
-    }
     [HttpPost]
     public ActionResult CriarFestival(Festival festival)
     {
@@ -166,17 +132,18 @@ public class FestivaisController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
     [HttpDelete("{id}")]
     public ActionResult RemoverFestival(int id)
     {
         Festival? festival = _service.ObterFestivalPorId(id);
         if (festival == null)
-        {
             return NotFound();
-        }
+
         _service.RemoverFestival(id);
         return NoContent();
     }
+
     [HttpPut("{id}")]
     public ActionResult AtualizarFestival(int id, Festival festival)
     {

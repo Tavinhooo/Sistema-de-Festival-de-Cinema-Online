@@ -37,6 +37,11 @@ public class FestivalService
         return _repository.ObterFestivalPorId(id);
     }
 
+    public List<Festival> FiltrarFestivais(string? nome = null, DateTime? dataInicio = null, DateTime? dataFim = null, string? local = null)
+    {
+        return _repository.FiltrarFestivais(nome, dataInicio, dataFim, local);
+    }
+
     public void CriarFestival(Festival festival)
     {
         if (string.IsNullOrWhiteSpace(festival.Nome))
@@ -51,6 +56,7 @@ public class FestivalService
 
         _repository.AdicionarFestival(festival);
     }
+
     public void RemoverFestival(int id)
     {
         _repository.DeleteFestival(id);
@@ -73,20 +79,5 @@ public class FestivalService
         existingFestival.DataFim = DateTime.SpecifyKind(festival.DataFim, DateTimeKind.Utc);
 
         _repository.UpdateFestival(existingFestival);
-    }
-
-    public List<Festival> FiltrarFestivais(string? nome = null, DateTime? dataInicio = null, DateTime? dataFim = null, string? local = null)
-    {
-        return _repository.FiltrarFestivais(nome, dataInicio, dataFim, local);
-    }
-
-    public List<Festival> ObterFestivaisADecorrer()
-    {
-        return _repository.ObterFestivaisADecorrer();
-    }
-
-    public List<Festival> ObterFestivaisFuturos()
-    {
-        return _repository.ObterFestivaisFuturos();
     }
 }

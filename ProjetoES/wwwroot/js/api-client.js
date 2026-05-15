@@ -121,6 +121,48 @@ const ApiClient = (() => {
       request("GET", `/api/filmes/tmdb/detalhes/${tmdbId}`),
     createFilme: (filme) => request("POST", "/api/filmes", filme),
 
+    getCurrentUserRole: () => {
+      const token = getAuthToken();
+      if (!token) return null;
+      const claims = decodeTokenClaims(token);
+      if (!claims) return null;
+      return claims.role ?? claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? null;
+    },
+
+    logout: () => {
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("authToken");
+      window.location.href = "/Login";
+    },
+
+    renderAuthNavigation: (containerId) => {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const token = getAuthToken();
+      if (!token) {
+        container.innerHTML = `
+      <a class="btn btn-login" href="/Login">Login</a>
+      <a class="btn btn-register" href="/Register">Registar</a>
+    `;
+        return;
+      }
+
+      const claims = decodeTokenClaims(token);
+      const role = claims?.role ?? null;
+      const name = claims?.name ?? claims?.unique_name ?? "Utilizador";
+
+      const adminLink = role === "Administrador"
+        ? '<a class="btn btn-register" href="/AdminPanel">Painel Admin</a>'
+        : "";
+
+      container.innerHTML = `
+    ${adminLink}
+    <span class="btn btn-login" style="cursor:default;">${name}</span>
+    <button class="btn btn-register" onclick="ApiClient.logout()">Logout</button>
+  `;
+    },
+
     // Cart methods
     getCarts: () => request("GET", "/api/carrinhos"),
     getCartByUser: (userId) => request("GET", `/api/carrinhos/${userId}`),
@@ -172,7 +214,7 @@ const ApiClient = (() => {
         `/api/festivais${queryString ? "?" + queryString : ""}`,
       );
     },
-    getFestivaisADecorrer: () => request("GET", "/api/festivais/decorrer"),
+    getFestivaisADecorrer: () => request("GET", "/api/festivais/a-decorrer"),
     getFestivaisProximos: () => request("GET", "/api/festivais/proximos"),
     getFestivaisDisponiveisParaFilmes: () =>
       request("GET", "/api/festivais/disponiveis-para-filmes"),
