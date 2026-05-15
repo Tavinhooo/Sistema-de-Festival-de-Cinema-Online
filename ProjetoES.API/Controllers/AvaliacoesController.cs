@@ -24,6 +24,7 @@ public class AvaliacoesController : ControllerBase
         {
             Id = a.Id,
             FilmeId = a.FilmeId,
+            ClienteId = a.ClienteId,
             Classificacao = a.Classificacao,
             Comentario = a.Comentario,
             DataAvaliacao = a.DataAvaliacao,

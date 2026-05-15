@@ -186,23 +186,45 @@
                             }
 
                             empty.style.display = 'none';
+                            const currentUserId = ApiClient.getCurrentUserId();
+                            const currentUserRole = ApiClient.getCurrentUserRole();
+
                             avaliacoes.forEach(a => {
-                                row.innerHTML += `
-                                                <div class="review-card">
-                                                    <div class="review-header" style="justify-content: space-between; width: 100%;">
-                                                        <div style="display: flex; align-items: center; gap: 10px;">
-                                                            <span>${a.clienteNome || 'Utilizador'}</span>
-                                                            <i class="far fa-star"></i> ${a.classificacao}
-                                                        </div>
-                                                        <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
-                                                            <i class="fas fa-flag"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="review-body">
-                                                        ${a.comentario || ''}
-                                                    </div>
-                                                </div>
-                                            `;
+                                const podeApagar = currentUserId && (a.clienteId === currentUserId || currentUserRole === 'Administrador');
+
+                                const card = document.createElement('div');
+                                card.className = 'review-card';
+                                card.innerHTML = `
+                            <div class="review-header" style="justify-content: space-between; width: 100%;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span>${a.clienteNome || 'Utilizador'}</span>
+                                    <i class="far fa-star"></i> ${a.classificacao}
+                                </div>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    ${podeApagar ? `<button class="btn-apagar-avaliacao" data-id="${a.id}" style="background:none; border:none; color:#e57373; cursor:pointer;" title="Apagar"><i class="fas fa-trash"></i></button>` : ''}
+                                    <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
+                                        <i class="fas fa-flag"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="review-body">${a.comentario || ''}</div>
+                        `;
+
+                                card.querySelector('.btn-apagar-avaliacao')?.addEventListener('click', async () => {
+                                    if (!confirm('Tens a certeza que queres apagar esta avaliação?')) return;
+                                    try {
+                                        if (currentUserRole === 'Administrador') {
+                                            await ApiClient.delete(`/api/admin/${currentUserId}/avaliacoes/${a.id}`);
+                                        } else {
+                                            await ApiClient.delete(`/api/cliente/avaliacoes/${a.id}`);
+                                        }
+                                        await loadReviews(filmId);
+                                    } catch (error) {
+                                        alert(error.message || 'Não foi possível apagar a avaliação.');
+                                    }
+                                });
+
+                                row.appendChild(card);
                             });
                         } catch (error) {
                             console.error('Erro ao carregar avaliações:', error);
