@@ -198,21 +198,7 @@
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="logo">
-            <i class="fa-brands fa-figma"></i>
-        </div>
-        
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisa Geral">
-            <i class="fas fa-search"></i>
-        </div>
-        <div class="nav-actions" id="navActions">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            <a class="btn btn-signin" asp-page="/Login">Sign in</a>
-            <a class="btn btn-register" asp-page="/Register">Register</a>
-        </div>
-    </header>
+    @await Html.PartialAsync("_Header")
 
     <main class="main-content">
         
