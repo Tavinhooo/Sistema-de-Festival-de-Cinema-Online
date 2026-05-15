@@ -3,6 +3,7 @@ using ProjetoES.API.Repositories;
 using ProjetoES.API.Interfaces;
 
 namespace ProjetoES.API.Services;
+
 public class AvaliacaoService : IAvaliacaoObservable
 {
     private readonly AvaliacaoRepository _repository;
@@ -26,9 +27,9 @@ public class AvaliacaoService : IAvaliacaoObservable
 
     public void CriarAvaliacao(Avaliacao avaliacao)
     {
-        if (avaliacao.Classificacao < 1 || avaliacao.Classificacao > 5)
+        if (avaliacao.Classificacao < 1 || avaliacao.Classificacao > 10)
         {
-            throw new ArgumentException("A Classificacao deve ser entre 1 e 5.");
+            throw new ArgumentException("A Classificacao deve ser entre 1 e 10.");
         }
         avaliacao.DataAvaliacao = DateTime.UtcNow;
         avaliacao.IsReportado = false;
@@ -37,9 +38,9 @@ public class AvaliacaoService : IAvaliacaoObservable
 
     public void EditarAvaliacao(Avaliacao avaliacao)
     {
-        if (avaliacao.Classificacao < 1 || avaliacao.Classificacao > 5)
+        if (avaliacao.Classificacao < 1 || avaliacao.Classificacao > 10)
         {
-            throw new ArgumentException("A Classificacao deve ser entre 1 e 5.");
+            throw new ArgumentException("A Classificacao deve ser entre 1 e 10.");
         }
         _repository.AtualizarAvaliacao(avaliacao);
     }
@@ -63,7 +64,7 @@ public class AvaliacaoService : IAvaliacaoObservable
         _repository.AtualizarAvaliacao(avaliacao);
     }
     //Moderação Admin
-    public List <Avaliacao> ObterAvaliacoesReportadas()
+    public List<Avaliacao> ObterAvaliacoesReportadas()
     {
         return _repository.ObterTodasAvaliacoes()
         .Where(a => a.IsReportado)
