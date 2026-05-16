@@ -129,6 +129,8 @@ Migrations/
  20260515151246_InitialCreate.Designer.cs
  20260515162413_AddLocalToFestival.cs
  20260515162413_AddLocalToFestival.Designer.cs
+ 20260516140526_TornarSessaoIdNullable.cs
+ 20260516140526_TornarSessaoIdNullable.Designer.cs
  AppDbContextModelSnapshot.cs
 Models/
  Acesso.cs

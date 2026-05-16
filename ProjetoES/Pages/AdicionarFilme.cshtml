@@ -303,17 +303,10 @@
         </div>
     </div>
 </div>
-
+@section Scripts {
 <script>
-    // Guarda o tmdbId do filme selecionado
     let selectedTmdbId = null;
-
-    const tmdbResults = document.getElementById('tmdbResults');
-    const loadingResults = document.getElementById('loadingResults');
-    const messageBox = document.getElementById('message');
-    const festivalSelect = document.getElementById('festivalId');
-    const adminContent = document.getElementById('adminContent');
-    const adminGuard = document.getElementById('adminGuard');
+    let tmdbResults, loadingResults, messageBox, festivalSelect, adminContent, adminGuard;
 
     function showAdminOnlyMessage(message) {
         adminContent.style.display = 'none';
@@ -326,13 +319,11 @@
             window.location.href = '/Login';
             return false;
         }
-
         const role = ApiClient.getCurrentUserRole();
         if (role !== 'Administrador') {
             showAdminOnlyMessage('Apenas administradores podem importar filmes.');
             return false;
         }
-
         return true;
     }
 
@@ -346,14 +337,6 @@
         messageBox.textContent = '';
     }
 
-    function getPosterUrl(posterPath) {
-        return posterPath ? `https://image.tmdb.org/t/p/w500${posterPath}` : '/images/default-poster.jpg';
-    }
-
-    function getYear(releaseDate) {
-        return releaseDate ? releaseDate.substring(0, 4) : new Date().getFullYear();
-    }
-
     function getMovieTitle(movie) {
         return movie.titulo || movie.title || movie.nome || movie.name || 'Filme';
     }
@@ -364,6 +347,10 @@
 
     function getMoviePoster(movie) {
         return movie.posterUrlCompleto || (movie.posterPath ? `https://image.tmdb.org/t/p/w500${movie.posterPath}` : null) || movie.poster_path || '/images/default-poster.jpg';
+    }
+
+    function getYear(releaseDate) {
+        return releaseDate ? releaseDate.substring(0, 4) : new Date().getFullYear();
     }
 
     function getMovieReleaseYear(movie) {
@@ -399,10 +386,7 @@
                 const movie = results.find(item => String(item.id) === movieId);
                 if (!movie) return;
 
-                // Guarda o tmdbId do filme selecionado
                 selectedTmdbId = movie.id;
-
-                // Destaca o card selecionado
                 tmdbResults.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
 
@@ -424,19 +408,14 @@
         try {
             const festivals = await ApiClient.getFestivaisDisponiveisParaFilmes();
             festivalSelect.innerHTML = '<option value="">-- Seleciona o festival --</option>';
-
             festivals.forEach(festival => {
                 const option = document.createElement('option');
                 option.value = festival.id;
                 option.textContent = festival.nome;
                 festivalSelect.appendChild(option);
             });
-
-            const queryParams = new URLSearchParams(window.location.search);
-            const festivalId = queryParams.get('festivalId');
-            if (festivalId) {
-                festivalSelect.value = festivalId;
-            }
+            const festivalId = new URLSearchParams(window.location.search).get('festivalId');
+            if (festivalId) festivalSelect.value = festivalId;
         } catch (error) {
             console.error(error);
             festivalSelect.innerHTML = '<option value="">Não foi possível carregar os festivais</option>';
@@ -449,12 +428,10 @@
             showMessage('Escreve um termo de pesquisa primeiro.', 'error');
             return;
         }
-
         clearMessage();
         selectedTmdbId = null;
         loadingResults.style.display = 'block';
         tmdbResults.innerHTML = '';
-
         try {
             const results = await ApiClient.searchTmdbMovies(query);
             renderSearchResults(results);
@@ -469,7 +446,6 @@
     async function submitFilm(event) {
         event.preventDefault();
         clearMessage();
-
         const payload = {
             festivalId: festivalSelect.value ? Number(festivalSelect.value) : null,
             titulo: document.getElementById('titulo').value.trim(),
@@ -479,9 +455,8 @@
             genero: document.getElementById('genero').value.trim(),
             duracaoMinutos: Number(document.getElementById('duracao').value),
             precoBilhete: Number(document.getElementById('precoBilhete').value),
-            tmdbId: selectedTmdbId  // Envia o tmdbId para o backend buscar o trailer
+            tmdbId: selectedTmdbId
         };
-
         try {
             await ApiClient.createFilme(payload);
             showMessage('Filme guardado com sucesso.', 'success');
@@ -495,16 +470,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        if (!ensureAdminAccess()) {
-            return;
-        }
+        // Inicializar variáveis aqui, depois do DOM estar pronto
+        tmdbResults = document.getElementById('tmdbResults');
+        loadingResults = document.getElementById('loadingResults');
+        messageBox = document.getElementById('message');
+        festivalSelect = document.getElementById('festivalId');
+        adminContent = document.getElementById('adminContent');
+        adminGuard = document.getElementById('adminGuard');
+
+        if (!ensureAdminAccess()) return;
 
         document.getElementById('searchBtn').addEventListener('click', searchTmdb);
-        document.getElementById('tmdbQuery').addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                searchTmdb();
-            }
+        document.getElementById('tmdbQuery').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); searchTmdb(); }
         });
         document.getElementById('filmForm').addEventListener('submit', submitFilm);
         document.getElementById('clearBtn').addEventListener('click', () => {
@@ -517,3 +495,4 @@
         loadFestivals();
     });
 </script>
+}

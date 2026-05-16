@@ -35,9 +35,11 @@ namespace ProjetoES.API.Services
             var itensPedido = carrinho.Itens.Select(i => new ItemPedido
             {
                 FilmeId = i.FilmeId,
+                FestivalId = i.FestivalId,
                 Quantidade = i.Quantidade,
                 TipoAcesso = i.TipoAcesso,
-                PrecoUnitario = i.PrecoUnitario
+                PrecoUnitario = i.PrecoUnitario,
+                Status = "Pedido"
             }).ToList();
 
             var pedido = new Pedido

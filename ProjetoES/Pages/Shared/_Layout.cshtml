@@ -49,13 +49,13 @@
     <script src="~/js/api-client.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof ApiClient !== 'undefined' && ApiClient.renderAuthNavigation) {
-                ApiClient.renderAuthNavigation('navActions');
-            }
-        });
-    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof ApiClient !== 'undefined' && ApiClient.renderAuthNavigation) {
+            ApiClient.renderAuthNavigation('navActions');
+        }
+    });
+</script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

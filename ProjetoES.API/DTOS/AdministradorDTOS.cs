@@ -72,7 +72,7 @@ namespace ProjetoES.API.DTOs
         public int UtilizadorId { get; set; }
         public string UtilizadorEmail { get; set; } = string.Empty;
         public DateTime DataPedido { get; set; }
-        public int SessaoId { get; set; }
+        public int? SessaoId { get; set; }
         public int Quantidade { get; set; }
         public string Estado { get; set; } = string.Empty;
         public double PrecoTotal { get; set; }
