@@ -15,7 +15,11 @@ const ApiClient = (() => {
 
     const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
     const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
-    const json = atob(paddedBase64);
+
+    // Corrige encoding UTF-8 dos caracteres especiais (ex: é, ã, ç)
+    const jsonBytes = Uint8Array.from(atob(paddedBase64), c => c.charCodeAt(0));
+    const json = new TextDecoder('utf-8').decode(jsonBytes);
+
     return JSON.parse(json);
   };
 
@@ -142,31 +146,58 @@ const ApiClient = (() => {
       const token = getAuthToken();
       if (!token) {
         container.innerHTML = `
-            <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
-                <i class="fas fa-shopping-cart cart-icon"></i>
-            </a>
-            <a class="btn btn-signin" href="/Login">Sign in</a>
-            <a class="btn btn-register" href="/Register">Register</a>
-        `;
+      <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
+        <i class="fas fa-shopping-cart cart-icon"></i>
+      </a>
+      <a class="btn btn-signin" href="/Login">Sign in</a>
+      <a class="btn btn-register" href="/Register">Register</a>
+    `;
         return;
       }
 
       const claims = decodeTokenClaims(token);
       const role = claims?.role ?? null;
       const name = claims?.name ?? claims?.unique_name ?? 'Utilizador';
+      const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+      const roleConfig = {
+        'Administrador': { color: '#e53935', label: 'Admin', icon: 'fa-shield-alt' },
+        'Cliente': { color: '#f9a825', label: 'Cliente', icon: 'fa-star' },
+        'Membro': { color: '#1e88e5', label: 'Membro', icon: 'fa-user' },
+      };
+      const rc = roleConfig[role] ?? { color: '#888', label: role, icon: 'fa-user' };
 
       const adminLink = role === 'Administrador'
         ? '<a class="btn btn-register" href="/AdminPanel">Painel Admin</a>'
         : '';
 
       container.innerHTML = `
-        <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-        </a>
-        ${adminLink}
-        <span class="btn btn-signin" style="cursor: default; pointer-events: none;">${name}</span>
-        <button type="button" class="btn btn-register" data-logout-btn>Logout</button>
-    `;
+    <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
+      <i class="fas fa-shopping-cart cart-icon"></i>
+    </a>
+    ${adminLink}
+    <a href="/Perfil" class="user-avatar-btn" title="Ver perfil" style="
+      display:inline-flex; align-items:center; gap:8px;
+      text-decoration:none; color:inherit;">
+      <div class="user-avatar" style="
+        width:36px; height:36px; border-radius:50%;
+        background: ${rc.color};
+        display:flex; align-items:center; justify-content:center;
+        font-size:13px; font-weight:800; color:white;
+        border: 2px solid ${rc.color};
+        box-shadow: 0 0 0 2px white, 0 0 0 4px ${rc.color}33;
+        flex-shrink:0;">
+        ${initials}
+      </div>
+      <div style="display:flex; flex-direction:column; line-height:1.2;">
+        <span style="font-size:13px; font-weight:700; color:#1a1a1a;">${name.split(' ')[0]}</span>
+        <span style="font-size:10px; font-weight:700; color:${rc.color}; text-transform:uppercase; letter-spacing:0.05em;">
+          <i class="fas ${rc.icon}" style="font-size:9px;"></i> ${rc.label}
+        </span>
+      </div>
+    </a>
+    <button type="button" class="btn btn-register" data-logout-btn>Logout</button>
+  `;
 
       const logoutBtn = container.querySelector('[data-logout-btn]');
       if (logoutBtn) {

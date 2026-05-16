@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoES.API.DTOs;
+using ProjetoES.API.DTOS;
 using ProjetoES.API.Services;
 using ProjetoES.API.Repositories;
 using System.Security.Claims;
@@ -86,7 +87,25 @@ namespace ProjetoES.API.Controllers
             {
                 var utilizadorId = ObterUtilizadorIdDoToken();
                 var pedidos = _pedidoRepository.ObterPedidosPorMembro(utilizadorId);
-                return Ok(pedidos);
+
+                var resultado = pedidos.Select(p => new HistoricoComprasDTO
+                {
+                    PedidoId = p.Id,
+                    DataPedido = p.DataPedido,
+                    DataPagamento = p.DataPagamento,
+                    PrecoTotal = p.PrecoTotal,
+                    Estado = p.Estado.ToString(),
+                    Itens = p.Itens.Select(i => new ItemPedidoDTO
+                    {
+                        FilmeId = i.FilmeId,
+                        FilmeTitulo = i.Filme?.Titulo ?? "Filme",
+                        TipoAcesso = i.TipoAcesso,
+                        Quantidade = i.Quantidade,
+                        PrecoUnitario = i.PrecoUnitario
+                    }).ToList()
+                }).ToList();
+
+                return Ok(resultado);
             }
             catch (Exception ex)
             {
