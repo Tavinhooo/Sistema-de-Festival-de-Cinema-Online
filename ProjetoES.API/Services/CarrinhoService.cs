@@ -58,35 +58,36 @@ public class CarrinhoService
     public CarrinhoResponseDTO AdicionarItem(int carrinhoId, ItemCarrinhoRequestDTO dto)
     {
         if (dto.Quantidade <= 0)
-        {
             throw new ArgumentException("A quantidade tem de ser superior a zero.");
-        }
 
         if (dto.FestivalId <= 0)
-        {
             throw new ArgumentException("O festival é obrigatório.");
-        }
 
         var carrinho = _repository.ObterCarrinhoPorId(carrinhoId);
         if (carrinho == null)
-        {
             throw new ArgumentException("Carrinho não encontrado.");
-        }
 
         var filme = _filmeRepository.ObterFilmePorId(dto.FilmeId);
         if (filme == null)
-        {
             throw new ArgumentException("Filme inválido.");
-        }
 
-        var precoFestival = _filmeRepository.ObterPrecoBilheteFestival(dto.FilmeId, dto.FestivalId);
+        // Calcular preço via Decorator
+        var filmesDoFestival = _filmeRepository.ObterFilmesPorFestival(dto.FestivalId);
+        var precosBilhetes = filmesDoFestival.Select(f => f.PrecoBilhete).ToList();
+        var precoBilheteFilme = _filmeRepository.ObterPrecoBilheteFestival(dto.FilmeId, dto.FestivalId);
 
-        var itemExistente = carrinho.Itens.FirstOrDefault(i => i.FilmeId == dto.FilmeId && i.FestivalId == dto.FestivalId && i.TipoAcesso == dto.TipoAcesso);
+        var calculator = ProjetoES.API.Pricing.PrecoCalculatorFactory.Criar(dto.TipoAcesso, precoBilheteFilme);
+        var precoCalculado = calculator.CalcularPreco(precosBilhetes);
+
+        var itemExistente = carrinho.Itens.FirstOrDefault(i =>
+            i.FilmeId == dto.FilmeId &&
+            i.FestivalId == dto.FestivalId &&
+            i.TipoAcesso == dto.TipoAcesso);
+
         if (itemExistente != null)
         {
             itemExistente.Quantidade += dto.Quantidade;
-            itemExistente.PrecoUnitario = (double)precoFestival;
-            itemExistente.TipoAcesso = dto.TipoAcesso;
+            itemExistente.PrecoUnitario = (double)precoCalculado;
         }
         else
         {
@@ -95,7 +96,7 @@ public class CarrinhoService
                 FilmeId = dto.FilmeId,
                 FestivalId = dto.FestivalId,
                 Quantidade = dto.Quantidade,
-                PrecoUnitario = (double)precoFestival,
+                PrecoUnitario = (double)precoCalculado,
                 CarrinhoId = carrinho.Id,
                 TipoAcesso = dto.TipoAcesso,
                 Status = "Carrinho"

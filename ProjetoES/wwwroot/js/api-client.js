@@ -179,27 +179,20 @@ const ApiClient = (() => {
 
     // Cart methods
     getCarts: () => request("GET", "/api/carrinhos"),
-    getCartByUser: (userId) => request("GET", `/api/carrinhos/${userId}`),
+    getCartByUser: (userId) =>
+      request("GET", `/api/carrinhos/usuario/${userId}`),
     createCart: (utilizadorId) =>
       request("POST", "/api/carrinhos", { utilizadorId }),
-    addToCart: (
-      carrinhoId,
-      filmeId,
-      quantidade,
-      tipoAcesso,
-      precoUnitario,
-      festivalId,
-    ) =>
-      request("POST", "/api/carrinhos/adicionar-item", {
-        carrinhoId,
+    addToCart: (carrinhoId, filmeId, quantidade, tipoAcesso, precoUnitario, festivalId) =>
+      request("POST", `/api/carrinhos/${carrinhoId}/itens`, {
         filmeId,
+        festivalId,
         quantidade,
         tipoAcesso,
-        precoUnitario,
-        festivalId,
+        precoUnitario
       }),
-    removeFromCart: (itemId) =>
-      request("DELETE", `/api/carrinhos/remover-item/${itemId}`),
+    removeFromCart: (carrinhoId, itemId) =>
+      request("DELETE", `/api/carrinhos/${carrinhoId}/itens/${itemId}`),
 
     // Checkout methods
     createStripeSession: () => request("POST", "/api/checkout/stripe/session"),
@@ -207,6 +200,28 @@ const ApiClient = (() => {
       request("POST", "/api/checkout", { metodoPagamento }),
     getCheckoutHistory: () => request("GET", "/api/checkout/historico"),
     getCheckoutOrder: (id) => request("GET", `/api/checkout/${id}`),
+
+    calcularPreco: (festivalId, tipoAcesso, filmeId = null) => {
+      let url = `/api/festivais/${festivalId}/preco?tipoAcesso=${encodeURIComponent(tipoAcesso)}`;
+      if (filmeId) url += `&filmeId=${filmeId}`;
+      return request('GET', url);
+    },
+
+    comprarAgora: async (userId, festivalId, filmeId, tipoAcesso, quantidade) => {
+      // Cria carrinho se não existir, adiciona item e vai para checkout
+      let carrinho;
+      try { carrinho = await ApiClient.getCartByUser(userId); }
+      catch { carrinho = await ApiClient.createCart(userId); }
+
+      const preco = await ApiClient.calcularPreco(festivalId, tipoAcesso, filmeId);
+      await ApiClient.addToCart(carrinho.id, filmeId, quantidade, tipoAcesso, preco.precoTotal, festivalId);
+      window.location.href = '/Checkout';
+    },
+
+    verificarAcessoFestival: (userId, festivalId) =>
+      request('GET', `/api/acessos/utilizador/${userId}/festival/${festivalId}`),
+    obterFilmesComAcesso: (userId) =>
+      request('GET', `/api/acessos/utilizador/${userId}/filmes`),
 
     // Festivals methods
     getFestivais: () => request("GET", "/api/festivais"),

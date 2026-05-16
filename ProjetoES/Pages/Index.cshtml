@@ -12,12 +12,365 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ProjetoES</title>
-    
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="~/css/index.css" />
     <link rel="stylesheet" href="~/css/filmes.css" />
+
+    <style>
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.55);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .modal-overlay.active {
+                display: flex;
+            }
+
+            .modal-festival {
+                background: white;
+                border-radius: 24px;
+                width: 100%;
+                max-width: 900px;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+            }
+
+            .modal-festival-header {
+                background: linear-gradient(135deg, #251433 0%, #50316f 60%, #6c4aa4 100%);
+                color: white;
+                padding: 28px 32px;
+                border-radius: 24px 24px 0 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .modal-festival-header h2 {
+                font-size: 1.6rem;
+                font-weight: 800;
+                margin-bottom: 6px;
+            }
+
+            .modal-festival-header p {
+                opacity: 0.85;
+                font-size: 14px;
+            }
+
+            .modal-close {
+                background: rgba(255, 255, 255, 0.15);
+                border: none;
+                color: white;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                transition: background 0.2s;
+            }
+
+            .modal-close:hover {
+                background: rgba(255, 255, 255, 0.25);
+            }
+
+            .modal-festival-body {
+                padding: 28px 32px;
+            }
+
+            .modal-access-banner {
+                background: #f0ebfb;
+                border: 1px solid #d4c3f0;
+                border-radius: 14px;
+                padding: 14px 18px;
+                margin-bottom: 24px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #50316f;
+            }
+
+            .modal-access-banner.has-access {
+                background: #edf7ee;
+                border-color: #bfe1c5;
+                color: #185a2f;
+            }
+
+            .modal-films-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .modal-film-card {
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid #ede8f5;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            .modal-film-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            }
+
+            .modal-film-poster {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                display: block;
+                background: #edeaf3;
+            }
+
+            .modal-film-info {
+                padding: 14px;
+            }
+
+            .modal-film-title {
+                font-weight: 700;
+                font-size: 15px;
+                margin-bottom: 4px;
+                color: #1a1a1a;
+            }
+
+            .modal-film-meta {
+                font-size: 12px;
+                color: #888;
+                margin-bottom: 10px;
+            }
+
+            .modal-film-price {
+                font-weight: 800;
+                color: #6b439b;
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+
+            .modal-film-actions {
+                display: flex;
+                gap: 8px;
+            }
+
+            .btn-cart {
+                flex: 1;
+                padding: 9px 12px;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                border: none;
+                background: linear-gradient(135deg, #7b57b8, #50316f);
+                color: white;
+                transition: opacity 0.2s;
+            }
+
+            .btn-cart:hover {
+                opacity: 0.9;
+            }
+
+            .btn-cart:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .btn-ver-filme {
+                flex: 1;
+                padding: 9px 12px;
+                border-radius: 10px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                border: 1px solid #7b57b8;
+                background: white;
+                color: #7b57b8;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                transition: background 0.2s;
+            }
+
+            .btn-ver-filme:hover {
+                background: #f0ebfb;
+            }
+
+            .modal-footer-actions {
+                margin-top: 24px;
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+            }
+
+            .btn-ver-todos {
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+                border: none;
+                background: linear-gradient(135deg, #7b57b8, #50316f);
+                color: white;
+                text-decoration: none;
+                transition: opacity 0.2s;
+            }
+
+            .btn-ver-todos:hover {
+                opacity: 0.9;
+            }
+
+            /* MODAL DETALHE FILME */
+            .modal-filme-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 2000;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .modal-filme-overlay.active {
+                display: flex;
+            }
+
+            .modal-filme {
+                background: white;
+                border-radius: 24px;
+                width: 100%;
+                max-width: 720px;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+            }
+
+            .modal-filme-top {
+                display: flex;
+                gap: 24px;
+                padding: 28px 32px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .modal-filme-poster-grande {
+                width: 160px;
+                height: 230px;
+                object-fit: cover;
+                border-radius: 14px;
+                background: #edeaf3;
+                flex-shrink: 0;
+            }
+
+            .modal-filme-header-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .modal-filme-titulo {
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: #1a1a1a;
+                margin-bottom: 8px;
+                line-height: 1.3;
+            }
+
+            .modal-filme-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+
+            .filme-badge {
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 700;
+                background: #f0ebfb;
+                color: #6b439b;
+            }
+
+            .modal-filme-rating {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 14px;
+                font-weight: 700;
+                color: #f59e0b;
+                margin-bottom: 14px;
+            }
+
+            .modal-filme-preco-destaque {
+                font-size: 22px;
+                font-weight: 800;
+                color: #6b439b;
+            }
+
+            .modal-filme-body {
+                padding: 24px 32px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .filme-section-label {
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: #aaa;
+                margin-bottom: 6px;
+            }
+
+            .filme-section-value {
+                font-size: 14px;
+                color: #333;
+                line-height: 1.6;
+            }
+
+            .modal-filme-close {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                background: rgba(0, 0, 0, 0.1);
+                border: none;
+                color: #333;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s;
+            }
+
+            .modal-filme-close:hover {
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            .modal-filme-filme-wrapper {
+                position: relative;
+            }
+    </style>
 </head>
 
 <body>
@@ -25,13 +378,9 @@
     @await Html.PartialAsync("_Header")
 
     <main class="main-content">
-        
         <section>
             <h2 class="section-title">Festivais a decorrer...</h2>
             <div class="card-row" id="current-festivals">
-                <!-- skeletons to avoid flash of unrelated server content -->
-                <div class="skeleton-card"></div>
-                <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
@@ -44,24 +393,519 @@
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
-                <div class="skeleton-card"></div>
-                <div class="skeleton-card"></div>
             </div>
         </section>
-
     </main>
 
-</body>
+    <!-- MODAL FESTIVAL -->
+    <div class="modal-overlay" id="modalFestival">
+        <div class="modal-festival">
+            <div class="modal-festival-header">
+                <div>
+                    <h2 id="modalFestivalNome">Festival</h2>
+                    <p id="modalFestivalDatas"></p>
+                </div>
+                <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-festival-body">
+                <div id="modalAccessBanner" class="modal-access-banner" style="display:none;"></div>
+
+                <!-- LISTA DE FILMES (informativa) -->
+                <h3 style="font-size:15px; font-weight:700; margin-bottom:14px; color:#333;">
+                    <i class="fas fa-film" style="color:#7b57b8; margin-right:6px;"></i>Filmes incluídos
+                </h3>
+                <div class="modal-films-grid" id="modalFilmsGrid">
+                    <p style="color:#aaa;">A carregar filmes...</p>
+                </div>
+
+                <!-- PAINEL DE COMPRA -->
+                <div id="modalPurchasePanel" style="display:none;">
+                    <hr style="border:none; border-top:1px solid #f0f0f0; margin: 24px 0;">
+
+                    <h3 style="font-size:15px; font-weight:700; margin-bottom:16px; color:#333;">
+                        <i class="fas fa-ticket-alt" style="color:#7b57b8; margin-right:6px;"></i>Escolhe o teu passe
+                    </h3>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+
+                        <!-- Dropdown tipo de passe -->
+                        <div>
+                            <label
+                                style="font-size:13px; font-weight:600; color:#555; display:block; margin-bottom:8px;">Tipo
+                                de Passe</label>
+                                <select id="selectTipoAcesso" style="
+                                    width:100%; padding:12px 16px;
+                                    border-radius:10px; border:1px solid #e0d8f0;
+                                    font-size:14px; font-family:inherit;
+                                    background:#faf8ff; color:#333;
+                                    cursor:pointer; outline:none;
+                                    appearance:none;
+                                    background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><path fill=%22%236b439b%22 d=%22M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z%22/></svg>');
+                                    background-repeat: no-repeat;
+                                    background-position: right 14px center;
+                                    background-size: 12px;
+                                    padding-right: 36px;">
+                                    <option value="Bilhete de Sessão">🎟 Bilhete de Sessão — 1 filme à tua escolha</option>
+                                    <option value="Aluguer Digital">📱 Aluguer Digital — 1 filme, 48h após play</option>
+                                    <option value="Passe Diário">☀️ Passe Diário — todos os filmes, 24h (50% desc.)</option>
+                                    <option value="Passe Completo">⭐ Passe Completo — todos os filmes, festival inteiro (30%
+                                        desc.)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Dropdown escolha de filme (só para bilhete/aluguer) -->
+                                <div id="filmeSelectWrapper">
+                                    <label
+                                    style="font-size:13px; font-weight:600; color:#555; display:block; margin-bottom:8px;">Filme</label>
+                                    <select id="selectFilme" style="
+                                        width:100%; padding:12px 16px;
+                                        border-radius:10px; border:1px solid #e0d8f0;
+                                        font-size:14px; font-family:inherit;
+                                        background:#faf8ff; color:#333;
+                                        cursor:pointer; outline:none;
+                                        appearance:none;
+                                        background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><path fill=%22%236b439b%22 d=%22M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z%22/></svg>');
+                                        background-repeat: no-repeat;
+                                        background-position: right 14px center;
+                                        background-size: 12px;
+                                        padding-right: 36px;">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Descrição do passe selecionado -->
+                            <div id="passeDescricao" style="
+                                background:#f0ebfb; border-radius:12px;
+                                padding:14px 18px; margin-bottom:20px;
+                                font-size:13px; color:#50316f; line-height:1.5;
+                                display:flex; align-items:flex-start; gap:10px;">
+                                <i class="fas fa-info-circle" style="margin-top:2px; flex-shrink:0;"></i>
+                                <span id="passeDescricaoTexto"></span>
+                            </div>
+
+                            <!-- Preço calculado -->
+                            <div style="
+                                background: linear-gradient(135deg, #251433, #50316f);
+                                border-radius:14px; padding:20px 24px;
+                                display:flex; justify-content:space-between; align-items:center;
+                                margin-bottom:20px; color:white;">
+                                <div>
+                                    <div style="font-size:12px; opacity:0.8; margin-bottom:4px;">Total a pagar</div>
+                                    <div id="precoCalculado" style="font-size:28px; font-weight:800;">€—</div>
+                                </div>
+                                <div id="precoDesconto" style="
+                                    background:rgba(255,255,255,0.15);
+                                    border-radius:8px; padding:6px 12px;
+                                    font-size:12px; font-weight:700; display:none;">
+                                </div>
+                            </div>
+
+                            <!-- Botões de ação -->
+                            <div style="display:flex; gap:12px;">
+                                <button id="btnAdicionarCarrinho" onclick="handleAdicionarCarrinho()" style="
+                                    flex:1; padding:14px;
+                                    border-radius:12px; border:2px solid #7b57b8;
+                                    background:white; color:#7b57b8;
+                                    font-size:15px; font-weight:700;
+                                    cursor:pointer; transition:all 0.2s;
+                                    display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+                                </button>
+                                <button id="btnComprarAgora" onclick="handleComprarAgora()" style="
+                                    flex:1; padding:14px;
+                                    border-radius:12px; border:none;
+                                    background: linear-gradient(135deg, #7b57b8, #50316f);
+                                    color:white;
+                                    font-size:15px; font-weight:700;
+                                    cursor:pointer; transition:opacity 0.2s;
+                                    display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    <i class="fas fa-bolt"></i> Comprar Agora
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Botão "ver todos" para quem já tem acesso -->
+                        <div class="modal-footer-actions" id="modalFooterActions"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL DETALHE FILME -->
+            <div class="modal-filme-overlay" id="modalFilme">
+                <div class="modal-filme modal-filme-filme-wrapper">
+                    <button class="modal-filme-close" id="modalFilmeClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <div class="modal-filme-top">
+                        <img class="modal-filme-poster-grande" id="mfPoster" src="" alt="" />
+                        <div class="modal-filme-header-info">
+                            <div class="modal-filme-titulo" id="mfTitulo"></div>
+                            <div class="modal-filme-badges" id="mfBadges"></div>
+                            <div class="modal-filme-rating">
+                                <i class="fas fa-star"></i>
+                                <span id="mfRating"></span>
+                            </div>
+                            <div class="modal-filme-preco-destaque" id="mfPreco"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-filme-body">
+                        <div>
+                            <div class="filme-section-label">Sinopse</div>
+                            <div class="filme-section-value" id="mfSinopse"></div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                            <div>
+                                <div class="filme-section-label">Realizador</div>
+                                <div class="filme-section-value" id="mfRealizador"></div>
+                            </div>
+                            <div>
+                                <div class="filme-section-label">Duração</div>
+                                <div class="filme-section-value" id="mfDuracao"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="filme-section-label">Elenco</div>
+                            <div class="filme-section-value" id="mfElenco"></div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                            <div>
+                                <div class="filme-section-label">Género</div>
+                                <div class="filme-section-value" id="mfGenero"></div>
+                            </div>
+                            <div>
+                                <div class="filme-section-label">Ano</div>
+                                <div class="filme-section-value" id="mfAno"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="~/js/api-client.js"></script>
+            <script src="~/js/api-client.js"></script>
 <script src="~/js/api-client.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         ApiClient.renderAuthNavigation('navActions');
+        renderFestivais();
     });
+
+    let carrinhoId = null;
+    let _festivalAtual = null;
+    let _filmesAtuais = [];
+
+    const PASSES = {
+        'Bilhete de Sessão': {
+            descricao: 'Acesso a <strong>1 filme</strong> à tua escolha do festival. Válido para a sessão escolhida.',
+            precisaFilme: true,
+            desconto: null
+        },
+        'Aluguer Digital': {
+            descricao: 'Acesso a <strong>1 filme</strong> durante <strong>48 horas</strong> após o primeiro play.',
+            precisaFilme: true,
+            desconto: null
+        },
+        'Passe Diário': {
+            descricao: 'Acesso a <strong>todos os filmes</strong> do festival durante <strong>24 horas</strong>. Desconto de 50% sobre o total.',
+            precisaFilme: false,
+            desconto: '50% desc.'
+        },
+        'Passe Completo': {
+            descricao: 'Acesso a <strong>todos os filmes</strong> durante toda a duração do festival. Desconto de 30% sobre o total.',
+            precisaFilme: false,
+            desconto: '30% desc.'
+        }
+    };
+
+    // --- Fechar modal festival ---
+    document.getElementById('modalClose').addEventListener('click', () =>
+        document.getElementById('modalFestival').classList.remove('active'));
+    document.getElementById('modalFestival').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('modalFestival'))
+            document.getElementById('modalFestival').classList.remove('active');
+    });
+
+    // --- Fechar modal filme ---
+    document.getElementById('modalFilmeClose').addEventListener('click', () =>
+        document.getElementById('modalFilme').classList.remove('active'));
+    document.getElementById('modalFilme').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('modalFilme'))
+            document.getElementById('modalFilme').classList.remove('active');
+    });
+
+    // --- Quando muda o tipo de passe ou o filme ---
+    document.getElementById('selectTipoAcesso').addEventListener('change', atualizarPreco);
+    document.getElementById('selectFilme').addEventListener('change', atualizarPreco);
+
+    // --- Modal detalhe filme ---
+    function abrirModalFilme(f) {
+        document.getElementById('mfPoster').src = f.posterUrl || '/images/default-poster.jpg';
+        document.getElementById('mfPoster').alt = f.titulo;
+        document.getElementById('mfTitulo').textContent = f.titulo;
+        document.getElementById('mfSinopse').textContent = f.sinopse || 'Sem sinopse disponível.';
+        document.getElementById('mfRealizador').textContent = f.realizador || '—';
+        document.getElementById('mfElenco').textContent = f.elenco || '—';
+        document.getElementById('mfGenero').textContent = f.genero || '—';
+        document.getElementById('mfAno').textContent = f.ano || '—';
+        document.getElementById('mfDuracao').textContent = f.duracaoMinutos ? `${f.duracaoMinutos} min` : '—';
+        document.getElementById('mfPreco').textContent = `€${Number(f.precoBilhete || 0).toFixed(2)}`;
+
+        const rating = Number(f.mediaAvaliacao || 0);
+        document.getElementById('mfRating').textContent = rating > 0 ? `${rating.toFixed(1)} / 5` : 'Sem avaliação';
+
+        const badges = document.getElementById('mfBadges');
+        badges.innerHTML = '';
+        if (f.genero) badges.innerHTML += `<span class="filme-badge">${f.genero}</span>`;
+        if (f.ano)    badges.innerHTML += `<span class="filme-badge">${f.ano}</span>`;
+        if (f.duracaoMinutos) badges.innerHTML += `<span class="filme-badge"><i class="fas fa-clock"></i> ${f.duracaoMinutos} min</span>`;
+        document.getElementById('modalFilme').classList.add('active');
+    }
+
+    // --- Abrir modal festival ---
+    async function abrirModalFestival(festival) {
+        _festivalAtual = festival;
+        const modal = document.getElementById('modalFestival');
+        const grid = document.getElementById('modalFilmsGrid');
+        const banner = document.getElementById('modalAccessBanner');
+        const purchasePanel = document.getElementById('modalPurchasePanel');
+        const footerActions = document.getElementById('modalFooterActions');
+
+        document.getElementById('modalFestivalNome').textContent = festival.nome || 'Festival';
+        const d1 = new Date(festival.dataInicio).toLocaleDateString('pt-PT');
+        const d2 = new Date(festival.dataFim).toLocaleDateString('pt-PT');
+        document.getElementById('modalFestivalDatas').textContent = `${d1} — ${d2}`;
+
+        grid.innerHTML = '<p style="color:#aaa; padding:20px 0;">A carregar filmes...</p>';
+        banner.style.display = 'none';
+        purchasePanel.style.display = 'none';
+        footerActions.innerHTML = '';
+        modal.classList.add('active');
+
+        const userId = ApiClient.getCurrentUserId();
+        const role = ApiClient.getCurrentUserRole();
+
+        let temAcesso = false;
+        if (userId) {
+            try { temAcesso = await ApiClient.verificarAcessoFestival(userId, festival.id); }
+            catch { temAcesso = false; }
+        }
+
+        // Preparar carrinho
+        if (userId) {
+            try {
+                const c = await ApiClient.getCartByUser(userId);
+                carrinhoId = c.id;
+            } catch {
+                try {
+                    const c = await ApiClient.createCart(userId);
+                    carrinhoId = c.id;
+                } catch (e) { console.error(e); }
+            }
+        }
+
+        // Banner de acesso
+        if (role === 'Administrador') {
+            banner.className = 'modal-access-banner has-access';
+            banner.innerHTML = '<i class="fas fa-shield-alt"></i> Tens acesso total como Administrador.';
+            banner.style.display = 'flex';
+            footerActions.innerHTML = `<a href="/Filmes?festivalId=${festival.id}" class="btn-ver-todos">Ver todos os filmes</a>`;
+        } else if (temAcesso) {
+            banner.className = 'modal-access-banner has-access';
+            banner.innerHTML = '<i class="fas fa-check-circle"></i> Já tens acesso aos filmes deste festival!';
+            banner.style.display = 'flex';
+            footerActions.innerHTML = `<a href="/Filmes?festivalId=${festival.id}" class="btn-ver-todos">Ver todos os filmes</a>`;
+        } else if (!userId) {
+            banner.className = 'modal-access-banner';
+            banner.innerHTML = '<i class="fas fa-lock"></i> <span>Faz <a href="/Login" style="color:#7b57b8; font-weight:700;">login</a> para comprares um passe.</span>';
+            banner.style.display = 'flex';
+        }
+
+        // Carregar filmes
+        try {
+            const filmes = await ApiClient.getFilmesByFestival(festival.id);
+            _filmesAtuais = filmes || [];
+            grid.innerHTML = '';
+
+            if (_filmesAtuais.length === 0) {
+                grid.innerHTML = '<p style="color:#aaa;">Nenhum filme disponível neste festival.</p>';
+                return;
+            }
+
+            const canAccess = temAcesso || role === 'Administrador';
+
+            _filmesAtuais.forEach(f => {
+                const card = document.createElement('div');
+                card.className = 'modal-film-card';
+                card.style.cursor = 'pointer';
+                card.title = `Ver detalhes de ${f.titulo}`;
+
+                card.innerHTML = `
+                    <img class="modal-film-poster"
+                         src="${f.posterUrl || '/images/default-poster.jpg'}"
+                         alt="${f.titulo}"
+                         onerror="this.style.background='#edeaf3'; this.src='';" />
+                    <div class="modal-film-info">
+                        <div class="modal-film-title">${f.titulo}</div>
+                        <div class="modal-film-meta">${f.genero || ''} ${f.ano ? '· ' + f.ano : ''}</div>
+                        <div class="modal-film-price">€${Number(f.precoBilhete || 0).toFixed(2)}</div>
+                        ${canAccess
+                            ? `<a href="/Filme?id=${f.id}&festivalId=${festival.id}" class="btn-ver-filme"
+                                  onclick="event.stopPropagation()">
+                                <i class="fas fa-play"></i> Ver filme
+                               </a>`
+                            : `<span style="font-size:12px; color:#aaa;">
+                                <i class="fas fa-info-circle"></i> Clica para detalhes
+                               </span>`
+                        }
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('a')) abrirModalFilme(f);
+                });
+
+                grid.appendChild(card);
+            });
+
+            // Mostrar painel de compra apenas para quem não tem acesso e está logado
+            if (!temAcesso && role !== 'Administrador' && userId) {
+                preencherSelectFilmes(_filmesAtuais);
+                purchasePanel.style.display = 'block';
+                await atualizarPreco();
+            }
+
+        } catch (e) {
+            console.error(e);
+            grid.innerHTML = '<p style="color:#e57373;">Erro ao carregar filmes.</p>';
+        }
+    }
+
+    function preencherSelectFilmes(filmes) {
+        const sel = document.getElementById('selectFilme');
+        sel.innerHTML = filmes.map(f =>
+            `<option value="${f.id}" data-preco="${f.precoBilhete}">
+                ${f.titulo} — €${Number(f.precoBilhete).toFixed(2)}
+             </option>`
+        ).join('');
+    }
+
+    async function atualizarPreco() {
+        if (!_festivalAtual) return;
+
+        const tipoAcesso = document.getElementById('selectTipoAcesso').value;
+        const passeInfo = PASSES[tipoAcesso];
+        const filmeSelectWrapper = document.getElementById('filmeSelectWrapper');
+        const precoEl = document.getElementById('precoCalculado');
+        const descontoEl = document.getElementById('precoDesconto');
+
+        filmeSelectWrapper.style.display = passeInfo.precisaFilme ? 'block' : 'none';
+        document.getElementById('passeDescricaoTexto').innerHTML = passeInfo.descricao;
+
+        if (passeInfo.desconto) {
+            descontoEl.textContent = passeInfo.desconto;
+            descontoEl.style.display = 'block';
+        } else {
+            descontoEl.style.display = 'none';
+        }
+
+        try {
+            precoEl.textContent = '€...';
+            const filmeId = passeInfo.precisaFilme
+                ? document.getElementById('selectFilme').value
+                : null;
+
+            const resultado = await ApiClient.calcularPreco(
+                _festivalAtual.id,
+                tipoAcesso,
+                filmeId
+            );
+            precoEl.textContent = `€${Number(resultado.precoTotal).toFixed(2)}`;
+        } catch (e) {
+            precoEl.textContent = '€—';
+            console.error('Erro ao calcular preço:', e);
+        }
+    }
+
+    async function handleAdicionarCarrinho() {
+        const userId = ApiClient.getCurrentUserId();
+        if (!userId) { window.location.href = '/Login'; return; }
+
+        const tipoAcesso = document.getElementById('selectTipoAcesso').value;
+        const passeInfo = PASSES[tipoAcesso];
+        const filmeId = passeInfo.precisaFilme
+            ? parseInt(document.getElementById('selectFilme').value)
+            : _filmesAtuais[0]?.id;
+
+        const btn = document.getElementById('btnAdicionarCarrinho');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A adicionar...';
+
+        try {
+            if (!carrinhoId) {
+                const c = await ApiClient.createCart(userId);
+                carrinhoId = c.id;
+            }
+            const resultado = await ApiClient.calcularPreco(
+                _festivalAtual.id,
+                tipoAcesso,
+                passeInfo.precisaFilme ? filmeId : null
+            );
+            await ApiClient.addToCart(carrinhoId, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+
+            btn.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+            btn.style.background = '#edf7ee';
+            btn.style.borderColor = '#4caf50';
+            btn.style.color = '#2e7d32';
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho';
+                btn.style = '';
+            }, 2000);
+        } catch (e) {
+            alert(e.message || 'Não foi possível adicionar ao carrinho.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho';
+        }
+    }
+
+    async function handleComprarAgora() {
+        const userId = ApiClient.getCurrentUserId();
+        if (!userId) { window.location.href = '/Login'; return; }
+
+        const tipoAcesso = document.getElementById('selectTipoAcesso').value;
+        const passeInfo = PASSES[tipoAcesso];
+        const filmeId = passeInfo.precisaFilme
+            ? parseInt(document.getElementById('selectFilme').value)
+            : _filmesAtuais[0]?.id;
+
+        const btn = document.getElementById('btnComprarAgora');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A processar...';
+
+        try {
+            if (!carrinhoId) {
+                const c = await ApiClient.createCart(userId);
+                carrinhoId = c.id;
+            }
+            const resultado = await ApiClient.calcularPreco(
+                _festivalAtual.id,
+                tipoAcesso,
+                passeInfo.precisaFilme ? filmeId : null
+            );
+            await ApiClient.addToCart(carrinhoId, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+            window.location.href = '/Checkout';
+        } catch (e) {
+            alert(e.message || 'Não foi possível processar a compra.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-bolt"></i> Comprar Agora';
+        }
+    }
 
     async function renderFestivais() {
         const currentContainer = document.getElementById('current-festivals');
         const upcomingContainer = document.getElementById('upcoming-festivals');
-
         try {
             const [ongoing, upcoming] = await Promise.all([
                 ApiClient.getFestivaisADecorrer(),
@@ -72,42 +916,36 @@
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.style.cursor = 'pointer';
-                div.title = f.nome || f.nomeFestival || 'Ver filmes deste festival';
-
-                const title = document.createElement('h3');
-                title.textContent = f.nome || f.nomeFestival || 'Festival';
-                const dates = document.createElement('p');
-                const d1 = new Date(f.dataInicio).toLocaleDateString();
-                const d2 = new Date(f.dataFim).toLocaleDateString();
-                dates.textContent = `${d1} — ${d2}`;
-
-                div.appendChild(title);
-                div.appendChild(dates);
-
-                // Redirect to Filmes page with festivalId query parameter
-                const festivalId = f.id ?? f.Id ?? f.festivalId ?? f.idFestival;
-                if (festivalId) {
-                    div.addEventListener('click', () => {
-                        window.location.href = `/Filmes?festivalId=${festivalId}`;
-                    });
-                }
-
+                div.title = `Ver filmes de ${f.nome}`;
+                div.innerHTML = `
+                    <h3 style="font-size:16px; font-weight:700; padding:0 16px; text-align:center;">${f.nome || 'Festival'}</h3>
+                    <p style="font-size:12px; color:#888; margin-top:8px; padding:0 16px; text-align:center;">
+                        ${new Date(f.dataInicio).toLocaleDateString('pt-PT')} — ${new Date(f.dataFim).toLocaleDateString('pt-PT')}
+                    </p>
+                    <div style="margin-top:14px; padding:7px 18px; background:#7b57b8; color:white; border-radius:20px; font-size:13px; font-weight:700;">
+                        Ver festival
+                    </div>
+                `;
+                div.addEventListener('click', () => abrirModalFestival(f));
                 return div;
             }
 
             currentContainer.innerHTML = '';
-            ongoing.forEach(f => currentContainer.appendChild(createCard(f)));
+            ongoing.length === 0
+                ? currentContainer.innerHTML = '<p style="color:#aaa; font-size:14px;">Nenhum festival a decorrer.</p>'
+                : ongoing.forEach(f => currentContainer.appendChild(createCard(f)));
 
             upcomingContainer.innerHTML = '';
-            upcoming.forEach(f => upcomingContainer.appendChild(createCard(f)));
+            upcoming.length === 0
+                ? upcomingContainer.innerHTML = '<p style="color:#aaa; font-size:14px;">Nenhum festival próximo.</p>'
+                : upcoming.forEach(f => upcomingContainer.appendChild(createCard(f)));
+
         } catch (err) {
             console.error('Falha ao carregar festivais', err);
         }
     }
-
-    document.addEventListener('DOMContentLoaded', renderFestivais);
 </script>
 
-</html>
+        </body>
 
-</html>
+    </html>

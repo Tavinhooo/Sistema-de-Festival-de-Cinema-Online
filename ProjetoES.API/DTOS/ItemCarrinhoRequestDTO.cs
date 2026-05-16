@@ -16,4 +16,5 @@ public class ItemCarrinhoRequestDTO
     [Required]
     [StringLength(50)]
     public string TipoAcesso { get; set; } = "Aluguer Digital";
+
 }

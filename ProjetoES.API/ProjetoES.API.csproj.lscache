@@ -56,6 +56,7 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 
 [sourceFiles]
 Controllers/
+ AcessosController.cs
  AdministradorController.cs
  AuthController.cs
  AvaliacoesController.cs
@@ -98,6 +99,7 @@ DTOS/
  ItemCarrinhoResponseDTO.cs
  MembroPerfilDTO.CS
  MoradaDTO.cs
+ PrecoResponseDTO.cs
  SessaoRequestDTO.cs
  SessaoResponseDTO.cs
  StripeCheckoutSessionDTO.cs
@@ -156,6 +158,13 @@ obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  ProjetoES.API.AssemblyInfo.cs
  ProjetoES.API.GlobalUsings.g.cs
+Pricing/
+ IPrecoCalculator.cs
+ PasseCompletoDecorator.cs
+ PrecoBase.cs
+ PrecoCalculatorFactory.cs
+ PrecoDecorator.cs
+ PrecoDiarioDecorator.cs
 Program.cs
 Repositories/
  AcessoRepository.cs

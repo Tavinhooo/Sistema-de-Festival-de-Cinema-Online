@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoES.API.DTOs;
 using ProjetoES.API.Models;
+using ProjetoES.API.Pricing;
+using ProjetoES.API.Repositories;
 using ProjetoES.API.Services;
 
 namespace ProjetoES.API.Controllers;
@@ -10,10 +13,12 @@ namespace ProjetoES.API.Controllers;
 public class FestivaisController : ControllerBase
 {
     private readonly FestivalService _service;
+    private readonly FilmeRepository _filmeRepository;
 
-    public FestivaisController(FestivalService service)
+    public FestivaisController(FestivalService service, FilmeRepository filmeRepository)
     {
         _service = service;
+        _filmeRepository = filmeRepository;
     }
 
     [HttpGet]
@@ -156,6 +161,45 @@ public class FestivaisController : ControllerBase
         {
             _service.AtualizarFestival(id, festival);
             return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // GET api/festivais/{id}/preco?tipoAcesso=Passe Completo&filmeId=3
+    [HttpGet("{id}/preco")]
+    [AllowAnonymous]
+    public ActionResult<PrecoResponseDTO> CalcularPreco(
+        int id,
+        [FromQuery] string tipoAcesso,
+        [FromQuery] int? filmeId = null)
+    {
+        var filmes = _filmeRepository.ObterFilmesPorFestival(id);
+        if (!filmes.Any())
+            return NotFound("Festival sem filmes.");
+
+        var precos = filmes.Select(f => f.PrecoBilhete).ToList();
+
+        decimal precoFilme = 0;
+        if (filmeId.HasValue)
+        {
+            var filme = filmes.FirstOrDefault(f => f.Id == filmeId.Value);
+            if (filme == null) return NotFound("Filme não encontrado neste festival.");
+            precoFilme = filme.PrecoBilhete;
+        }
+
+        try
+        {
+            var calculator = PrecoCalculatorFactory.Criar(tipoAcesso, precoFilme);
+            var total = calculator.CalcularPreco(precos);
+            return Ok(new PrecoResponseDTO
+            {
+                TipoAcesso = tipoAcesso,
+                Descricao = calculator.Descricao,
+                PrecoTotal = total
+            });
         }
         catch (ArgumentException ex)
         {
