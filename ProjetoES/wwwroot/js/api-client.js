@@ -142,25 +142,39 @@ const ApiClient = (() => {
       const token = getAuthToken();
       if (!token) {
         container.innerHTML = `
-      <a class="btn btn-login" href="/Login">Login</a>
-      <a class="btn btn-register" href="/Register">Registar</a>
-    `;
+            <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
+                <i class="fas fa-shopping-cart cart-icon"></i>
+            </a>
+            <a class="btn btn-signin" href="/Login">Sign in</a>
+            <a class="btn btn-register" href="/Register">Register</a>
+        `;
         return;
       }
 
       const claims = decodeTokenClaims(token);
       const role = claims?.role ?? null;
-      const name = claims?.name ?? claims?.unique_name ?? "Utilizador";
+      const name = claims?.name ?? claims?.unique_name ?? 'Utilizador';
 
-      const adminLink = role === "Administrador"
+      const adminLink = role === 'Administrador'
         ? '<a class="btn btn-register" href="/AdminPanel">Painel Admin</a>'
-        : "";
+        : '';
 
       container.innerHTML = `
-    ${adminLink}
-    <span class="btn btn-login" style="cursor:default;">${name}</span>
-    <button class="btn btn-register" onclick="ApiClient.logout()">Logout</button>
-  `;
+        <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
+            <i class="fas fa-shopping-cart cart-icon"></i>
+        </a>
+        ${adminLink}
+        <span class="btn btn-signin" style="cursor: default; pointer-events: none;">${name}</span>
+        <button type="button" class="btn btn-register" data-logout-btn>Logout</button>
+    `;
+
+      const logoutBtn = container.querySelector('[data-logout-btn]');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          ApiClient.clearToken();
+          window.location.href = '/';
+        });
+      }
     },
 
     // Cart methods

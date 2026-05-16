@@ -92,6 +92,20 @@ public class CarrinhosController : ControllerBase
         }
     }
 
+    [HttpPut("{carrinhoId}/itens/{itemId}")]
+    [AllowAnonymous]
+    public ActionResult<CarrinhoResponseDTO> AtualizarQuantidade(int carrinhoId, int itemId, [FromBody] AtualizarItemDTO dto)
+    {
+        try
+        {
+            return Ok(_service.AtualizarQuantidade(carrinhoId, itemId, dto.Quantidade));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpDelete("{id}")]
     [AllowAnonymous]
     public ActionResult RemoverCarrinho(int id)

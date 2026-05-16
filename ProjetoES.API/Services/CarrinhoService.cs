@@ -153,4 +153,22 @@ public class CarrinhoService
             Total = itens.Sum(i => i.Subtotal)
         };
     }
+
+    public CarrinhoResponseDTO AtualizarQuantidade(int carrinhoId, int itemId, int novaQuantidade)
+    {
+        if (novaQuantidade <= 0)
+            throw new ArgumentException("A quantidade tem de ser superior a zero.");
+
+        var carrinho = _repository.ObterCarrinhoPorId(carrinhoId);
+        if (carrinho == null)
+            throw new ArgumentException("Carrinho não encontrado.");
+
+        var item = carrinho.Itens.FirstOrDefault(i => i.Id == itemId);
+        if (item == null)
+            throw new ArgumentException("Item não encontrado no carrinho.");
+
+        item.Quantidade = novaQuantidade;
+        _repository.AtualizarCarrinho(carrinho);
+        return MapearParaResponse(carrinho);
+    }
 }
