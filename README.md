@@ -1,5 +1,6 @@
 # Sistema-de-Festival-de-Cinema-Online
 
+```text
 Sistema-de-Festival-de-Cinema-Online/
 ├── README.md
 ├── Sistema-de-Festival-de-Cinema-Online.sln
@@ -47,3 +48,4 @@ Sistema-de-Festival-de-Cinema-Online/
 │   ├── Properties/
 │   └── wwwroot/
 └── README_STRUCTURE.md
+```
