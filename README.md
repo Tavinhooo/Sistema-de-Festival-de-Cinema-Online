@@ -2,10 +2,6 @@
 
 ## Estrutura por feature (ProjetoES.API)
 
-O projeto ProjetoES.API foi organizado por feature para melhorar navegacao, manutencao e escalabilidade, sem alterar a logica de negocio.
-
-Cada layer foi agrupada pelas mesmas features:
-
 - Controllers/
 - Services/
 - Repositories/
@@ -115,8 +111,3 @@ ProjetoES.API/Factories
 
 - Acessos
 - Listas
-
-### Limpeza final aplicada
-
-- Pastas vazias removidas: Interfaces/Auth, Interfaces/Compras, Models/Shared.
-- Extensao de ficheiro normalizada: MembroPerfilDTO.CS -> MembroPerfilDTO.cs.
