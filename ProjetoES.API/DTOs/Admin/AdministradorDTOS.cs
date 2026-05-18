@@ -56,16 +56,17 @@ namespace ProjetoES.API.DTOs
 
     }
 
-    public class AvaliacaoDTO
-    {
-        public int Id { get; set; }
-        public int ClienteId { get; set; }
-        public int FilmeId { get; set; }
-        public int Classificacao { get; set; }
-        public string Comentario { get; set; } = string.Empty;
-        public DateTime DataAvaliacao { get; set; }
-        public bool IsReportado { get; set; }
-    }
+public class AvaliacaoDTO
+{
+    public int Id { get; set; }
+    public int ClienteId { get; set; }
+    public int FilmeId { get; set; }
+    public int Classificacao { get; set; }
+    public string Comentario { get; set; } = string.Empty;
+    public DateTime DataAvaliacao { get; set; }
+    public bool IsReportado { get; set; }
+    public string? MotivoReporte { get; set; } // ADICIONA ISTO
+}
     public class PedidoDTO
     {
         public int Id { get; set; }

@@ -9,5 +9,7 @@ public class AvaliacaoResponseDTO
     public string? ClienteNome { get; set; }
     public int Classificacao { get; set; }
     public string Comentario { get; set; } = string.Empty;
+
     public DateTime DataAvaliacao { get; set; }
+    public string? MotivoReporte { get; set; }
 }

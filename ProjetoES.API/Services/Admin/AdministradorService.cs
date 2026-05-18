@@ -323,7 +323,8 @@ namespace ProjetoES.API.Services
             Classificacao = a.Classificacao,
             Comentario = a.Comentario,
             DataAvaliacao = a.DataAvaliacao,
-            IsReportado = a.IsReportado
+            IsReportado = a.IsReportado,
+            MotivoReporte = a.MotivoReporte 
         };
 
         private PedidoDTO MapearPedidoParaDTO(Pedido p) => new()

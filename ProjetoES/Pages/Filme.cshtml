@@ -215,13 +215,78 @@
                 alert('Tens de estar autenticado para denunciar uma avaliação.');
                 return;
                 }
-                if (!confirm('Queres denunciar esta avaliação?')) return;
+
+                // Modal de denúncia
+                const motivos = [
+                'Assédio',
+                'Spam',
+                'Conteúdo ofensivo',
+                'Informação falsa',
+                'Outro'
+                ];
+
+                const modalHtml = `
+                <div id="modalReporte" style="
+                position:fixed; inset:0; background:rgba(0,0,0,0.5);
+                z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px;">
+                <div style="
+                background:white; border-radius:20px; padding:28px; width:100%;
+                max-width:420px; box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+                <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:6px;">Denunciar avaliação</h3>
+                <p style="font-size:13px; color:#888; margin-bottom:20px;">Qual o motivo da denúncia?</p>
+                <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+                ${motivos.map(m => `
+                <label style="
+                display:flex; align-items:center; gap:12px; padding:12px 16px;
+                border:1px solid #ede8f5; border-radius:12px; cursor:pointer;
+                transition:background 0.15s;" 
+                onmouseover="this.style.background='#f5f0fc'"
+                onmouseout="this.style.background='white'">
+                <input type="radio" name="motivoReporte" value="${m}" 
+                style="accent-color:#7b57b8; width:16px; height:16px;" />
+                <span style="font-size:14px; font-weight:600;">${m}</span>
+                </label>
+                `).join('')}
+                </div>
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button id="btnCancelarReporte" style="
+                padding:10px 20px; border-radius:10px; border:1px solid #ddd;
+                background:white; font-weight:600; cursor:pointer; font-size:14px;">
+                Cancelar
+                </button>
+                <button id="btnSubmeterReporte" style="
+                padding:10px 20px; border-radius:10px; border:none;
+                background:linear-gradient(135deg,#7b57b8,#50316f);
+                color:white; font-weight:700; cursor:pointer; font-size:14px;">
+                Denunciar
+                </button>
+                </div>
+                </div>
+                </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                const modalReporte = document.getElementById('modalReporte');
+
+                document.getElementById('btnCancelarReporte').addEventListener('click', () => {
+                modalReporte.remove();
+                });
+
+                document.getElementById('btnSubmeterReporte').addEventListener('click', async () => {
+                const selected = document.querySelector('input[name="motivoReporte"]:checked');
+                if (!selected) {
+                alert('Seleciona um motivo antes de denunciar.');
+                return;
+                }
+
                 try {
-                await ApiClient.post(`/api/avaliacoes/${a.id}/reportar`, {});
+                await ApiClient.post(`/api/avaliacoes/${a.id}/reportar`, { motivo: selected.value });
+                modalReporte.remove();
                 alert('Avaliação denunciada. O administrador irá analisá-la.');
                 } catch (error) {
                 alert(error.message || 'Não foi possível denunciar a avaliação.');
                 }
+                });
                 });
 
                 row.appendChild(card);

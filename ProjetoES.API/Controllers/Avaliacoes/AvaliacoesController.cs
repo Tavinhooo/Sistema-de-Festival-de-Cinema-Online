@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoES.API.DTOs;
+using ProjetoES.API.DTOS;
 using ProjetoES.API.Repositories;
 
 namespace ProjetoES.API.Controllers;
@@ -28,6 +29,7 @@ public class AvaliacoesController : ControllerBase
             Classificacao = a.Classificacao,
             Comentario = a.Comentario,
             DataAvaliacao = a.DataAvaliacao,
+            MotivoReporte = a.MotivoReporte,
             ClienteNome = a.Cliente != null ? $"{a.Cliente.PrimeiroNome} {a.Cliente.UltimoNome}" : "Utilizador"
         }).ToList();
 
@@ -35,11 +37,13 @@ public class AvaliacoesController : ControllerBase
     }
 
     [HttpPost("{id}/reportar")]
-    public ActionResult ReportarAvaliacao(int id)
+    public ActionResult ReportarAvaliacao(int id, [FromBody] ReportarAvaliacaoDTO dto)
     {
         var avaliacao = _repository.ObterAvaliacaoPorId(id);
         if (avaliacao == null) return NotFound();
+
         avaliacao.IsReportado = true;
+        avaliacao.MotivoReporte = dto.Motivo;
         _repository.AtualizarAvaliacao(avaliacao);
         return NoContent();
     }
@@ -53,4 +57,5 @@ public class AvaliacoesController : ControllerBase
         _repository.AtualizarAvaliacao(avaliacao);
         return NoContent();
     }
+
 }
