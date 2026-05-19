@@ -1,0 +1,510 @@
+@page
+@{
+    ViewData["Title"] = "Adicionar Filme a Festival";
+}
+
+<style>
+    .film-import-shell {
+        min-height: 100vh;
+        padding: 40px 20px 64px;
+        background:
+            radial-gradient(circle at top left, rgba(122, 92, 188, 0.16), transparent 28%),
+            radial-gradient(circle at top right, rgba(232, 181, 104, 0.14), transparent 24%),
+            linear-gradient(180deg, #faf8ff 0%, #f5f2fa 100%);
+        font-family: 'Inter', sans-serif;
+        color: #1f1b29;
+    }
+
+    .film-import-card {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(119, 89, 177, 0.12);
+        border-radius: 28px;
+        box-shadow: 0 22px 60px rgba(24, 16, 40, 0.12);
+        overflow: hidden;
+    }
+
+    .film-import-hero {
+        padding: 28px 32px;
+        background: linear-gradient(135deg, #251433 0%, #50316f 60%, #6c4aa4 100%);
+        color: white;
+    }
+
+    .film-import-hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 800;
+    }
+
+    .film-import-hero p {
+        margin: 0;
+        max-width: 72ch;
+        opacity: 0.88;
+        line-height: 1.6;
+    }
+
+    .film-import-body {
+        padding: 32px;
+    }
+
+    .toolbar,
+    .form-grid {
+        display: grid;
+        gap: 16px;
+    }
+
+    .toolbar {
+        grid-template-columns: 1fr auto;
+        margin-bottom: 20px;
+    }
+
+    .search-input,
+    .field {
+        width: 100%;
+        border: 1px solid #ddd9e6;
+        border-radius: 16px;
+        background: white;
+        padding: 14px 16px;
+        font: inherit;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .search-input:focus,
+    .field:focus {
+        outline: none;
+        border-color: #7b57b8;
+        box-shadow: 0 0 0 4px rgba(123, 87, 184, 0.14);
+    }
+
+    /* Contentor das Checkboxes */
+    .checkbox-panel {
+        max-height: 220px;
+        overflow-y: auto;
+        border: 1px solid #ddd9e6;
+        border-radius: 16px;
+        background: white;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .checkbox-item:hover {
+        background-color: #f5f2fa;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #7b57b8;
+        cursor: pointer;
+    }
+
+    .checkbox-item span {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #2b2038;
+    }
+
+    .primary-btn,
+    .ghost-btn {
+        border: 0;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .primary-btn {
+        background: linear-gradient(135deg, #7b57b8, #50316f);
+        color: white;
+        box-shadow: 0 16px 24px rgba(79, 48, 111, 0.22);
+    }
+
+    .ghost-btn {
+        background: #f0ebfb;
+        color: #432b66;
+    }
+
+    .primary-btn:hover,
+    .ghost-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .primary-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .notice {
+        display: none;
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        font-weight: 600;
+    }
+
+    .notice.success {
+        display: block;
+        background: #edf7ee;
+        color: #185a2f;
+        border: 1px solid #bfe1c5;
+    }
+
+    .notice.error {
+        display: block;
+        background: #ffecec;
+        color: #872626;
+        border: 1px solid #f4bcbc;
+    }
+
+    .results-row {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        padding: 4px 2px 18px;
+        margin: 18px 0 28px;
+        scroll-snap-type: x proximity;
+    }
+
+    .result-card {
+        min-width: 140px;
+        max-width: 140px;
+        cursor: pointer;
+        scroll-snap-align: start;
+        border-radius: 18px;
+        background: white;
+        border: 1px solid #ece6f5;
+        box-shadow: 0 12px 24px rgba(31, 19, 56, 0.08);
+        overflow: hidden;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .result-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 30px rgba(31, 19, 56, 0.12);
+    }
+
+    .result-card img {
+        display: block;
+        width: 100%;
+        height: 210px;
+        object-fit: cover;
+        background: #f1edf8;
+    }
+
+    .result-card p {
+        margin: 0;
+        padding: 10px 10px 12px;
+        font-size: .85rem;
+        font-weight: 700;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .result-card.selected {
+        border: 2px solid #7b57b8;
+        box-shadow: 0 0 0 4px rgba(123, 87, 184, 0.18);
+    }
+
+    .section-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0 0 12px;
+        color: #2b2038;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .full {
+        grid-column: 1 / -1;
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: .9rem;
+        font-weight: 700;
+        color: #4d425f;
+    }
+
+    .helper {
+        margin-top: 8px;
+        font-size: .84rem;
+        color: #6f6782;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    @@media (max-width: 860px) {
+        .toolbar,
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="film-import-shell">
+    <div class="film-import-card">
+        <div class="film-import-hero">
+            <h1>Adicionar Filme a Festival</h1>
+            <p>Selecione um filme existente no catálogo da base de dados e associe-o a um ou múltiplos festivais em simultâneo.</p>
+        </div>
+
+        <div class="film-import-body">
+            <div id="message" class="notice"></div>
+            <div id="adminGuard" class="helper" style="display:none; padding: 18px 0; font-weight: 700;"></div>
+
+            <div id="adminContent">
+                <div class="toolbar">
+                    <input id="dbQuery" class="search-input" type="search" placeholder="Filtrar filme por título no catálogo interno..." />
+                    <button type="button" class="primary-btn" id="filterBtn">Filtrar</button>
+                </div>
+
+                <h2 class="section-title">Filmes no Catálogo da Base de Dados</h2>
+                <div id="loadingResults" class="helper" style="display:none;">A carregar catálogo...</div>
+                <div id="dbResults" class="results-row"></div>
+
+                <h2 class="section-title">Configurar Associação</h2>
+                <form id="associationForm">
+                    <div class="form-grid">
+                        <div class="full">
+                            <label class="field-label">Selecione o(s) Festival(ais)</label>
+                            <div id="festivalCheckboxes" class="checkbox-panel">
+                                <div class="helper">A carregar festivais...</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="tituloView">Título Selecionado</label>
+                            <input id="tituloView" class="field" type="text" readonly placeholder="Nenhum filme selecionado" style="background: #f4f1fa; color: #666;" />
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="anoView">Ano</label>
+                            <input id="anoView" class="field" type="text" readonly style="background: #f4f1fa; color: #666;" />
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="primary-btn" id="submitBtn" disabled>Associar Filme</button>
+                        <a href="/AdminPanel" class="ghost-btn" style="text-decoration: none; text-align: center;">Voltar ao Painel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="~/js/api-client.js"></script>
+<script>
+    let selectedFilmeId = null;
+    let _todosFilmes = [];
+    let dbResults, loadingResults, messageBox, checkboxContainer, adminContent, adminGuard, submitBtn;
+
+    function showAdminOnlyMessage(message) {
+        adminContent.style.display = 'none';
+        adminGuard.style.display = 'block';
+        adminGuard.textContent = message;
+    }
+
+    function ensureAdminAccess() {
+        if (!ApiClient.isAuthenticated()) {
+            window.location.href = '/Login';
+            return false;
+        }
+        const role = ApiClient.getCurrentUserRole();
+        if (role !== 'Administrador') {
+            showAdminOnlyMessage('Apenas administradores podem associar filmes a festivais.');
+            return false;
+        }
+        return true;
+    }
+
+    function showMessage(text, type) {
+        messageBox.className = `notice ${type}`;
+        messageBox.innerHTML = text;
+    }
+
+    function clearMessage() {
+        messageBox.className = 'notice';
+        messageBox.textContent = '';
+    }
+
+    async function carregarCatalogoCompleto() {
+        loadingResults.style.display = 'block';
+        dbResults.innerHTML = '';
+        try {
+            const filmes = await ApiClient.getFilmes(); 
+            _todosFilmes = filmes || [];
+            renderizarFilmes(_todosFilmes);
+        } catch (error) {
+            console.error(error);
+            dbResults.innerHTML = '<div class="helper" style="color: #c62828;">Erro ao carregar os filmes da base de dados.</div>';
+        } finally {
+            loadingResults.style.display = 'none';
+        }
+    }
+
+    function renderizarFilmes(filmes) {
+        if (filmes.length === 0) {
+            dbResults.innerHTML = '<div class="helper">Nenhum filme disponível no catálogo.</div>';
+            return;
+        }
+
+        dbResults.innerHTML = filmes.map(movie => `
+            <article class="result-card" data-filme-id="${movie.id}">
+                <img src="${movie.posterUrl || '/images/default-poster.jpg'}" alt="${movie.titulo}" onerror="this.src='/images/default-poster.jpg';" />
+                <p title="${movie.titulo}">${movie.titulo}</p>
+            </article>
+        `).join('');
+
+        dbResults.querySelectorAll('.result-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const filmeId = Number(card.dataset.filmeId);
+                const movie = filmes.find(item => item.id === filmeId);
+                if (!movie) return;
+
+                selectedFilmeId = movie.id;
+                dbResults.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+
+                document.getElementById('tituloView').value = movie.titulo;
+                document.getElementById('anoView').value = movie.ano || '—';
+                submitBtn.disabled = false;
+                clearMessage();
+            });
+        });
+    }
+
+    function filtrarFilmesLocais() {
+        const query = document.getElementById('dbQuery').value.toLowerCase().trim();
+        const filtrados = _todosFilmes.filter(f => f.titulo.toLowerCase().includes(query));
+        renderizarFilmes(filtrados);
+    }
+
+    async function loadFestivals() {
+        try {
+            const festivals = await ApiClient.getFestivais(); 
+            checkboxContainer.innerHTML = '';
+            
+            if (!festivals || festivals.length === 0) {
+                checkboxContainer.innerHTML = '<div class="helper">Nenhum festival disponível.</div>';
+                return;
+            }
+
+            const currentFestivalId = new URLSearchParams(window.location.search).get('festivalId');
+
+            festivals.forEach(festival => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-item';
+                
+                // Forçar a ativação se o festivalId vier mapeado na URL
+                const isChecked = currentFestivalId && String(festival.id) === currentFestivalId ? 'checked' : '';
+
+                label.innerHTML = `
+                    <input type="checkbox" value="${festival.id}" ${isChecked}>
+                    <span>${festival.nome}</span>
+                `;
+                checkboxContainer.appendChild(label);
+            });
+        } catch (error) {
+            console.error(error);
+            checkboxContainer.innerHTML = '<div class="helper" style="color: #c62828;">Não foi possível carregar os festivais.</div>';
+        }
+    }
+async function executarAssociacao(event) {
+        event.preventDefault();
+        clearMessage();
+
+        if (!selectedFilmeId) {
+            showMessage('Por favor, selecione um filme do catálogo primeiro.', 'error');
+            return;
+        }
+
+        // Recolher os valores de todas as checkboxes que estão marcadas
+        const checkedBoxes = checkboxContainer.querySelectorAll('input[type="checkbox"]:checked');
+        const selectedFestivalIds = Array.from(checkedBoxes).map(cb => Number(cb.value));
+        
+        if (selectedFestivalIds.length === 0) {
+            showMessage('Por favor, marque pelo menos um festival na lista.', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A associar...';
+
+        const pedidos = selectedFestivalIds.map(festivalId => {
+            return ApiClient.associarFilmeAoFestival(festivalId, selectedFilmeId);
+        });
+
+        try {
+            await Promise.all(pedidos);
+
+            const sufixo = selectedFestivalIds.length === 1 ? 'festival' : 'festivais';
+            showMessage(`Filme associado com sucesso a ${selectedFestivalIds.length} ${sufixo}!`, 'success');
+        
+            selectedFilmeId = null;
+            document.getElementById('associationForm').reset();
+            document.getElementById('tituloView').value = '';
+            document.getElementById('anoView').value = '';
+            submitBtn.disabled = true;
+            dbResults.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+
+        } catch (err) {
+            console.error("Erro na associação de filmes:", err);
+            showMessage(`Erro ao associar o filme. Detalhes: ${err.message || 'O backend rejeitou o pedido.'}`, 'error');
+        } finally {
+            submitBtn.innerHTML = 'Associar Filme';
+            submitBtn.disabled = selectedFilmeId === null;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        dbResults = document.getElementById('dbResults');
+        loadingResults = document.getElementById('loadingResults');
+        messageBox = document.getElementById('message');
+        checkboxContainer = document.getElementById('festivalCheckboxes');
+        adminContent = document.getElementById('adminContent');
+        adminGuard = document.getElementById('adminGuard');
+        submitBtn = document.getElementById('submitBtn');
+
+        if (!ensureAdminAccess()) return;
+
+        document.getElementById('filterBtn').addEventListener('click', filtrarFilmesLocais);
+        document.getElementById('dbQuery').addEventListener('input', filtrarFilmesLocais);
+        document.getElementById('associationForm').addEventListener('submit', executarAssociacao);
+
+        carregarCatalogoCompleto();
+        loadFestivals();
+    });
+</script>
+}

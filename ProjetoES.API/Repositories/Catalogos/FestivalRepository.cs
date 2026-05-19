@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 
@@ -71,12 +72,15 @@ public class FestivalRepository
         }
     }
 
-    public List<Festival> FiltrarFestivais(string? nome = null, DateOnly ? dataInicio = null, DateOnly  ? dataFim = null, string? local = null)
+    public List<Festival> FiltrarFestivais(string? nome = null, string? descricao = null, DateOnly? dataInicio = null, DateOnly? dataFim = null, string? local = null)
     {
         var query = _context.Festivais.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(nome))
             query = query.Where(f => f.Nome.ToLower().Contains(nome.ToLower()));
+            
+        if (!string.IsNullOrWhiteSpace(descricao))
+            query = query.Where(f => f.Descricao.ToLower().Contains(descricao.ToLower()));
 
         if (dataInicio.HasValue)
             query = query.Where(f => f.DataInicio >= dataInicio.Value);
@@ -88,5 +92,22 @@ public class FestivalRepository
             query = query.Where(f => f.Local.ToLower().Contains(local.ToLower()));
 
         return query.OrderBy(f => f.DataInicio).ToList();
+    }
+
+    public void AssociarFilmeAoFestival(int festivalId, Filme filme)
+    {
+        var festival = _context.Festivais
+            .Include(f => f.Filmes) 
+            .FirstOrDefault(f => f.Id == festivalId);
+
+        if (festival == null)
+            throw new ArgumentException("Festival não encontrado.");
+
+        // Verifica se a relação já existe na base de dados para não duplicar
+        if (!festival.Filmes.Any(filmeNoFestival => filmeNoFestival.Id == filme.Id))
+        {
+            festival.Filmes.Add(filme);
+            _context.SaveChanges();
+        }
     }
 }

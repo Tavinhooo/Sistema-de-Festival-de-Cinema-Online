@@ -4,6 +4,7 @@ namespace ProjetoES.API.DTOs
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
+        public string Descricao { get; set; } = string.Empty;
         public DateOnly DataInicio { get; set; }
         public DateOnly DataFim { get; set; }
         public string Estado { get; set; } = string.Empty;

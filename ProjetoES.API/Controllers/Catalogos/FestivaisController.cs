@@ -22,17 +22,18 @@ public class FestivaisController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais(string? nome, DateOnly? dataInicio, DateOnly? dataFim, string? local)
+    public ActionResult<List<FestivalResponseDTO>> ObterTodosFestivais(string? nome, string? descricao, DateOnly? dataInicio, DateOnly? dataFim, string? local)
     {
         List<FestivalResponseDTO> festivais;
 
-        if (!string.IsNullOrWhiteSpace(nome) || dataInicio.HasValue || dataFim.HasValue || !string.IsNullOrWhiteSpace(local))
+        if (!string.IsNullOrWhiteSpace(nome) || !string.IsNullOrWhiteSpace(descricao) || dataInicio.HasValue || dataFim.HasValue || !string.IsNullOrWhiteSpace(local))
         {
-            festivais = _service.FiltrarFestivais(nome, dataInicio, dataFim, local)
+            festivais = _service.FiltrarFestivais(nome, descricao, dataInicio, dataFim, local)
                 .Select(festival => new FestivalResponseDTO
                 {
                     Id = festival.Id,
                     Nome = festival.Nome,
+                    Descricao = festival.Descricao,
                     DataInicio = festival.DataInicio,
                     DataFim = festival.DataFim,
                     Estado = festival.Estado.ToString(),
@@ -47,6 +48,7 @@ public class FestivaisController : ControllerBase
                 {
                     Id = festival.Id,
                     Nome = festival.Nome,
+                    Descricao = festival.Descricao,
                     DataInicio = festival.DataInicio,
                     DataFim = festival.DataFim,
                     Estado = festival.Estado.ToString(),
@@ -66,6 +68,7 @@ public class FestivaisController : ControllerBase
             {
                 Id = festival.Id,
                 Nome = festival.Nome,
+                Descricao = festival.Descricao,
                 DataInicio = festival.DataInicio,
                 DataFim = festival.DataFim,
                 Estado = festival.Estado.ToString(),
@@ -84,6 +87,7 @@ public class FestivaisController : ControllerBase
             {
                 Id = festival.Id,
                 Nome = festival.Nome,
+                Descricao = festival.Descricao,
                 DataInicio = festival.DataInicio,
                 DataFim = festival.DataFim,
                 Estado = festival.Estado.ToString(),
@@ -102,6 +106,7 @@ public class FestivaisController : ControllerBase
             {
                 Id = festival.Id,
                 Nome = festival.Nome,
+                Descricao = festival.Descricao,
                 DataInicio = festival.DataInicio,
                 DataFim = festival.DataFim,
                 Estado = festival.Estado.ToString(),
@@ -123,6 +128,7 @@ public class FestivaisController : ControllerBase
         {
             Id = festival.Id,
             Nome = festival.Nome,
+            Descricao = festival.Descricao,
             DataInicio = festival.DataInicio,
             DataFim = festival.DataFim,
             Estado = festival.Estado.ToString()
@@ -167,6 +173,21 @@ public class FestivaisController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost("{id}/associar-filme")]
+public ActionResult AssociarFilmeAoFestival(int id, [FromBody] int filmeId)
+{
+    try
+    {
+        _service.AssociarFilmeAoFestival(id, filmeId); 
+        
+        return Ok(new { message = "Filme associado com sucesso!" });
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
 
     // GET api/festivais/{id}/preco?tipoAcesso=Passe Completo&filmeId=3
     [HttpGet("{id}/preco")]

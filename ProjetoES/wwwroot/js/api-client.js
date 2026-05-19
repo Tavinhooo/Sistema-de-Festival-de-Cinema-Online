@@ -10,15 +10,17 @@ const ApiClient = (() => {
   const TOKEN_KEYS = ["authToken"]; // localStorage/sessionStorage keys to check
 
   const decodeTokenClaims = (token) => {
-    const payload = token?.split('.')[1];
+    const payload = token?.split(".")[1];
     if (!payload) return null;
 
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-    const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const paddedBase64 = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
 
     // Corrige encoding UTF-8 dos caracteres especiais (ex: é, ã, ç)
-    const jsonBytes = Uint8Array.from(atob(paddedBase64), c => c.charCodeAt(0));
-    const json = new TextDecoder('utf-8').decode(jsonBytes);
+    const jsonBytes = Uint8Array.from(atob(paddedBase64), (c) =>
+      c.charCodeAt(0),
+    );
+    const json = new TextDecoder("utf-8").decode(jsonBytes);
 
     return JSON.parse(json);
   };
@@ -130,7 +132,13 @@ const ApiClient = (() => {
       if (!token) return null;
       const claims = decodeTokenClaims(token);
       if (!claims) return null;
-      return claims.role ?? claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? null;
+      return (
+        claims.role ??
+        claims[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] ??
+        null
+      );
     },
 
     logout: () => {
@@ -157,19 +165,33 @@ const ApiClient = (() => {
 
       const claims = decodeTokenClaims(token);
       const role = claims?.role ?? null;
-      const name = claims?.name ?? claims?.unique_name ?? 'Utilizador';
-      const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      const name = claims?.name ?? claims?.unique_name ?? "Utilizador";
+      const initials = name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
 
       const roleConfig = {
-        'Administrador': { color: '#e53935', label: 'Admin', icon: 'fa-shield-alt' },
-        'Cliente': { color: '#f9a825', label: 'Cliente', icon: 'fa-star' },
-        'Membro': { color: '#1e88e5', label: 'Membro', icon: 'fa-user' },
+        Administrador: {
+          color: "#e53935",
+          label: "Admin",
+          icon: "fa-shield-alt",
+        },
+        Cliente: { color: "#f9a825", label: "Cliente", icon: "fa-star" },
+        Membro: { color: "#1e88e5", label: "Membro", icon: "fa-user" },
       };
-      const rc = roleConfig[role] ?? { color: '#888', label: role, icon: 'fa-user' };
+      const rc = roleConfig[role] ?? {
+        color: "#888",
+        label: role,
+        icon: "fa-user",
+      };
 
-      const adminLink = role === 'Administrador'
-        ? '<a class="btn btn-register" href="/AdminPanel">Painel Admin</a>'
-        : '';
+      const adminLink =
+        role === "Administrador"
+          ? '<a class="btn btn-register" href="/AdminPanel">Painel Admin</a>'
+          : "";
 
       container.innerHTML = `
     <a class="cart-link" href="/Carrinho" aria-label="Abrir carrinho">
@@ -190,7 +212,7 @@ const ApiClient = (() => {
         ${initials}
       </div>
       <div style="display:flex; flex-direction:column; line-height:1.2;">
-        <span style="font-size:13px; font-weight:700; color:#1a1a1a;">${name.split(' ')[0]}</span>
+        <span style="font-size:13px; font-weight:700; color:#1a1a1a;">${name.split(" ")[0]}</span>
         <span style="font-size:10px; font-weight:700; color:${rc.color}; text-transform:uppercase; letter-spacing:0.05em;">
           <i class="fas ${rc.icon}" style="font-size:9px;"></i> ${rc.label}
         </span>
@@ -199,11 +221,11 @@ const ApiClient = (() => {
     <button type="button" class="btn btn-register" data-logout-btn>Logout</button>
   `;
 
-      const logoutBtn = container.querySelector('[data-logout-btn]');
+      const logoutBtn = container.querySelector("[data-logout-btn]");
       if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener("click", () => {
           ApiClient.clearToken();
-          window.location.href = '/';
+          window.location.href = "/";
         });
       }
     },
@@ -214,13 +236,20 @@ const ApiClient = (() => {
       request("GET", `/api/carrinhos/usuario/${userId}`),
     createCart: (utilizadorId) =>
       request("POST", "/api/carrinhos", { utilizadorId }),
-    addToCart: (carrinhoId, filmeId, quantidade, tipoAcesso, precoUnitario, festivalId) =>
+    addToCart: (
+      carrinhoId,
+      filmeId,
+      quantidade,
+      tipoAcesso,
+      precoUnitario,
+      festivalId,
+    ) =>
       request("POST", `/api/carrinhos/${carrinhoId}/itens`, {
         filmeId,
         festivalId,
         quantidade,
         tipoAcesso,
-        precoUnitario
+        precoUnitario,
       }),
     removeFromCart: (carrinhoId, itemId) =>
       request("DELETE", `/api/carrinhos/${carrinhoId}/itens/${itemId}`),
@@ -235,24 +264,47 @@ const ApiClient = (() => {
     calcularPreco: (festivalId, tipoAcesso, filmeId = null) => {
       let url = `/api/festivais/${festivalId}/preco?tipoAcesso=${encodeURIComponent(tipoAcesso)}`;
       if (filmeId) url += `&filmeId=${filmeId}`;
-      return request('GET', url);
+      return request("GET", url);
     },
 
-    comprarAgora: async (userId, festivalId, filmeId, tipoAcesso, quantidade) => {
+    comprarAgora: async (
+      userId,
+      festivalId,
+      filmeId,
+      tipoAcesso,
+      quantidade,
+    ) => {
       // Cria carrinho se não existir, adiciona item e vai para checkout
       let carrinho;
-      try { carrinho = await ApiClient.getCartByUser(userId); }
-      catch { carrinho = await ApiClient.createCart(userId); }
+      try {
+        carrinho = await ApiClient.getCartByUser(userId);
+      } catch {
+        carrinho = await ApiClient.createCart(userId);
+      }
 
-      const preco = await ApiClient.calcularPreco(festivalId, tipoAcesso, filmeId);
-      await ApiClient.addToCart(carrinho.id, filmeId, quantidade, tipoAcesso, preco.precoTotal, festivalId);
-      window.location.href = '/Checkout';
+      const preco = await ApiClient.calcularPreco(
+        festivalId,
+        tipoAcesso,
+        filmeId,
+      );
+      await ApiClient.addToCart(
+        carrinho.id,
+        filmeId,
+        quantidade,
+        tipoAcesso,
+        preco.precoTotal,
+        festivalId,
+      );
+      window.location.href = "/Checkout";
     },
 
     verificarAcessoFestival: (userId, festivalId) =>
-      request('GET', `/api/acessos/utilizador/${userId}/festival/${festivalId}`),
+      request(
+        "GET",
+        `/api/acessos/utilizador/${userId}/festival/${festivalId}`,
+      ),
     obterFilmesComAcesso: (userId) =>
-      request('GET', `/api/acessos/utilizador/${userId}/filmes`),
+      request("GET", `/api/acessos/utilizador/${userId}/filmes`),
 
     // Festivals methods
     getFestivais: () => request("GET", "/api/festivais"),
@@ -297,10 +349,27 @@ const ApiClient = (() => {
       const claims = decodeTokenClaims(token);
       if (!claims) return null;
 
-      const userId = claims.sub ?? claims.nameid ?? claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+      const userId =
+        claims.sub ??
+        claims.nameid ??
+        claims[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+        ];
       const parsed = Number(userId);
       return Number.isFinite(parsed) ? parsed : null;
-    }
+    },
+
+    // Film-Festival association methods
+    vincularFilmeAoFestival: (filmeId, festivalId, precoBilhete) =>
+      request("PUT", `/api/filmes/${filmeId}/festival/${festivalId}`, {
+        precoBilhete,
+      }),
+    desvincularFilmeDeFestival: (filmeId, festivalId) =>
+      request("DELETE", `/api/filmes/${filmeId}/festival/${festivalId}`),
+    getFestivaisDisponiveis: () =>
+      request("GET", "/api/festivais/disponiveis-para-filmes"),
+    associarFilmeAoFestival: (festivalId, filmeId) => 
+      request("POST", `/api/festivais/${festivalId}/associar-filme`, filmeId),
   };
 })();
 
