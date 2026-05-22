@@ -803,7 +803,8 @@
                     `;
 
                     card.addEventListener('click', () => {
-                        window.location.href = `/Filme?id=${f.id}&festivalId=${festival.id}`;
+                        const filmId = f.id ?? f.filmeId ?? f.FilmeId;
+                        window.location.href = `/Filme?id=${filmId}&festivalId=${festival.id}`;
                     });
 
                     grid.appendChild(card);

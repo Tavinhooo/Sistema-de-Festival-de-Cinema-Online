@@ -250,7 +250,7 @@
 
     <main class="main-content">
         <div class="festival-actions-bar">
-            <a href="/Festivais" class="festival-page-link">
+            <a href="/Festivais" class="festival-page-link" id="festivalPageLink" style="display:none;">
                 <i class="fas fa-list"></i>
                 Ver todos os festivais
             </a>
@@ -401,6 +401,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             ApiClient.renderAuthNavigation('navActions');
+            const festivalPageLink = document.getElementById('festivalPageLink');
+            if (festivalPageLink) {
+                festivalPageLink.style.display = ApiClient.getCurrentUserRole() === 'Administrador' ? 'inline-flex' : 'none';
+            }
             renderFestivais();
         });
 
@@ -547,7 +551,8 @@
                     `;
 
                     card.addEventListener('click', () => {
-                        window.location.href = `/Filme?id=${f.id}&festivalId=${festival.id}`;
+                        const filmId = f.id ?? f.filmeId ?? f.FilmeId;
+                        window.location.href = `/Filme?id=${filmId}&festivalId=${festival.id}`;
                     });
 
                     grid.appendChild(card);
@@ -690,7 +695,7 @@
                             Ver festival
                         </div>
                     `;
-                    div.addEventListener('click', () => abrirModalFestival(f));
+                    div.addEventListener('click', () => window.location.href = `/Filmes?festivalId=${f.id}`);
                     return div;
                 }
 

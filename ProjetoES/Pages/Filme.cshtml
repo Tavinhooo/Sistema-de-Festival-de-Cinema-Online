@@ -305,21 +305,19 @@
                 const userId = ApiClient.getCurrentUserId();
                 const role = ApiClient.getCurrentUserRole();
 
-                if (role !== 'Administrador') {
-                if (!userId) {
-                window.location.href = '/Login';
-                return;
-                }
+                if (role !== 'Administrador' && !userId) {
+                // Instead of redirecting away, show a small banner prompting login so
+                // the user stays on the film details page and can be guided to buy a pass.
                 try {
-                const temAcesso = await ApiClient.verificarAcessoFestival(userId, Number(festivalId));
-                if (!temAcesso) {
-                window.location.href = '/';
-                return;
-                }
-                } catch (e) {
-                window.location.href = '/';
-                return;
-                }
+                    if (!document.getElementById('filmAccessBanner')) {
+                        const banner = document.createElement('div');
+                        banner.id = 'filmAccessBanner';
+                        banner.style.cssText = 'background:#f0ebfb; border:1px solid #d4c3f0; padding:12px 16px; text-align:center; font-weight:700; color:#50316f; position:relative;';
+                        banner.innerHTML = 'Faz <a href="/Login" style="color:#7b57b8; font-weight:700;">login</a> para comprares um passe e veres os filmes deste festival.';
+                        document.body.insertBefore(banner, document.body.firstChild);
+                    }
+                } catch (e) { console.error('Erro ao mostrar banner de acesso:', e); }
+                // do not return; continue loading film details (we'll show a CTA instead)
                 }
                 }
 
@@ -343,7 +341,7 @@
                 const row = document.getElementById('relatedMovies');
                 row.innerHTML = '';
 
-                const outros = filmes.filter(f => f.id !== Number(currentFilmId));
+                const outros = filmes.filter(f => Number(f.id ?? f.filmeId ?? f.FilmeId) !== Number(currentFilmId));
 
                 if (outros.length === 0) {
                 row.innerHTML = '<p style="color:#888; font-size:14px;">Não há outros filmes neste festival.</p>';
@@ -365,7 +363,8 @@
                 </div>
                 `;
                 card.addEventListener('click', () => {
-                window.location.href = `/Filme?id=${f.id}&festivalId=${festivalId}`;
+                const otherFilmId = f.id ?? f.filmeId ?? f.FilmeId;
+                window.location.href = `/Filme?id=${otherFilmId}&festivalId=${festivalId}`;
                 });
                 row.appendChild(card);
                 });

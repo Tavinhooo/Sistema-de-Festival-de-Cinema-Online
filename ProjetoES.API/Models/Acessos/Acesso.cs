@@ -5,8 +5,6 @@ namespace ProjetoES.API.Models
     public class Acesso
     {
         public int Id { get; set; }
-
-        // Fix: navigation property adicionada
         public int ClienteId { get; set; }
         public virtual Utilizador? Cliente { get; set; }
 

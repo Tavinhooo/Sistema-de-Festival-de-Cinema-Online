@@ -139,7 +139,7 @@
 
                 ApiClient.setToken(token, true); // use localStorage
                 showRegisterMessage('Conta criada com sucesso. A redirecionar...', false);
-                setTimeout(() => window.location.href = '/Checkout', 1500);
+                setTimeout(() => window.location.href = '/', 1500);
             } catch (error) {
                 showRegisterMessage(error.message || 'Erro ao criar conta.', true);
             }

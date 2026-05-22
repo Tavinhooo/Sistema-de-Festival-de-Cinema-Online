@@ -31,6 +31,34 @@
             </button>
         </div>
 
+        <section id="purchasePanel" style="display:none; margin-bottom:24px; padding:14px 18px; border-radius:16px; background:#f6f1ff; border:1px solid #e2d6f5; box-shadow:0 10px 24px rgba(107,67,155,0.08);">
+            <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:12px; flex:1 1 260px; min-width:240px;">
+                    <div style="display:flex; flex-direction:column; gap:2px; min-width:170px;">
+                        <span style="font-size:12px; font-weight:800; color:#6b439b; text-transform:uppercase; letter-spacing:0.08em;">Escolhe o teu passe</span>
+                        <select id="selectTipoAcesso" style="width:100%; min-width:170px; padding:11px 14px; border-radius:12px; border:1px solid #dccff0; background:white; color:#251433; font-size:14px; font-family:inherit; cursor:pointer; outline:none;">
+                            <option value="" selected>Escolhe um bilhete</option>
+                            <option value="Passe Diário">Passe Diário</option>
+                            <option value="Passe Completo">Passe Completo</option>
+                        </select>
+                        <div id="passeDescricaoTexto" style="font-size:12px; line-height:1.5; color:#6d5a84; min-height:36px; margin-top:2px;">Seleciona um tipo de bilhete para ver a descrição.</div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:2px; min-width:110px;">
+                        <span style="font-size:12px; font-weight:800; color:#6b439b; text-transform:uppercase; letter-spacing:0.08em;">Total a pagar</span>
+                        <strong id="precoCalculado" style="font-size:22px; color:#251433; line-height:1;">€—</strong>
+                    </div>
+                </div>
+
+                <button id="btnAdicionarCarrinho" onclick="handleAdicionarCarrinho()" style="padding:12px 18px; border-radius:12px; border:none; background:linear-gradient(135deg, #7b57b8, #50316f); color:white; font-size:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap;">
+                    <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+                </button>
+                <button id="btnComprarAgora" onclick="handleComprarAgora()" style="padding:12px 18px; border-radius:12px; border:1px solid #d7c4ee; background:white; color:#50316f; font-size:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap;">
+                    <i class="fas fa-bolt"></i> Comprar Agora
+                </button>
+            </div>
+        </section>
+
         <div class="card-grid" id="films-grid">
             <p id="films-loading">A carregar filmes...</p>
         </div>
@@ -40,152 +68,312 @@
     <script src="~/js/api-client.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        ApiClient.renderAuthNavigation('navActions');
+            ApiClient.renderAuthNavigation('navActions');
         });
 
-        // Guard de acesso ao festival
-        const festivalIdGuard = getQueryParam('festivalId');
-        if (festivalIdGuard) {
-        const userId = ApiClient.getCurrentUserId();
-        const role = ApiClient.getCurrentUserRole();
+        let carrinhoId = null;
+        let _festivalAtual = null;
+        let _filmesAtuais = [];
+        let _estadoAcesso = { userId: null, role: null, temAcesso: false };
 
-        if (role !== 'Administrador') {
-        if (!userId) {
-        window.location.href = '/Login';
-        return;
-        }
-        try {
-        const temAcesso = await ApiClient.verificarAcessoFestival(userId, Number(festivalIdGuard));
-        if (!temAcesso) {
-        window.location.href = `/?festivalId=${festivalIdGuard}`;
-        return;
-        }
-        } catch (e) {
-        window.location.href = '/';
-        return;
-        }
-        }
-        }
+        const PASSES = {
+            'Passe Diário': {
+                desconto: '50% desc.'
+            },
+            'Passe Completo': {
+                desconto: '30% desc.'
+            }
+        };
 
         function getQueryParam(name) {
-        const params = new URLSearchParams(window.location.search);
-        return params.get(name);
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
         }
 
         function getFieldValue(source, keys, fallback = '') {
-        for (const key of keys) {
-        const value = source?.[key];
-        if (value !== undefined && value !== null && value !== '') {
-        return value;
-        }
-        }
+            for (const key of keys) {
+                const value = source?.[key];
+                if (value !== undefined && value !== null && value !== '') {
+                    return value;
+                }
+            }
 
-        return fallback;
+            return fallback;
         }
 
         function getPoster(movie) {
-        return getFieldValue(movie, ['posterUrl', 'PosterUrl', 'posterUrlCompleto', 'PosterUrlCompleto', 'poster_path', 'posterPath'], '/images/default-poster.jpg');
+            return getFieldValue(movie, ['posterUrl', 'PosterUrl', 'posterUrlCompleto', 'PosterUrlCompleto', 'poster_path', 'posterPath'], '/images/default-poster.jpg');
         }
 
         function getTitle(movie) {
-        return getFieldValue(movie, ['titulo', 'Titulo', 'nome', 'Nome', 'title', 'Title'], 'Filme');
+            return getFieldValue(movie, ['titulo', 'Titulo', 'nome', 'Nome', 'title', 'Title'], 'Filme');
         }
 
         function getFestivalName(movie) {
-        return getFieldValue(movie, ['festivalNome', 'FestivalNome', 'nomeFestival', 'NomeFestival', 'festivalName', 'FestivalName']);
+            return getFieldValue(movie, ['festivalNome', 'FestivalNome', 'nomeFestival', 'NomeFestival', 'festivalName', 'FestivalName']);
         }
 
         function getFestivalId(movie, fallbackFestivalId) {
-        const value = getFieldValue(movie, ['festivalId', 'FestivalId', 'idFestival', 'IdFestival'], fallbackFestivalId ?? null);
-        return value ? Number(value) : null;
+            const value = getFieldValue(movie, ['festivalId', 'FestivalId', 'idFestival', 'IdFestival'], fallbackFestivalId ?? null);
+            return value ? Number(value) : null;
+        }
+
+        function getFilmId(movie) {
+            const value = getFieldValue(movie, ['id', 'Id', 'filmeId', 'FilmeId'], null);
+            return value ? Number(value) : null;
+        }
+
+        function getCurrentAccess() {
+            return {
+                userId: ApiClient.getCurrentUserId(),
+                role: ApiClient.getCurrentUserRole()
+            };
+        }
+
+        async function getFestivalAccessState(festivalId) {
+            const { userId, role } = getCurrentAccess();
+            let temAcesso = role === 'Administrador';
+
+            if (festivalId && userId && !temAcesso) {
+                try {
+                    temAcesso = await ApiClient.verificarAcessoFestival(userId, festivalId);
+                } catch {
+                    temAcesso = false;
+                }
+            }
+
+            return { userId, role, temAcesso };
         }
 
         function createFilmCard(f, selectedFestivalId = null) {
-        const festivalId = getFestivalId(f, selectedFestivalId ?? getQueryParam('festivalId'));
-        const festivalName = getFestivalName(f);
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.style.cursor = 'pointer';
-        div.style.position = 'relative';
-        div.style.overflow = 'hidden';
-        div.style.borderRadius = '20px';
+            const festivalId = getFestivalId(f, selectedFestivalId ?? getQueryParam('festivalId'));
+            const festivalName = getFestivalName(f);
+            const filmId = getFilmId(f);
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.style.cursor = 'pointer';
+            div.style.position = 'relative';
+            div.style.overflow = 'hidden';
+            div.style.borderRadius = '20px';
 
-        const img = document.createElement('img');
-        img.src = getPoster(f);
-        img.alt = getTitle(f);
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'cover';
-        img.style.display = 'block';
+            const img = document.createElement('img');
+            img.src = getPoster(f);
+            img.alt = getTitle(f);
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.display = 'block';
 
-        const overlay = document.createElement('div');
-        overlay.style.position = 'absolute';
-        overlay.style.left = '0';
-        overlay.style.right = '0';
-        overlay.style.bottom = '0';
-        overlay.style.padding = '16px';
-        overlay.style.background = 'linear-gradient(180deg, transparent, rgba(0,0,0,0.8))';
-        overlay.style.color = 'white';
-        overlay.innerHTML = `<h3 style="margin:0 0 6px; font-size:1rem;">${getTitle(f)}</h3><p style="margin:0; font-size:.88rem; opacity:.9;">${festivalName || (festivalId ? `Festival ${festivalId}` : '')}</p>`;
+            const overlay = document.createElement('div');
+            overlay.style.position = 'absolute';
+            overlay.style.left = '0';
+            overlay.style.right = '0';
+            overlay.style.bottom = '0';
+            overlay.style.padding = '16px';
+            overlay.style.background = 'linear-gradient(180deg, transparent, rgba(0,0,0,0.8))';
+            overlay.style.color = 'white';
+            overlay.innerHTML = `<h3 style="margin:0 0 6px; font-size:1rem;">${getTitle(f)}</h3><p style="margin:0; font-size:.88rem; opacity:.9;">${festivalName || (festivalId ? `Festival ${festivalId}` : '')}</p>`;
 
-        div.appendChild(img);
-        div.appendChild(overlay);
+            div.appendChild(img);
+            div.appendChild(overlay);
 
-        div.addEventListener('click', () => {
-        const filmId = getFieldValue(f, ['id', 'Id'], null);
-        const target = festivalId ? `/Filme?id=${filmId}&festivalId=${festivalId}` : `/Filme?id=${filmId}`;
-        window.location.href = target;
-        });
+            div.addEventListener('click', () => {
+                const target = festivalId ? `/Filme?id=${filmId}&festivalId=${festivalId}` : `/Filme?id=${filmId}`;
+                window.location.href = target;
+            });
 
-        return div;
+            return div;
+        }
+
+        function updatePurchasePanel() {
+            const panel = document.getElementById('purchasePanel');
+
+            if (!panel || !_festivalAtual) return;
+
+            if (_estadoAcesso.role === 'Administrador' || _estadoAcesso.temAcesso) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            if (!_estadoAcesso.userId) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+            updatePrice();
+        }
+
+        async function ensureCart(userId) {
+            if (carrinhoId) {
+                return carrinhoId;
+            }
+
+            try {
+                const cart = await ApiClient.getCartByUser(userId);
+                carrinhoId = cart.id;
+                return carrinhoId;
+            } catch {
+                const cart = await ApiClient.createCart(userId);
+                carrinhoId = cart.id;
+                return carrinhoId;
+            }
+        }
+
+        async function updatePrice() {
+            if (!_festivalAtual) return;
+
+            const tipoAcesso = document.getElementById('selectTipoAcesso').value;
+            const precoEl = document.getElementById('precoCalculado');
+            const descricaoEl = document.getElementById('passeDescricaoTexto');
+
+            if (!tipoAcesso) {
+                descricaoEl.textContent = 'Seleciona um tipo de bilhete para ver a descrição.';
+                precoEl.textContent = '€—';
+                return;
+            }
+
+            descricaoEl.innerHTML = tipoAcesso === 'Passe Diário'
+                ? 'Acesso a <strong>todos os filmes</strong> do festival durante <strong>24 horas</strong>. Desconto de 50% sobre o total.'
+                : 'Acesso a <strong>todos os filmes</strong> durante toda a duração do festival. Desconto de 30% sobre o total.';
+
+            try {
+                precoEl.textContent = '€...';
+                const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso);
+                precoEl.textContent = `€${Number(resultado.precoTotal).toFixed(2)}`;
+            } catch (err) {
+                console.error('Erro ao calcular preço:', err);
+                precoEl.textContent = '€—';
+            }
+        }
+
+        async function handleAdicionarCarrinho() {
+            if (!_festivalAtual) return;
+
+            const { userId } = _estadoAcesso;
+            if (!userId) {
+                window.location.href = '/Login';
+                return;
+            }
+
+            const tipoAcesso = document.getElementById('selectTipoAcesso').value;
+            if (!tipoAcesso) {
+                alert('Escolhe um tipo de bilhete primeiro.');
+                return;
+            }
+            const btn = document.getElementById('btnAdicionarCarrinho');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A adicionar...';
+
+            try {
+                const carrinho = await ensureCart(userId);
+                const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso);
+                const filmeId = getFilmId(_filmesAtuais[0]) ?? null;
+                await ApiClient.addToCart(carrinho, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+
+                btn.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho';
+                }, 1800);
+            } catch (err) {
+                alert(err.message || 'Não foi possível adicionar ao carrinho.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho';
+            }
+        }
+
+        async function handleComprarAgora() {
+            if (!_festivalAtual) return;
+
+            const { userId } = _estadoAcesso;
+            if (!userId) {
+                window.location.href = '/Login';
+                return;
+            }
+
+            const tipoAcesso = document.getElementById('selectTipoAcesso').value;
+            if (!tipoAcesso) {
+                alert('Escolhe um tipo de bilhete primeiro.');
+                return;
+            }
+            const btn = document.getElementById('btnComprarAgora');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A processar...';
+
+            try {
+                const carrinho = await ensureCart(userId);
+                const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso);
+                const filmeId = getFilmId(_filmesAtuais[0]) ?? null;
+                await ApiClient.addToCart(carrinho, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+                window.location.href = '/Carrinho';
+            } catch (err) {
+                alert(err.message || 'Não foi possível processar a compra.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Comprar Agora';
+            }
         }
 
         async function loadFilmsForFestival() {
-        const grid = document.getElementById('films-grid');
-        const festivalParam = getQueryParam('festivalId');
-        const festivalId = festivalParam ? Number(festivalParam) : null;
+            const grid = document.getElementById('films-grid');
+            const purchasePanel = document.getElementById('purchasePanel');
+            const festivalParam = getQueryParam('festivalId');
+            const festivalId = festivalParam ? Number(festivalParam) : null;
 
-        // show skeleton immediately to avoid flicker of old content
-        const skeletonCount = 6;
-        const skeletonMarkup = Array.from({ length: skeletonCount }).map(() => `
-        <div class="skeleton-card">
-        <div class="skeleton-line" style="width:70%"></div>
-        <div class="skeleton-line" style="width:50%"></div>
-        <div class="skeleton-line" style="width:60%"></div>
-        </div>
-        `).join('');
-        grid.innerHTML = skeletonMarkup;
+            purchasePanel.style.display = 'none';
 
-        try {
-        let filmes = [];
-        if (festivalId) {
-        try {
-        const festival = await ApiClient.getFestivalById(festivalId);
-        document.querySelector('.section-title').textContent = getFieldValue(festival, ['nome', 'Nome', 'nomeFestival', 'NomeFestival'], `Festival ${festivalId}`);
-        } catch {
-        document.querySelector('.section-title').textContent = `Festival ${festivalId}`;
+            const skeletonCount = 6;
+            const skeletonMarkup = Array.from({ length: skeletonCount }).map(() => `
+                <div class="skeleton-card">
+                    <div class="skeleton-line" style="width:70%"></div>
+                    <div class="skeleton-line" style="width:50%"></div>
+                    <div class="skeleton-line" style="width:60%"></div>
+                </div>
+            `).join('');
+            grid.innerHTML = skeletonMarkup;
+
+            try {
+                let filmes = [];
+
+                if (festivalId) {
+                    try {
+                        const festival = await ApiClient.getFestivalById(festivalId);
+                        document.querySelector('.section-title').textContent = getFieldValue(festival, ['nome', 'Nome', 'nomeFestival', 'NomeFestival'], `Festival ${festivalId}`);
+                        _festivalAtual = festival;
+                    } catch {
+                        document.querySelector('.section-title').textContent = `Festival ${festivalId}`;
+                        _festivalAtual = { id: festivalId };
+                    }
+
+                    _estadoAcesso = await getFestivalAccessState(festivalId);
+                    filmes = await ApiClient.getFilmesByFestival(festivalId);
+                } else {
+                    _festivalAtual = null;
+                    _estadoAcesso = getCurrentAccess();
+                    filmes = await ApiClient.getFilmes();
+                    document.querySelector('.section-title').textContent = 'Todos os Filmes';
+                }
+
+                if (!Array.isArray(filmes) || filmes.length === 0) {
+                    grid.innerHTML = '<p>Nenhum filme encontrado.</p>';
+                    return;
+                }
+
+                _filmesAtuais = filmes;
+                grid.innerHTML = '';
+                filmes.forEach(f => grid.appendChild(createFilmCard(f, festivalId)));
+
+                if (festivalId) updatePurchasePanel();
+                if (!festivalId) purchasePanel.style.display = 'none';
+            } catch (err) {
+                console.error('Erro ao carregar filmes', err);
+                grid.innerHTML = '<p>Erro ao carregar filmes.</p>';
+            }
         }
 
-        filmes = await ApiClient.getFilmesByFestival(festivalId);
-        } else {
-        filmes = await ApiClient.getFilmes();
-        document.querySelector('.section-title').textContent = 'Todos os Filmes';
-        }
-
-        if (!Array.isArray(filmes) || filmes.length === 0) {
-        grid.innerHTML = '<p>Nenhum filme encontrado.</p>';
-        return;
-        }
-
-        // replace skeleton with real content
-        grid.innerHTML = '';
-        filmes.forEach(f => grid.appendChild(createFilmCard(f, festivalId)));
-        } catch (err) {
-        console.error('Erro ao carregar filmes', err);
-        grid.innerHTML = '<p>Erro ao carregar filmes.</p>';
-        }
-        }
-
+        document.getElementById('selectTipoAcesso').addEventListener('change', updatePrice);
         document.addEventListener('DOMContentLoaded', loadFilmsForFestival);
     </script>
 
