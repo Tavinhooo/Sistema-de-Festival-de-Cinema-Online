@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 
@@ -17,25 +18,45 @@ public class AcessoRepository
         _context.Acessos.AddRange(acessos);
         _context.SaveChanges();
     }
-
-    public bool TemAcessoAFestival(int clienteId, int festivalId)
+   
+    public bool VerificarAcessoFilmeNoFestival(int clienteId, int filmeId, int festivalId)
     {
-        var filmesNoFestival = _context.FestivalFilmes
-            .Where(ff => ff.FestivalId == festivalId)
-            .Select(ff => ff.FilmeId)
-            .ToList();
-
-        return _context.Acessos.Any(a =>
+        bool temBilheteFilme = _context.Acessos.Any(a =>
             a.ClienteId == clienteId &&
-            filmesNoFestival.Contains(a.FilmeId) &&
-            a.Estado == EstadoAcesso.Ativo);
-    }
+            a.FilmeId == filmeId &&
+            a.Estado == EstadoAcesso.Ativo &&
+            (a.TipoAcesso == "Bilhete de Sessão" || a.TipoAcesso == "Aluguer Digital"));
 
-    public List<int> ObterFilmesComAcesso(int clienteId)
+        if (temBilheteFilme) return true;
+
+        bool filmePertenceAoFestival = _context.FestivalFilmes
+            .Any(ff => ff.FestivalId == festivalId && ff.FilmeId == filmeId);
+
+        if (filmePertenceAoFestival)
+        {
+            var filmesDoFestival = _context.FestivalFilmes
+                .Where(ff => ff.FestivalId == festivalId)
+                .Select(ff => ff.FilmeId)
+                .ToList();
+
+            bool temPasseFestival = _context.Acessos.Any(a =>
+                a.ClienteId == clienteId &&
+                a.Estado == EstadoAcesso.Ativo &&
+                (a.TipoAcesso == "Passe Completo" || a.TipoAcesso == "Passe Diário") &&
+                filmesDoFestival.Contains(a.FilmeId));
+
+            if (temPasseFestival) return true;
+        }
+
+        return false;
+    }
+    
+    public List<Filme> ObterFilmesComAcesso(int clienteId)
     {
         return _context.Acessos
             .Where(a => a.ClienteId == clienteId && a.Estado == EstadoAcesso.Ativo)
-            .Select(a => a.FilmeId)
+            .Include(a => a.Filme)
+            .Select(a => a.Filme)
             .ToList();
     }
 }

@@ -25,11 +25,17 @@ namespace ProjetoES.API.Controllers
 
         private int ObterUtilizadorIdDoToken()
         {
-            var sub = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            // Debug: ver todos os claims que chegam
+            foreach (var claim in User.Claims)
+                Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
+
+            var sub = User.FindFirstValue("sub")
+                ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue("nameid")
                 ?? throw new UnauthorizedAccessException("Token inválido.");
+
             return int.Parse(sub);
         }
-
         // POST: api/checkout — RF04: processa compra e promove Membro para Cliente
         [HttpPost]
         public IActionResult ProcessarCheckout(CheckoutRequestDTO dto)

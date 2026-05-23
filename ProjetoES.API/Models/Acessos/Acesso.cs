@@ -9,7 +9,7 @@ namespace ProjetoES.API.Models
         public virtual Utilizador? Cliente { get; set; }
 
         public int FilmeId { get; set; }
-        public virtual Filme? Filme { get; set; }
+        public virtual Filme Filme { get; set; } = null!;
 
         public DateTime DataAquisicao { get; set; } = DateTime.UtcNow;
         public DateTime? DataValidade { get; set; }

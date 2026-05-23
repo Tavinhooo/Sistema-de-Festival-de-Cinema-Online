@@ -258,6 +258,15 @@
         <button class="tab-btn active" onclick="switchTab('historico')">
             <i class="fas fa-receipt"></i> Histórico de Compras
         </button>
+        <button class="tab-btn" onclick="switchTab('acessos')">
+            <i class="fas fa-film"></i> Filmes com Acesso
+        </button>
+        <button class="tab-btn" onclick="switchTab('queroVer')">
+            <i class="fas fa-plus-circle"></i> Ver Depois
+        </button>
+        <button class="tab-btn" onclick="switchTab('visto')">
+            <i class="fas fa-eye"></i> Visto
+        </button>
     </div>
 
     <!-- HISTÓRICO -->
@@ -276,7 +285,22 @@
         </div>
     </div>
 
+    <div class="tab-content" id="tab-queroVer">
+        <div class="section-title"><i class="fas fa-plus-circle"></i> Ver Depois</div>
+        <div id="queroVerContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-visto">
+        <div class="section-title"><i class="fas fa-eye"></i> Visto</div>
+        <div id="vistoContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
 </div>
+
 
 @section Scripts {
     <script>
@@ -320,12 +344,12 @@
                     `;
 
             // Carregar histórico e acessos em paralelo
-            await Promise.all([carregarHistorico(), carregarAcessos(userId)]);
+            await Promise.all([carregarHistorico(), carregarAcessos(userId), carregarLista(userId, 'QueroVer', 'queroVerContainer'), carregarLista(userId, 'Visto', 'vistoContainer')]);
         });
 
         function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', ['historico', 'acessos'][i] === tab);
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick') === `switchTab('${tab}')`);
             });
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
@@ -383,17 +407,17 @@
             }
         }
 
-        async function carregarAcessos(userId) {
+       async function carregarAcessos(userId) {
             const container = document.getElementById('acessosContainer');
             try {
                 const filmes = await ApiClient.obterFilmesComAcesso(userId);
 
                 if (!filmes || filmes.length === 0) {
                     container.innerHTML = `
-                                <div class="empty-state">
-                                    <i class="fas fa-film"></i>
-                                    Ainda não tens filmes.<br>Compra um passe para começar a ver!
-                                </div>`;
+                        <div class="empty-state">
+                            <i class="fas fa-film"></i>
+                            Ainda não tens filmes.<br>Compra um passe para começar a ver!
+                        </div>`;
                     return;
                 }
 
@@ -404,15 +428,15 @@
                     const card = document.createElement('div');
                     card.className = 'acesso-card';
                     card.innerHTML = `
-                                <img src="${f.posterUrl || '/images/default-poster.jpg'}"
-                                     alt="${f.titulo}"
-                                     onerror="this.style.background='#edeaf3'; this.removeAttribute('src');" />
-                                <div class="acesso-titulo">${f.titulo}</div>
-                                <span class="acesso-tipo">${f.tipoAcesso || 'Acesso'}</span>
-                                ${f.dataExpiracao
+                        <img src="${f.posterUrl || '/images/default-poster.jpg'}"
+                            alt="${f.titulo}"
+                            onerror="this.style.background='#edeaf3'; this.removeAttribute('src');" />
+                        <div class="acesso-titulo">${f.titulo}</div>
+                        <span class="acesso-tipo">${f.tipoAcesso || 'Acesso'}</span>
+                        ${f.dataExpiracao
                             ? `<div class="acesso-validade"><i class="fas fa-clock"></i> Até ${new Date(f.dataExpiracao).toLocaleDateString('pt-PT')}</div>`
                             : ''}
-                            `;
+                    `;
                     grid.appendChild(card);
                 });
 
@@ -420,6 +444,58 @@
 
             } catch (e) {
                 container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i> Erro ao carregar filmes.</div>`;
+                console.error(e);
+            }
+        }
+
+        async function carregarLista(userId, tipo, containerId) {
+            const container = document.getElementById(containerId);
+            try {
+                const listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
+                const tipoMap = { 'QueroVer': 0, 'Visto': 1 };
+                const lista = listas.find(l => l.tipo === tipoMap[tipo]);
+
+                if (!lista || !lista.filmes || lista.filmes.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-film"></i> Lista vazia.</div>`;
+                    return;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'acessos-grid';
+
+                lista.filmes.forEach(f => {
+                    const card = document.createElement('div');
+                    card.className = 'acesso-card';
+                    card.style.position = 'relative';
+                    card.innerHTML = `
+                        <img src="${f.posterUrl || '/images/default-poster.jpg'}"
+                            alt="${f.titulo}"
+                            onerror="this.style.background='#edeaf3'; this.removeAttribute('src');" />
+                        <div class="acesso-titulo">${f.titulo}</div>
+                        <button data-filme-id="${f.id}" style="
+                            position:absolute; top:8px; right:8px;
+                            background:rgba(0,0,0,0.5); border:none; border-radius:50%;
+                            width:28px; height:28px; color:white; cursor:pointer;
+                            display:flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    card.querySelector('button').addEventListener('click', async () => {
+                        if (!confirm('Remover da lista?')) return;
+                        try {
+                            await ApiClient.delete(`/api/listaspessoais/${lista.id}/filmes/${f.id}`);
+                            card.remove();
+                        } catch (e) {
+                            alert(e.message || 'Erro ao remover.');
+                        }
+                    });
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+
+            } catch (e) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i> Erro ao carregar.</div>`;
                 console.error(e);
             }
         }

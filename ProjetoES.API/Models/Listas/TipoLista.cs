@@ -2,7 +2,7 @@ namespace ProjetoES.API.Models
 {
     public enum TipoLista
     {
-        QueroVer,
+        VerDepois,
         Visto,
         Favoritos
     }

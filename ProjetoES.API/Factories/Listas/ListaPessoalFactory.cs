@@ -9,7 +9,7 @@ namespace ProjetoES.API.Factories
         {
             return tipo switch
             {
-                TipoLista.QueroVer => new QueroVerStrategyService(),
+                TipoLista.VerDepois => new VerDepoisStrategyService(),
                 TipoLista.Visto => new VistoStrategyService(),
                 TipoLista.Favoritos => new FavoritoStrategyService(),
                 _ => throw new ArgumentException("Tipo de lista desconhecido")

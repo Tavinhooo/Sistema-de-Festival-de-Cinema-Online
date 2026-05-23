@@ -11,9 +11,9 @@ namespace ProjetoES.API.Controllers
     [Authorize]
     public class ListaPessoalController : ControllerBase
     {
-        private readonly ListaPessoalService _service;
+        private readonly IListaPessoalService _service;
 
-        public ListaPessoalController(ListaPessoalService service)
+        public ListaPessoalController(IListaPessoalService service)
         {
             _service = service;
         }
