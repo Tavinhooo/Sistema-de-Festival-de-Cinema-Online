@@ -308,3 +308,24 @@ body {
 }
 .shape-star { width: 20px; height: 20px; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
 .shape-square { width: 20px; height: 20px; border-radius: 4px; }
+
+#mensagem {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 9999;
+    pointer-events: none;
+}
+#mensagem.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}

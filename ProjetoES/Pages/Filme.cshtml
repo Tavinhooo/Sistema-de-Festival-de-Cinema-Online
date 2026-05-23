@@ -66,6 +66,9 @@
                 <div class="action-item" id="btnVisto" style="cursor:pointer;">
                     <i class="far fa-eye"></i> Visto
                 </div>
+                <div class="action-item" id="btnFavoritos" style="cursor:pointer;">
+                    <i class="far fa-heart"></i> Favoritos
+                </div>
             </div>
             </div>
         </div>
@@ -111,6 +114,7 @@
             </div>
         </div>
     </div>
+    <div id="mensagem"></div>
 
     <script src="~/js/api-client.js"></script>
     <script>
@@ -284,15 +288,15 @@
                     await ApiClient.post(`/api/listaspessoais/${lista.id}/filmes/${filmId}`, {});
                 } catch (e) {
                     if (e.status === 400) {
-                        alert('Filme já está nesta lista.');
+                        showMensagem('Filme já está nesta lista.', true);
                         return;
                     }
                     throw e;
                 }
 
-                alert(`Filme adicionado à lista "${tipo}"!`);
+                showMensagem(`Filme adicionado à lista "${tipo}"!`);
             } catch (error) {
-                alert(error.message || 'Não foi possível adicionar à lista.');
+                showMensagem(error.message || 'Não foi possível adicionar à lista.', true);
             }
         }
 
@@ -306,7 +310,7 @@
             try {
                 await ApiClient.comprarAgora(userId, Number(festivalId), Number(filmId), tipoAcesso, 1);
             } catch (error) {
-                alert(error.message || 'Não foi possível iniciar a compra.');
+                showMensagem(error.message || 'Não foi possível iniciar a compra.', true);
             }
         }
 
@@ -363,13 +367,13 @@
                             }
                             await loadReviews(filmId);
                         } catch (error) {
-                            alert(error.message || 'Não foi possível apagar a avaliação.');
+                            showMensagem(error.message || 'Não foi possível apagar a avaliação.', true);
                         }
                     });
 
                     card.querySelector('.btn-reportar-comentario')?.addEventListener('click', async () => {
                         if (!ApiClient.isAuthenticated()) {
-                            alert('Tens de estar autenticado para denunciar uma avaliação.');
+                            showMensagem('Tens de estar autenticado para denunciar uma avaliação.', true);
                             return;
                         }
 
@@ -413,13 +417,13 @@
 
                         document.getElementById('btnSubmeterReporte').addEventListener('click', async () => {
                             const selected = document.querySelector('input[name="motivoReporte"]:checked');
-                            if (!selected) { alert('Seleciona um motivo antes de denunciar.'); return; }
+                            if (!selected) { showMensagem('Seleciona um motivo antes de denunciar.', true); return; }
                             try {
                                 await ApiClient.post(`/api/avaliacoes/${a.id}/reportar`, { motivo: selected.value });
                                 modalReporte.remove();
-                                alert('Avaliação denunciada. O administrador irá analisá-la.');
+                                showMensagem('Avaliação denunciada. O administrador irá analisá-la.');
                             } catch (error) {
-                                alert(error.message || 'Não foi possível denunciar a avaliação.');
+                                showMensagem(error.message || 'Não foi possível denunciar a avaliação.', true);
                             }
                         });
                     });
@@ -503,6 +507,13 @@
                 document.getElementById('movieTitle').textContent = 'Filme indisponível';
             }
         }
+        function showMensagem(msg, isError = false) {
+            const toast = document.getElementById('mensagem');
+            toast.textContent = msg;
+            toast.style.background = isError ? '#c0392b' : '#1a1a1a';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
 
         // ── Eventos ───────────────────────────────────────────────
 
@@ -538,7 +549,7 @@
             });
 
             document.querySelector('.btn-submit').addEventListener('click', async () => {
-                if (!selectedRating) { alert('Seleciona uma nota antes de submeter.'); return; }
+                if (!selectedRating) { showMensagem('Seleciona uma nota antes de submeter.', true); return; }
                 if (!ApiClient.isAuthenticated()) { window.location.href = '/Login'; return; }
 
                 const filmId = getQueryParam('id');
@@ -548,7 +559,7 @@
                         classificacao:  selectedRating,
                         comentario:     document.getElementById('avaliacaoComentario').value.trim()
                     });
-                    alert('Avaliação submetida com sucesso!');
+                    showMensagem('Avaliação submetida com sucesso!');
                     modalAvaliacao.classList.remove('active');
                     selectedRating = null;
                     document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
@@ -556,12 +567,13 @@
                     await loadReviews(filmId);
                 } catch (error) {
                     console.error(error);
-                    alert(error.message || 'Não foi possível submeter a avaliação.');
+                    showMensagem(error.message || 'Não foi possível submeter a avaliação.', true);
                 }
             });
 
             document.getElementById('btnVerDepois')?.addEventListener('click', () => adicionarALista('QueroVer'));
             document.getElementById('btnVisto')?.addEventListener('click', () => adicionarALista('Visto'));
+            document.getElementById('btnFavoritos')?.addEventListener('click', () => adicionarALista('Favoritos'));
 
             loadFilm();
         });

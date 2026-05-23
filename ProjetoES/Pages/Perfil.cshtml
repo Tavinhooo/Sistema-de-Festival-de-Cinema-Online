@@ -267,6 +267,11 @@
         <button class="tab-btn" onclick="switchTab('visto')">
             <i class="fas fa-eye"></i> Visto
         </button>
+        <button class="tab-btn" onclick="switchTab('favoritos')">
+            <i class="fas fa-heart"></i> Favoritos
+        </button>
+
+</div>
     </div>
 
     <!-- HISTÓRICO -->
@@ -295,6 +300,13 @@
     <div class="tab-content" id="tab-visto">
         <div class="section-title"><i class="fas fa-eye"></i> Visto</div>
         <div id="vistoContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-favoritos">
+        <div class="section-title"><i class="fas fa-heart"></i> Favoritos</div>
+        <div id="favoritosContainer">
             <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
         </div>
     </div>
@@ -344,7 +356,7 @@
                     `;
 
             // Carregar histórico e acessos em paralelo
-            await Promise.all([carregarHistorico(), carregarAcessos(userId), carregarLista(userId, 'QueroVer', 'queroVerContainer'), carregarLista(userId, 'Visto', 'vistoContainer')]);
+            await Promise.all([carregarHistorico(), carregarAcessos(userId), carregarLista(userId, 'QueroVer', 'queroVerContainer'), carregarLista(userId, 'Visto', 'vistoContainer'), carregarLista(userId, 'Favoritos', 'favoritosContainer')]);
         });
 
         function switchTab(tab) {
@@ -486,7 +498,7 @@
                             await ApiClient.delete(`/api/listaspessoais/${lista.id}/filmes/${f.id}`);
                             card.remove();
                         } catch (e) {
-                            alert(e.message || 'Erro ao remover.');
+                            showMensagem(e.message || 'Erro ao remover.', true);
                         }
                     });
                     grid.appendChild(card);
@@ -499,5 +511,12 @@
                 console.error(e);
             }
         }
+    function showMensagem(msg, isError = false) {
+        const toast = document.getElementById('mensagem');
+        toast.textContent = msg;
+        toast.style.background = isError ? '#c0392b' : '#1a1a1a';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }   
     </script>
 }
