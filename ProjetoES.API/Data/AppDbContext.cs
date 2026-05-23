@@ -78,6 +78,27 @@ public class AppDbContext : DbContext
                     j.Property(ff => ff.PrecoBilhete).HasColumnType("numeric(10,2)");
                 });
 
+        modelBuilder.Entity<ListaPessoal>()
+            .HasMany(l => l.Filmes)
+            .WithMany(f => f.ListasPessoais)
+            .UsingEntity<Dictionary<string, object>>(
+                "ListaPessoalFilme",
+                j => j
+                    .HasOne<Filme>()
+                    .WithMany()
+                    .HasForeignKey("FilmeId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<ListaPessoal>()
+                    .WithMany()
+                    .HasForeignKey("ListaPessoalId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.ToTable("ListaPessoalFilme");
+                    j.HasKey("ListaPessoalId", "FilmeId");
+                });
+
         modelBuilder.Entity<Acesso>()
             .HasOne(a => a.Cliente)
             .WithMany()

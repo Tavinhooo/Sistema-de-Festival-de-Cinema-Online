@@ -464,7 +464,7 @@
             const container = document.getElementById(containerId);
             try {
                 const listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
-                const tipoMap = { 'QueroVer': 0, 'Visto': 1 };
+                const tipoMap = { 'QueroVer': 0, 'Visto': 1, 'Favoritos': 2 };
                 const lista = listas.find(l => l.tipo === tipoMap[tipo]);
 
                 if (!lista || !lista.filmes || lista.filmes.length === 0) {

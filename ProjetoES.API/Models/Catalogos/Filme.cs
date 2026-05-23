@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ProjetoES.API.Models
 {
@@ -27,5 +28,8 @@ namespace ProjetoES.API.Models
         public int FestivalId { get; set; }
 
         public virtual ICollection<Festival> Festivais { get; set; } = new List<Festival>();
+
+        [JsonIgnore]
+        public virtual ICollection<ListaPessoal> ListasPessoais { get; set; } = new List<ListaPessoal>();
     }
 }
