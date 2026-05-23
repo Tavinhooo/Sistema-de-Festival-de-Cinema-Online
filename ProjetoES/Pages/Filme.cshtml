@@ -57,19 +57,35 @@
                 <div id="accessCta" style="margin-top:16px;"></div>
 
                 <div class="trailer-actions" id="trailerActions" style="display:none;">
-                <div class="action-item" id="btnVerDepois" style="cursor:pointer;">
-                    <i class="fas fa-plus-circle"></i> Ver Depois
+                    <button type="button" class="action-item list-action" id="btnVerDepois" data-list-type="QueroVer">
+                        <span class="action-icon"><i class="fas fa-plus-circle"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Ver Depois</span>
+                            <span class="action-subtitle">Guardar para mais tarde</span>
+                        </span>
+                    </button>
+                    <button type="button" class="action-item" id="btnAbrirAvaliacao">
+                        <span class="action-icon"><i class="far fa-star"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Avaliar</span>
+                            <span class="action-subtitle">Partilhar a tua opinião</span>
+                        </span>
+                    </button>
+                    <button type="button" class="action-item list-action" id="btnVisto" data-list-type="Visto">
+                        <span class="action-icon"><i class="far fa-eye"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Visto</span>
+                            <span class="action-subtitle">Marcar como assistido</span>
+                        </span>
+                    </button>
+                    <button type="button" class="action-item list-action" id="btnFavoritos" data-list-type="Favoritos">
+                        <span class="action-icon"><i class="far fa-heart"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Favorito</span>
+                            <span class="action-subtitle">Adicionar à tua lista</span>
+                        </span>
+                    </button>
                 </div>
-                <div class="action-item" id="btnAbrirAvaliacao" style="cursor:pointer;">
-                    <i class="far fa-star"></i> Avaliar
-                </div>
-                <div class="action-item" id="btnVisto" style="cursor:pointer;">
-                    <i class="far fa-eye"></i> Visto
-                </div>
-                <div class="action-item" id="btnFavoritos" style="cursor:pointer;">
-                    <i class="far fa-heart"></i> Favoritos
-                </div>
-            </div>
             </div>
         </div>
 
@@ -118,6 +134,18 @@
 
     <script src="~/js/api-client.js"></script>
     <script>
+        const LISTA_CONFIG = {
+            QueroVer: { tipo: 0, buttonId: 'btnVerDepois', label: 'Ver Depois', iconAdd: 'fa-plus-circle', iconRemove: 'fa-check-circle', subtitleAdd: 'Guardar para mais tarde', subtitleRemove: 'Remover da lista' },
+            Visto: { tipo: 1, buttonId: 'btnVisto', label: 'Visto', iconAdd: 'fa-eye', iconRemove: 'fa-check-circle', subtitleAdd: 'Marcar como assistido', subtitleRemove: 'Remover da lista' },
+            Favoritos: { tipo: 2, buttonId: 'btnFavoritos', label: 'Favorito', iconAdd: 'fa-heart', iconRemove: 'fa-check-circle', subtitleAdd: 'Adicionar à tua lista', subtitleRemove: 'Remover da lista' }
+        };
+
+        const estadoListas = {
+            QueroVer: { listaId: null, hasFilm: false },
+            Visto: { listaId: null, hasFilm: false },
+            Favoritos: { listaId: null, hasFilm: false }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             ApiClient.renderAuthNavigation('navActions');
         });
@@ -269,32 +297,77 @@
             }
         }
 
-       async function adicionarALista(tipo) {
+        function getListaButton(tipo) {
+            const config = LISTA_CONFIG[tipo];
+            return config ? document.getElementById(config.buttonId) : null;
+        }
+
+        function atualizarEstadoBotaoLista(tipo, ativo) {
+            const config = LISTA_CONFIG[tipo];
+            const button = getListaButton(tipo);
+            if (!config || !button) return;
+
+            const icon = button.querySelector('.action-icon i');
+            const subtitle = button.querySelector('.action-subtitle');
+            const title = button.querySelector('.action-title');
+
+            button.classList.toggle('is-active', ativo);
+            button.setAttribute('aria-pressed', String(ativo));
+            if (title) title.textContent = config.label;
+            if (subtitle) subtitle.textContent = ativo ? config.subtitleRemove : config.subtitleAdd;
+            if (icon) icon.className = `fas ${ativo ? config.iconRemove : config.iconAdd}`;
+        }
+
+        async function carregarEstadoListas() {
+            const userId = ApiClient.getCurrentUserId();
+            if (!userId) return;
+
+            const filmId = Number(getQueryParam('id'));
+            const listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
+
+            Object.keys(LISTA_CONFIG).forEach(tipo => {
+                const config = LISTA_CONFIG[tipo];
+                const lista = listas.find(l => l.tipo === config.tipo);
+                const hasFilm = !!(lista?.filmes || []).some(f => Number(f.id ?? f.filmeId ?? f.FilmeId) === filmId);
+
+                estadoListas[tipo] = {
+                    listaId: lista?.id ?? null,
+                    hasFilm
+                };
+
+                atualizarEstadoBotaoLista(tipo, hasFilm);
+            });
+        }
+
+        async function toggleLista(tipo) {
             const userId = ApiClient.getCurrentUserId();
             if (!userId) { window.location.href = '/Login'; return; }
 
-            const filmId = getQueryParam('id');
+            const config = LISTA_CONFIG[tipo];
+            const filmId = Number(getQueryParam('id'));
+            const currentState = estadoListas[tipo] ?? { listaId: null, hasFilm: false };
 
             try {
-                const listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
-                const tipoMap = { 'QueroVer': 0, 'Visto': 1, 'Favoritos': 2 };
-                let lista = listas.find(l => l.tipo === tipoMap[tipo]);
+                let listaId = currentState.listaId;
 
-                if (!lista) {
-                    lista = await ApiClient.post(`/api/listaspessoais?membroId=${userId}&tipo=${tipoMap[tipo]}`, {});
+                if (!listaId) {
+                    const listaCriada = await ApiClient.post(`/api/listaspessoais?membroId=${userId}&tipo=${config.tipo}`, {});
+                    listaId = listaCriada.id;
+                    estadoListas[tipo].listaId = listaId;
                 }
 
-                try {
-                    await ApiClient.post(`/api/listaspessoais/${lista.id}/filmes/${filmId}`, {});
-                } catch (e) {
-                    if (e.status === 400) {
-                        showMensagem('Filme já está nesta lista.', true);
-                        return;
-                    }
-                    throw e;
+                if (currentState.hasFilm) {
+                    await ApiClient.delete(`/api/listaspessoais/${listaId}/filmes/${filmId}`);
+                    estadoListas[tipo].hasFilm = false;
+                    atualizarEstadoBotaoLista(tipo, false);
+                    showMensagem(`Filme removido de "${config.label}".`);
+                    return;
                 }
 
-                showMensagem(`Filme adicionado à lista "${tipo}"!`);
+                await ApiClient.post(`/api/listaspessoais/${listaId}/filmes/${filmId}`, {});
+                estadoListas[tipo].hasFilm = true;
+                atualizarEstadoBotaoLista(tipo, true);
+                showMensagem(`Filme adicionado a "${config.label}"!`);
             } catch (error) {
                 showMensagem(error.message || 'Não foi possível adicionar à lista.', true);
             }
@@ -499,6 +572,8 @@
                     renderTrailer(filme.trailerUrl || '');
                 }
 
+                await carregarEstadoListas();
+
                 if (festivalId) await loadRelatedMovies(festivalId, filmId);
                 await loadReviews(filmId);
 
@@ -571,9 +646,9 @@
                 }
             });
 
-            document.getElementById('btnVerDepois')?.addEventListener('click', () => adicionarALista('QueroVer'));
-            document.getElementById('btnVisto')?.addEventListener('click', () => adicionarALista('Visto'));
-            document.getElementById('btnFavoritos')?.addEventListener('click', () => adicionarALista('Favoritos'));
+            document.getElementById('btnVerDepois')?.addEventListener('click', () => toggleLista('QueroVer'));
+            document.getElementById('btnVisto')?.addEventListener('click', () => toggleLista('Visto'));
+            document.getElementById('btnFavoritos')?.addEventListener('click', () => toggleLista('Favoritos'));
 
             loadFilm();
         });

@@ -200,23 +200,99 @@ body {
 }
 
 .trailer-actions {
-    display: flex;
-    gap: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
     margin-top: 15px;
 }
 
 .action-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 16px;
+    gap: 10px;
+    padding: 10px 12px;
+    min-height: 54px;
+    border-radius: 16px;
+    border: 1px solid #e7def2;
+    background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
+    box-shadow: 0 10px 24px rgba(85, 54, 124, 0.08);
+    font-weight: 700;
+    font-size: 13px;
     cursor: pointer;
-    color: #111;
+    color: #22142f;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    text-align: left;
 }
 
 .action-item i {
-    font-size: 20px;
+    font-size: 16px;
+}
+
+.action-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(85, 54, 124, 0.12);
+    border-color: #cbbbe1;
+}
+
+.action-item.is-active {
+    background: linear-gradient(135deg, #7b57b8, #4b2f72);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(123, 87, 184, 0.28);
+}
+
+.action-item.is-active .action-icon {
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+}
+
+.action-item.is-active .action-subtitle {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.action-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(123, 87, 184, 0.1);
+    color: #7b57b8;
+    flex-shrink: 0;
+}
+
+.action-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.action-title {
+    line-height: 1.05;
+}
+
+.action-subtitle {
+    font-size: 11px;
+    font-weight: 600;
+    color: #7a7288;
+}
+
+@media (max-width: 1100px) {
+    .trailer-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .trailer-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .action-item {
+        padding: 12px 14px;
+    }
 }
 
 /* ETIQUETAS DE SEÇÃO (Relacionados / Avaliações) */
