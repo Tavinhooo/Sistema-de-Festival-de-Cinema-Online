@@ -311,6 +311,11 @@
                             <label class="field-label" for="anoView">Ano</label>
                             <input id="anoView" class="field" type="text" readonly style="background: #f4f1fa; color: #666;" />
                         </div>
+
+                        <div>
+                            <label class="field-label" for="associationPrice">Preço do bilhete (€) (opcional)</label>
+                            <input id="associationPrice" class="field" type="number" step="0.01" min="0" placeholder="Deixa em branco para manter preço atual" />
+                        </div>
                     </div>
 
                     <div class="actions">
@@ -459,11 +464,15 @@ async function executarAssociacao(event) {
             return;
         }
 
+        // Optional price field on the form
+        const priceInput = document.getElementById('associationPrice');
+        const price = priceInput && priceInput.value.trim() !== '' ? Number(priceInput.value) : null;
+
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A associar...';
 
         const pedidos = selectedFestivalIds.map(festivalId => {
-            return ApiClient.associarFilmeAoFestival(festivalId, selectedFilmeId);
+            return ApiClient.associarFilmeAoFestival(festivalId, selectedFilmeId, price);
         });
 
         try {

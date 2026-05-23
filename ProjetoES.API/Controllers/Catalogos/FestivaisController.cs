@@ -175,19 +175,25 @@ public class FestivaisController : ControllerBase
     }
 
     [HttpPost("{id}/associar-filme")]
-public ActionResult AssociarFilmeAoFestival(int id, [FromBody] int filmeId)
-{
-    try
+    public ActionResult AssociarFilmeAoFestival(int id, [FromBody] DTOs.Catalogos.AssociarFilmeRequestDTO dto)
     {
-        _service.AssociarFilmeAoFestival(id, filmeId); 
-        
-        return Ok(new { message = "Filme associado com sucesso!" });
+        try
+        {
+            _service.AssociarFilmeAoFestival(id, dto.FilmeId);
+
+            if (dto.PrecoBilhete.HasValue && dto.PrecoBilhete.Value > 0)
+            {
+                // Ensure the festival-film join has the supplied price
+                _filmeRepository.VincularFilmeAoFestival(dto.FilmeId, id, dto.PrecoBilhete.Value);
+            }
+
+            return Ok(new { message = "Filme associado com sucesso!" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
-    catch (Exception ex)
-    {
-        return BadRequest(ex.Message);
-    }
-}
 
     // GET api/festivais/{id}/preco?tipoAcesso=Passe Completo&filmeId=3
     [HttpGet("{id}/preco")]

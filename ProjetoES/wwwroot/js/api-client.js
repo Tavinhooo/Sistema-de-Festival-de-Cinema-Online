@@ -368,8 +368,8 @@ const ApiClient = (() => {
       request("DELETE", `/api/filmes/${filmeId}/festival/${festivalId}`),
     getFestivaisDisponiveis: () =>
       request("GET", "/api/festivais/disponiveis-para-filmes"),
-    associarFilmeAoFestival: (festivalId, filmeId) => 
-      request("POST", `/api/festivais/${festivalId}/associar-filme`, filmeId),
+    associarFilmeAoFestival: (festivalId, filmeId, precoBilhete = null) => 
+      request("POST", `/api/festivais/${festivalId}/associar-filme`, { filmeId, precoBilhete }),
   };
 })();
 

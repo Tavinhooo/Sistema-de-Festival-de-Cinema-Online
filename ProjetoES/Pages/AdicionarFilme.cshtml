@@ -288,10 +288,6 @@
                             <input id="duracao" class="field" type="number" min="1" required />
                         </div>
 
-                        <div>
-                            <label class="field-label" for="precoBilhete">Preço do bilhete (€)</label>
-                            <input id="precoBilhete" class="field" type="number" step="0.01" min="0" required />
-                        </div>
                     </div>
 
                     <div class="actions">
@@ -454,7 +450,6 @@
             ano: Number(document.getElementById('ano').value),
             genero: document.getElementById('genero').value.trim(),
             duracaoMinutos: Number(document.getElementById('duracao').value),
-            precoBilhete: Number(document.getElementById('precoBilhete').value),
             tmdbId: selectedTmdbId
         };
         try {
