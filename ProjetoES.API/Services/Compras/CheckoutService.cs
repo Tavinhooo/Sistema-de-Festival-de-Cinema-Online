@@ -57,18 +57,21 @@ namespace ProjetoES.API.Services
             var acessos = new List<Acesso>();
             foreach (var itemCarrinho in carrinho.Itens)
             {
+                Console.WriteLine($"Item: FilmeId={itemCarrinho.FilmeId}, FestivalId={itemCarrinho.FestivalId}, Tipo={itemCarrinho.TipoAcesso}");
                 for (int i = 0; i < itemCarrinho.Quantidade; i++)
                 {
                     var acesso = new Acesso
                     {
                         ClienteId = memberId,
                         FilmeId = itemCarrinho.FilmeId,
+                        FestivalId = itemCarrinho.FestivalId,
                         DataAquisicao = DateTime.UtcNow,
                         DataValidade = DateTime.UtcNow.AddDays(30), // Bilhete válido por 30 dias
                         Estado = EstadoAcesso.Ativo,
-                        TipoAcesso = "Bilhete"
+                        TipoAcesso = itemCarrinho.TipoAcesso
                     };
                     acessos.Add(acesso);
+                    
                 }
             }
 

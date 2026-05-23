@@ -24,6 +24,7 @@ public class AcessoRepository
         bool temBilheteFilme = _context.Acessos.Any(a =>
             a.ClienteId == clienteId &&
             a.FilmeId == filmeId &&
+            a.FestivalId == festivalId &&
             a.Estado == EstadoAcesso.Ativo &&
             (a.TipoAcesso == "Bilhete de Sessão" || a.TipoAcesso == "Aluguer Digital"));
 
@@ -34,20 +35,19 @@ public class AcessoRepository
 
         if (filmePertenceAoFestival)
         {
-            var filmesDoFestival = _context.FestivalFilmes
-                .Where(ff => ff.FestivalId == festivalId)
-                .Select(ff => ff.FilmeId)
-                .ToList();
-
             bool temPasseFestival = _context.Acessos.Any(a =>
                 a.ClienteId == clienteId &&
                 a.Estado == EstadoAcesso.Ativo &&
-                (a.TipoAcesso == "Passe Completo" || a.TipoAcesso == "Passe Diário") &&
-                filmesDoFestival.Contains(a.FilmeId));
+                a.FestivalId == festivalId &&
+                (a.TipoAcesso.ToLower() == "passe completo" || a.TipoAcesso.ToLower() == "passe diário"));
 
             if (temPasseFestival) return true;
         }
-
+        var acessosCliente = _context.Acessos
+    .Where(a => a.ClienteId == clienteId)
+    .Select(a => new { a.FilmeId, a.FestivalId, a.TipoAcesso, a.Estado })
+    .ToList();
+Console.WriteLine($"Acessos: {System.Text.Json.JsonSerializer.Serialize(acessosCliente)}");
         return false;
     }
     

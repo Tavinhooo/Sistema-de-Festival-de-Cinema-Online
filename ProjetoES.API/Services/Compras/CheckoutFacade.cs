@@ -56,7 +56,7 @@ namespace ProjetoES.API.Services
             foreach (var ip in itensPedido)
             {
                 var quantidade = ip.Quantidade <= 0 ? 1 : ip.Quantidade;
-                _acessoService.CriarAcessos(utilizadorId, ip.FilmeId, quantidade, ip.TipoAcesso);
+                _acessoService.CriarAcessos(utilizadorId, ip.FilmeId, ip.FestivalId, quantidade, ip.TipoAcesso);
             }
 
             _carrinhoRepo.Limpar(carrinho);

@@ -15,7 +15,7 @@ public class AcessoService
         _acessoRepository = acessoRepository;
     }
 
-    public void CriarAcessos(int clienteId, int filmeId, int quantidade, string tipoAcesso)
+    public void CriarAcessos(int clienteId, int filmeId, int festivalId, int quantidade, string tipoAcesso)
     {
         if (quantidade <= 0)
         {
@@ -28,6 +28,8 @@ public class AcessoService
         var acessos = Enumerable.Range(0, quantidade)
             .Select(_ => factory.CriarAcesso(clienteId, filmeId, dataAquisicao))
             .ToList();
+
+        foreach (var acesso in acessos) acesso.FestivalId = festivalId;
 
         _acessoRepository.CriarAcessos(acessos);
     }
