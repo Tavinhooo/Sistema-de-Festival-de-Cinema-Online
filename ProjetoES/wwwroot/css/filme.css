@@ -341,19 +341,22 @@ body {
 
 .review-card {
     min-width: 320px;
-    background-color: #e5e5e5;
-    border-radius: 15px;
-    padding: 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
+    border-radius: 18px;
+    padding: 22px;
     flex-shrink: 0;
+    border: 1px solid #eadff7;
+    box-shadow: 0 10px 24px rgba(70, 44, 102, 0.08);
 }
 
 .review-header {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
     font-size: 16px;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 .review-header i {
@@ -362,7 +365,91 @@ body {
 
 .review-body {
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
+}
+
+.review-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.review-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #7b57b8, #50316f);
+    color: white;
+    box-shadow: 0 10px 18px rgba(123, 87, 184, 0.18);
+}
+
+.review-author-meta {
+    min-width: 0;
+}
+
+.review-author-name {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: #24172f;
+    line-height: 1.2;
+}
+
+.review-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #7b57b8;
+    background: #f2ebfb;
+    border-radius: 999px;
+    padding: 4px 10px;
+}
+
+.review-comment {
+    background: #fff;
+    border: 1px solid #efe5fb;
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #3f3647;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.review-comment-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #7b57b8;
+}
+
+.review-comment-label i {
+    font-size: 12px;
+}
+
+.review-comment-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4e4458;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.review-comment-empty {
+    color: #8f849d;
+    font-style: italic;
 }
 
 /* FORMAS PLACEHOLDER (Para manter o visual dos cartões) */

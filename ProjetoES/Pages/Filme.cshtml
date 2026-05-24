@@ -162,6 +162,16 @@
             return `${h}h:${String(m).padStart(2, '0')}min`;
         }
 
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
         function renderPoster(url, title) {
             document.getElementById('moviePoster').innerHTML =
                 `<img src="${url}" alt="${title}" style="width:100%; height:100%; object-fit:cover; border-radius:20px;" />`;
@@ -441,14 +451,21 @@
 
                 avaliacoes.forEach(a => {
                     const podeApagar = currentUserId && (a.clienteId === currentUserId || currentUserRole === 'Administrador');
+                    const comentario = String(a.comentario || '').trim();
+                    const comentarioHtml = comentario
+                        ? `<p class="review-comment-text">${escapeHtml(comentario)}</p>`
+                        : '<p class="review-comment-text review-comment-empty">Sem comentário.</p>';
 
                     const card = document.createElement('div');
                     card.className = 'review-card';
                     card.innerHTML = `
-                        <div class="review-header" style="justify-content:space-between; width:100%;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <span>${a.clienteNome || 'Utilizador'}</span>
-                                <i class="far fa-star"></i> ${a.classificacao}
+                        <div class="review-header">
+                            <div class="review-author">
+                                <span class="review-avatar"><i class="fas fa-user"></i></span>
+                                <div class="review-author-meta">
+                                    <span class="review-author-name">${escapeHtml(a.clienteNome || 'Utilizador')}</span>
+                                    <span class="review-rating"><i class="far fa-star"></i> ${escapeHtml(a.classificacao)}</span>
+                                </div>
                             </div>
                             <div style="display:flex; gap:8px; align-items:center;">
                                 ${podeApagar ? `<button class="btn-apagar-avaliacao" data-id="${a.id}"
@@ -460,7 +477,12 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="review-body">${a.comentario || ''}</div>`;
+                        <div class="review-body">
+                            <div class="review-comment">
+                                <div class="review-comment-label"><i class="fas fa-quote-left"></i> Comentário</div>
+                                ${comentarioHtml}
+                            </div>
+                        </div>`;
 
                     card.querySelector('.btn-apagar-avaliacao')?.addEventListener('click', async () => {
                         if (!confirm('Tens a certeza que queres apagar esta avaliação?')) return;
