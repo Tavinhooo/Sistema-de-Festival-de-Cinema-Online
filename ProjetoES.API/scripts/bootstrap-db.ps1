@@ -80,44 +80,69 @@ if ([string]::IsNullOrWhiteSpace($pgHost) -or
     throw 'DefaultConnection must include Host, Port, Database, and Username.'
 }
 
+$env:PGPASSWORD = $pgPassword
 
-if ($RecreateDb) {
-    Write-Host "[bootstrap-db] RecreateDb requested: terminating connections and recreating database '$pgDatabase'..."
-    $env:PGPASSWORD = $pgPassword
+function Invoke-Psql {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Database,
+        [Parameter(Mandatory = $true)]
+        [string[]]$ExtraArguments
+    )
 
-    # Terminate connections to the target database
-    $terminateSql = "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{0}' AND pid <> pg_backend_pid();" -f $pgDatabase
-    & psql -h $pgHost -p $pgPort -U $pgUsername -d postgres -c $terminateSql
-
-    # Drop and recreate database (DROP cannot run inside a transaction block)
-    $dropSql = 'DROP DATABASE IF EXISTS "{0}";' -f $pgDatabase
-    $createSql = 'CREATE DATABASE "{0}";' -f $pgDatabase
-    & psql -h $pgHost -p $pgPort -U $pgUsername -d postgres -c $dropSql
-    & psql -h $pgHost -p $pgPort -U $pgUsername -d postgres -c $createSql
+    & psql -h $pgHost -p $pgPort -U $pgUsername -d $Database @ExtraArguments
 
     if ($LASTEXITCODE -ne 0) {
-        throw 'Failed to drop/create database.'
+        throw "psql command failed while targeting database '$Database'."
+    }
+}
+
+function Test-DatabaseExists {
+    $result = & psql -h $pgHost -p $pgPort -U $pgUsername -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$pgDatabase';"
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not check whether database '$pgDatabase' exists."
     }
 
-    Write-Host "[bootstrap-db] Database recreated. Proceeding to restore."
-} else {
-    $env:PGPASSWORD = $pgPassword
+    return $result.Trim() -eq '1'
 }
 
-$psqlArgs = @(
-    '-h', $pgHost,
-    '-p', $pgPort,
-    '-U', $pgUsername,
-    '-d', $pgDatabase,
-    '-f', $dumpPath
-)
+function Test-DatabaseHasUserTables {
+    $tableCount = & psql -h $pgHost -p $pgPort -U $pgUsername -d $pgDatabase -tAc "SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');"
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect database '$pgDatabase'."
+    }
+
+    return ([int]$tableCount.Trim()) -gt 0
+}
+
+$databaseExists = Test-DatabaseExists
+
+if (-not $databaseExists) {
+    Write-Host "[bootstrap-db] Database '$pgDatabase' does not exist yet. Creating it..."
+    Invoke-Psql -Database 'postgres' -ExtraArguments @('-v', 'ON_ERROR_STOP=1', '-c', ('CREATE DATABASE "{0}";' -f $pgDatabase))
+    $databaseExists = $true
+}
+
+$shouldRecreateDb = $RecreateDb -or (Test-DatabaseHasUserTables)
+
+if ($shouldRecreateDb) {
+    Write-Host "[bootstrap-db] Recreating database '$pgDatabase' before restore..."
+
+    $terminateSql = "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{0}' AND pid <> pg_backend_pid();" -f $pgDatabase
+    Invoke-Psql -Database 'postgres' -ExtraArguments @('-v', 'ON_ERROR_STOP=1', '-c', $terminateSql)
+
+    $dropSql = 'DROP DATABASE IF EXISTS "{0}";' -f $pgDatabase
+    $createSql = 'CREATE DATABASE "{0}";' -f $pgDatabase
+    Invoke-Psql -Database 'postgres' -ExtraArguments @('-v', 'ON_ERROR_STOP=1', '-c', $dropSql)
+    Invoke-Psql -Database 'postgres' -ExtraArguments @('-v', 'ON_ERROR_STOP=1', '-c', $createSql)
+
+    Write-Host "[bootstrap-db] Database recreated. Proceeding to restore."
+}
 
 Write-Host "Restoring PostgreSQL dump into '$pgDatabase'..."
-& psql @psqlArgs
-
-if ($LASTEXITCODE -ne 0) {
-    throw 'Database restore failed.'
-}
+Invoke-Psql -Database $pgDatabase -ExtraArguments @('-v', 'ON_ERROR_STOP=1', '-f', $dumpPath)
 
 Write-Host 'Database restore completed successfully.'
 
