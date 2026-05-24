@@ -7,6 +7,9 @@ namespace ProjetoES.API.Controllers
 {
     [ApiController]
     [Route("api/admin")]
+    /// <summary>
+    /// Controlador para funcionalidades administrativas, como gestão de filmes, festivais, sessões, utilizadores e avaliações.
+    /// </summary>
     public class AdministradorController : ControllerBase
     {
         private readonly IAdministradorService _service;

@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjetoES.API.DTOs;
 
+/// <summary>
+/// DTO para a criação de novas avaliações, incluindo validação de campos obrigatórios e escala de classificação.
+/// </summary>
 public class CriarAvaliacaoDTO
 {
     public int FilmeId { get; set; }

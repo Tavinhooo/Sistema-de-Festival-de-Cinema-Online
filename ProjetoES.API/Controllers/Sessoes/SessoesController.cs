@@ -7,6 +7,9 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/sessoes")]
+/// <summary>
+/// Controlador para gerir as sessões dos filmes nos festivais, incluindo criação, atualização, remoção e consulta por filme ou festival.
+/// </summary>
 public class SessoesController : ControllerBase
 {
     private readonly SessaoService _service;

@@ -10,6 +10,9 @@ namespace ProjetoES.API.Controllers
     [ApiController]
     [Route("api/checkout")]
     [Authorize]
+    /// <summary>
+    /// Controlador para gerir o processo de checkout, incluindo processamento de compras, integração com pouca implementação do Stripe e visualização do histórico de compras.
+    /// </summary>
     public class CheckoutController : ControllerBase
     {
         private readonly CheckoutFacade _checkoutFacade;
@@ -25,7 +28,6 @@ namespace ProjetoES.API.Controllers
 
         private int ObterUtilizadorIdDoToken()
         {
-            // Debug: ver todos os claims que chegam
             foreach (var claim in User.Claims)
                 Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
 
@@ -36,7 +38,8 @@ namespace ProjetoES.API.Controllers
 
             return int.Parse(sub);
         }
-        // POST: api/checkout — RF04: processa compra e promove Membro para Cliente
+        // RF04: processa compra e promove Membro para Cliente
+        // POST: api/checkout
         [HttpPost]
         public IActionResult ProcessarCheckout(CheckoutRequestDTO dto)
         {
@@ -59,8 +62,6 @@ namespace ProjetoES.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        // POST: api/checkout/stripe/session
         [HttpPost("stripe/session")]
         public IActionResult CriarStripeSession()
         {

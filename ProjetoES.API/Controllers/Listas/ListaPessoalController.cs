@@ -4,6 +4,9 @@ using ProjetoES.API.Models;
 using ProjetoES.API.Services;
 using ProjetoES.API.Interfaces;
 
+/// <summary>
+/// Controlador para gerir as listas pessoais dos utilizadores, incluindo criação, atualização, remoção e associação de filmes.
+/// </summary>
 namespace ProjetoES.API.Controllers
 {
     [ApiController]

@@ -8,6 +8,9 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/filmes")]
+// <summary>
+// Controlador para gerir os filmes, incluindo criação, atualização, remoção e associação a festivais e cálculo de preços.
+// </summary>
 public class FilmesController : ControllerBase
 {
     private readonly FilmeService _service;
@@ -77,7 +80,7 @@ public class FilmesController : ControllerBase
         return Ok(detalhes);
     }
 
-    // NOVO — endpoint dedicado para buscar o trailer de um filme TMDB
+    // endpoint dedicado para buscar o trailer de um filme TMDB
     [HttpGet("tmdb/trailer/{tmdbId}")]
     public async Task<ActionResult<string>> ObterTrailerTmdb(int tmdbId)
     {

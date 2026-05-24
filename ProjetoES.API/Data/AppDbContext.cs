@@ -3,6 +3,11 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Data;
 
+/// <summary>
+/// Contexto de dados para a aplicação, utilizando Entity Framework Core para mapear as entidades do domínio para as tabelas do banco de dados.
+/// Inclui DbSet para cada entidade, como Festivais, Filmes, Sessões, Carrinhos, Compras, Utilizadores, Avaliações, Listas Pessoais, entre outros.
+/// Configura as relações entre as entidades, como a relação muitos-para-muitos entre Festivais e Filmes, e a relação um-para-muitos entre Utilizadores e Pedidos, utilizando Fluent API no método OnModelCreating.
+/// </summary>
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

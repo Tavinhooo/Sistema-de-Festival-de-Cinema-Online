@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjetoES.API.DTOs;
 
+/// <summary>
+/// DTO para o registo de novos utilizadores, incluindo validação de campos obrigatórios e formato de email.
+/// </summary>
 public class AuthRegisterDTO
 {
     public int? VisitanteId { get; set; }
