@@ -6,10 +6,12 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/auth")]
+/// <summary>
+/// Controlador para autenticação e registo de utilizadores.
+/// </summary>
 public class AuthController : ControllerBase
 {
     private readonly AuthService _service;
-
     public AuthController(AuthService service)
     {
         _service = service;

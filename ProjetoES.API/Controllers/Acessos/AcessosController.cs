@@ -7,6 +7,9 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/acessos")]
+/// <summary>
+/// Controlador para gerir os acessos dos utilizadores aos filmes e festivais.
+/// </summary>
 public class AcessosController : ControllerBase
 {
     private readonly AcessoRepository _repository;

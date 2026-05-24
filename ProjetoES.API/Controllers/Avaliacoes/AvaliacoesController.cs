@@ -7,6 +7,9 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/avaliacoes")]
+/// <summary>
+    /// Controlador para gerir as avaliações dos filmes pelos clientes, incluindo funcionalidades de reporte e moderação.
+/// </summary>
 public class AvaliacoesController : ControllerBase
 {
     private readonly AvaliacaoRepository _repository;

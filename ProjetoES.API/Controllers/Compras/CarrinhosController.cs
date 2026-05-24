@@ -7,6 +7,9 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/carrinhos")]
+/// <summary>
+    /// Controlador para gerir os carrinhos de compras dos clientes, incluindo adição, remoção e atualização de itens, bem como cálculo de preços.
+    /// </summary>
 public class CarrinhosController : ControllerBase
 {
     private readonly CarrinhoService _service;

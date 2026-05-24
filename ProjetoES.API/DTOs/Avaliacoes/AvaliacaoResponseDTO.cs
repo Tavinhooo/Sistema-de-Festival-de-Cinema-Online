@@ -1,5 +1,8 @@
 namespace ProjetoES.API.DTOs;
 
+/// <summary>
+/// DTO para a resposta de avaliações, incluindo informações sobre o filme, cliente e classificação.
+/// </summary>
 public class AvaliacaoResponseDTO
 {
     public int Id { get; set; }

@@ -8,7 +8,10 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/cliente")]
-[Authorize(Roles = "Cliente,Administrador")] // RNF01.3 — bloqueia Visitantes e Membros
+[Authorize(Roles = "Cliente,Administrador")] 
+/// <summary>
+/// Controlador para gerir as funcionalidades específicas dos Clientes, incluindo visualização do histórico de compras, acessos e gestão de avaliações.
+/// </summary>
 public class ClienteController : ControllerBase
 {
     private readonly ClienteService _service;
@@ -26,7 +29,7 @@ public class ClienteController : ControllerBase
         return int.Parse(sub);
     }
 
-    // GET api/cliente/compras — RU10 / RF07
+    // GET api/cliente/compras
     [HttpGet("compras")]
     public ActionResult<List<HistoricoComprasDTO>> ObterHistoricoCompras()
     {
@@ -38,7 +41,7 @@ public class ClienteController : ControllerBase
         catch (ArgumentException ex) { return NotFound(ex.Message); }
     }
 
-    // GET api/cliente/acessos — RU09
+    // GET api/cliente/acessos
     [HttpGet("acessos")]
     public ActionResult<List<AcessoResponseDTO>> ObterAcessos()
     {
@@ -50,7 +53,7 @@ public class ClienteController : ControllerBase
         catch (ArgumentException ex) { return NotFound(ex.Message); }
     }
 
-    // POST api/cliente/avaliacoes — RF13 / RU08
+    // POST api/cliente/avaliacoes
     [HttpPost("avaliacoes")]
     public ActionResult<AvaliacaoResponseDTO> CriarAvaliacao(CriarAvaliacaoDTO dto)
     {
@@ -62,7 +65,7 @@ public class ClienteController : ControllerBase
         catch (ArgumentException ex) { return BadRequest(ex.Message); }
     }
 
-    // GET api/cliente/avaliacoes — RU08
+    // GET api/cliente/avaliacoes
     [HttpGet("avaliacoes")]
     public ActionResult<List<AvaliacaoResponseDTO>> ObterAvaliacoes()
     {
@@ -74,7 +77,7 @@ public class ClienteController : ControllerBase
         catch (ArgumentException ex) { return NotFound(ex.Message); }
     }
 
-    // PUT api/cliente/avaliacoes/{id} — RF15.2
+    // PUT api/cliente/avaliacoes/{id}
     [HttpPut("avaliacoes/{id}")]
     public ActionResult<AvaliacaoResponseDTO> EditarAvaliacao(int id, CriarAvaliacaoDTO dto)
     {
@@ -87,7 +90,7 @@ public class ClienteController : ControllerBase
         catch (ArgumentException ex) { return BadRequest(ex.Message); }
     }
 
-    // DELETE api/cliente/avaliacoes/{id} — RF15.2
+    // DELETE api/cliente/avaliacoes/{id}
     [HttpDelete("avaliacoes/{id}")]
     public ActionResult EliminarAvaliacao(int id)
     {

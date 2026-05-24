@@ -1,7 +1,10 @@
 using ProjetoES.API.Models;
 
-namespace ProjetoES.API.DTOs
-{
+namespace ProjetoES.API.DTOs;
+    /// <summary>
+    /// DTOs para o painel de administração, incluindo informações sobre filmes, festivais, sessões, utilizadores, avaliações e pedidos, bem como um DTO para alterar o tipo de utilizador.
+    /// Estes DTOs são utilizados para exibir as informações relevantes no painel de administração e para realizar ações administrativas, como alterar o tipo de utilizador.
+    /// </summary>
     public class FilmeDTO
     {
         public int Id { get; set; }
@@ -84,4 +87,3 @@ public class AvaliacaoDTO
     {
         public TipoUtilizador NovoTipo { get; set; }
     }
-}

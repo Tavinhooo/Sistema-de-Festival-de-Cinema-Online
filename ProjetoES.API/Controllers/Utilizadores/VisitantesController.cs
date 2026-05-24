@@ -7,6 +7,10 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/visitantes")]
+
+/// <summary>
+/// Controlador para gerir as funcionalidades específicas dos Visitantes, incluindo criação de sessão anónima para navegação e carrinho de compras.
+/// </summary>
 public class VisitantesController : ControllerBase
 {
     private readonly AuthRepository _authRepository;

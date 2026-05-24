@@ -9,7 +9,11 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/membro")]
-[Authorize(Roles = "Membro,Cliente,Administrador")] // RF05.1 — bloqueia Visitantes
+[Authorize(Roles = "Membro,Cliente,Administrador")] 
+/// <summary>
+/// Controlador para gerir as funcionalidades específicas dos Membros, incluindo visualização e atualização do perfil, gestão de morada e método de pagamento, e logout.
+/// Inclui métodos para obter o perfil (RU11), atualizar o perfil (RU11), atualizar morada (RU12), atualizar método de pagamento (RU12) e realizar logout (RU14).
+/// </summary>
 public class MembroController : ControllerBase
 {
     private readonly MembroService _service;
@@ -52,7 +56,7 @@ public class MembroController : ControllerBase
         catch (ArgumentException ex) { return BadRequest(ex.Message); }
     }
 
-    // PUT api/membro/morada — RU06
+    // PUT api/membro/morada 
     [HttpPut("morada")]
     public ActionResult<MembroPerfilDTO> AtualizarMorada(AtualizarMoradaDTO dto)
     {
@@ -64,7 +68,7 @@ public class MembroController : ControllerBase
         catch (ArgumentException ex) { return BadRequest(ex.Message); }
     }
 
-    // PUT api/membro/pagamento — RU07 (prep)
+    // PUT api/membro/pagamento
     [HttpPut("pagamento")]
     public ActionResult<MembroPerfilDTO> AtualizarMetodoPagamento(AtualizarMetodoPagamentoDTO dto)
     {
@@ -76,7 +80,7 @@ public class MembroController : ControllerBase
         catch (ArgumentException ex) { return BadRequest(ex.Message); }
     }
 
-    // POST api/membro/logout — RU05
+    // POST api/membro/logout 
     [HttpPost("logout")]
     public IActionResult Logout()
     {
@@ -84,7 +88,7 @@ public class MembroController : ControllerBase
         {
             var id = ObterMembroIdDoToken();
             _service.RealizarLogout(id);
-            return NoContent(); // 204
+            return NoContent(); 
         }
         catch (ArgumentException ex) { return BadRequest(ex.Message); }
     }

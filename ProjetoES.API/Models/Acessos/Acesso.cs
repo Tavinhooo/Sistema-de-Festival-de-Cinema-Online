@@ -1,7 +1,7 @@
 namespace ProjetoES.API.Models
 {
     public enum EstadoAcesso { Ativo, Suspenso, Revogado }
-
+    
     public class Acesso
     {
         public int Id { get; set; }

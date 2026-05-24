@@ -10,6 +10,9 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/festivais")]
+/// <summary>
+/// Controlador para gerir os festivais, incluindo criação, atualização, remoção e associação de filmes, bem como cálculo de preços.
+/// </summary>
 public class FestivaisController : ControllerBase
 {
     private readonly FestivalService _service;
@@ -184,7 +187,7 @@ public class FestivaisController : ControllerBase
 
             if (dto.PrecoBilhete.HasValue && dto.PrecoBilhete.Value > 0)
             {
-                // Ensure the festival-film join has the supplied price
+                // atualiza o preço do bilhete para este filme neste festival
                 _filmeRepository.VincularFilmeAoFestival(dto.FilmeId, id, dto.PrecoBilhete.Value);
             }
 
@@ -196,7 +199,6 @@ public class FestivaisController : ControllerBase
         }
     }
 
-    // GET api/festivais/{id}/preco?tipoAcesso=Passe Completo&filmeId=3
     [HttpGet("{id}/preco")]
     [AllowAnonymous]
     public ActionResult<PrecoResponseDTO> CalcularPreco(
