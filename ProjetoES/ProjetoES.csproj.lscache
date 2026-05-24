@@ -422,6 +422,7 @@ obj/Debug/net10.0/ProjetoES.GeneratedMSBuildEditorConfig.editorconfig
 Pages/
  AdicionarFestival.cshtml
  AdicionarFilme.cshtml
+ AdicionarFilmeAFestival.cshtml
  Admin.cshtml
  AdminPanel.cshtml
  Carrinho.cshtml
@@ -431,6 +432,7 @@ Pages/
  Festivais.cshtml
  Filme.cshtml
  Filmes.cshtml
+ GerirFilmesFestival.cshtml
  Index.cshtml
  Login.cshtml
  Perfil.cshtml
@@ -448,6 +450,7 @@ Pages/
 Pages/
  AdicionarFestival.cshtml
  AdicionarFilme.cshtml
+ AdicionarFilmeAFestival.cshtml
  Admin.cshtml
  AdminPanel.cshtml
  Carrinho.cshtml
@@ -457,6 +460,7 @@ Pages/
  Festivais.cshtml
  Filme.cshtml
  Filmes.cshtml
+ GerirFilmesFestival.cshtml
  Index.cshtml
  Login.cshtml
  Perfil.cshtml

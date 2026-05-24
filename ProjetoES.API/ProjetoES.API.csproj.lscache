@@ -56,74 +56,88 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 
 [sourceFiles]
 Controllers/
- AcessosController.cs
- AdministradorController.cs
- AuthController.cs
- AvaliacoesController.cs
- CarrinhosController.cs
- CheckoutController.cs
- ClienteController.cs
- FestivaisController.cs
- FilmesController.cs
- ListaPessoalController.cs
- MembroController.cs
- SessoesController.cs
- VisitantesController.cs
+ Acessos/AcessosController.cs
+ Admin/AdministradorController.cs
+ Auth/AuthController.cs
+ Avaliacoes/AvaliacoesController.cs
+ Catalogos/
+  FestivaisController.cs
+  FilmesController.cs
+ Compras/
+  CarrinhosController.cs
+  CheckoutController.cs
+ Listas/ListaPessoalController.cs
+ Sessoes/SessoesController.cs
+ Utilizadores/
+  ClienteController.cs
+  MembroController.cs
+  VisitantesController.cs
 Data/
  AppDbContext.cs
  AppDbContextFactory.cs
-DTOS/
- AcessoResponseDTO.cs
- AdministradorDTOS.cs
- AtualizarItemDTO.cs
- AtualizarMetodoPagamento.cs
- AtualizarMoradaDTO.cs
- AtualizarPerfilDTO.cs
- AuthLoginDTO.cs
- AuthRegisterDTO.cs
- AuthResponseDTO.cs
- AvaliacaoResponseDTO.cs
- CarrinhoRequestDTO.cs
- CarrinhoResponseDTO.cs
- CheckoutDTO.cs
- ClienteResponseDTO.cs
- CreateFilmeDTO.cs
- CriarAvaliacaoDTO.cs
- FestivalFiltroDTO.cs
- FestivalRequestDTO.cs
- FestivalResponseDTO.cs
- FilmeFestivalDTO.cs
- FilmeResponseDTO.cs
- HistoricoComprasDTO.cs
- ItemCarrinhoRequestDTO.cs
- ItemCarrinhoResponseDTO.cs
- MembroPerfilDTO.CS
- MoradaDTO.cs
- PrecoResponseDTO.cs
- SessaoRequestDTO.cs
- SessaoResponseDTO.cs
- StripeCheckoutSessionDTO.cs
- UpdateFilmeDTO.cs
- VincularFilmeFestivalDTO.cs
- VisitanteSessionDTO.cs
-Factories/
+DTOs/
+ Acessos/AcessoResponseDTO.cs
+ Admin/AdministradorDTOS.cs
+ Auth/
+  AuthLoginDTO.cs
+  AuthRegisterDTO.cs
+  AuthResponseDTO.cs
+ Avaliacoes/
+  AvaliacaoResponseDTO.cs
+  CriarAvaliacaoDTO.cs
+  ReportarAvaliacaoDTO.cs
+ Catalogos/
+  AssociarFilmeRequestDTO.cs
+  CreateFilmeDTO.cs
+  FestivalFiltroDTO.cs
+  FestivalRequestDTO.cs
+  FestivalResponseDTO.cs
+  FilmeFestivalDTO.cs
+  FilmeResponseDTO.cs
+  PrecoResponseDTO.cs
+  UpdateFilmeDTO.cs
+  VincularFilmeFestivalDTO.cs
+ Compras/
+  AtualizarItemDTO.cs
+  AtualizarMetodoPagamento.cs
+  CarrinhoRequestDTO.cs
+  CarrinhoResponseDTO.cs
+  CheckoutDTO.cs
+  HistoricoComprasDTO.cs
+  ItemCarrinhoRequestDTO.cs
+  ItemCarrinhoResponseDTO.cs
+  StripeCheckoutSessionDTO.cs
+ Sessoes/
+  SessaoRequestDTO.cs
+  SessaoResponseDTO.cs
+ Utilizadores/
+  AtualizarMoradaDTO.cs
+  AtualizarPerfilDTO.cs
+  ClienteResponseDTO.cs
+  MembroPerfilDTO.cs
+  MoradaDTO.cs
+  VisitanteSessionDTO.cs
+Factories/Acessos/
  AcessoFactory.cs
  AluguerDigitalFactory.cs
  BilheteAcessoFactory.cs
- ListaPessoalFactory.cs
  PasseCompletoAcessoFactory.cs
  PasseDiarioAcessoFactory.cs
-Interfaces/
+Factories/Listas/ListaPessoalFactory.cs
+Interfaces/Admin/
  IAdministradorRepository.cs
  IAdministradorService.cs
+Interfaces/Avaliacoes/
  IAvaliacaoObservable.cs
  IAvaliacaoObserver.cs
+Interfaces/Catalogos/
  IFilmeService.cs
+ ITmdbApiClient.cs
+ ITmdbService.cs
+Interfaces/Listas/
  IListaPessoalRepository.cs
  IListaPessoalService.cs
  IListaPessoalStrategy.cs
- ITmdbApiClient.cs
- ITmdbService.cs
 Migrations/
  20260515151246_InitialCreate.cs
  20260515151246_InitialCreate.Designer.cs
@@ -131,31 +145,46 @@ Migrations/
  20260515162413_AddLocalToFestival.Designer.cs
  20260516140526_TornarSessaoIdNullable.cs
  20260516140526_TornarSessaoIdNullable.Designer.cs
+ 20260518071343_AddMotivoReporteToAvaliacao.cs
+ 20260518071343_AddMotivoReporteToAvaliacao.Designer.cs
+ 20260523133220_FixListaPessoalFK.cs
+ 20260523133220_FixListaPessoalFK.Designer.cs
+ 20260523151321_AddFestivalIdToAcesso.cs
+ 20260523151321_AddFestivalIdToAcesso.Designer.cs
+ 20260523170452_ListaPessoalManyToMany.cs
+ 20260523170452_ListaPessoalManyToMany.Designer.cs
+ 20260524013730_MakeItemPedidoFilmeIdNullable.cs
+ 20260524013730_MakeItemPedidoFilmeIdNullable.Designer.cs
  AppDbContextModelSnapshot.cs
-Models/
+Models/Acessos/
  Acesso.cs
- Administrador.cs
- Avaliacao.cs
- Carrinho.cs
- Compra.cs
- EstadoFestival.cs
- External/TmdbApiDtos.cs
- Festival.cs
- FestivalFilme.cs
- Filme.cs
- ItemPedido.cs
- ListaPessoal.cs
  LogAlteracaoAcesso.cs
- Membro.cs
- Morada.cs
- PasswordResetToken.cs
- Pedido.cs
- Sessao.cs
- TipoLista.cs
- TipoUtilizadores.cs
- TmdbMovie.cs
- Utilizador.cs
- Visitante.cs
+Models/
+ Avaliacoes/Avaliacao.cs
+ Catalogos/
+  EstadoFestival.cs
+  Festival.cs
+  FestivalFilme.cs
+  Filme.cs
+  TmdbMovie.cs
+ Compras/
+  Carrinho.cs
+  Compra.cs
+  ItemPedido.cs
+  Pedido.cs
+ External/TmdbApiDtos.cs
+ Listas/
+  ListaPessoal.cs
+  TipoLista.cs
+ Sessoes/Sessao.cs
+ Utilizadores/
+  Administrador.cs
+  Membro.cs
+  Morada.cs
+  PasswordResetToken.cs
+  TipoUtilizadores.cs
+  Utilizador.cs
+  Visitante.cs
 obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  ProjetoES.API.AssemblyInfo.cs
@@ -169,39 +198,47 @@ Pricing/
  PrecoDiarioDecorator.cs
 Program.cs
 Repositories/
- AcessoRepository.cs
- AdministradorRepository.cs
- AuthRepository.cs
- AvaliacaoRepository.cs
- CarrinhoRepository.cs
- ClienteRepository.cs
- FestivalRepository.cs
- FilmeRepository.cs
- IListaStrategy.cs
- ListaPessoalRepository.cs
- MembroRepository.cs
- PedidoRepository.cs
- SessaoRepository.cs
+ Acessos/AcessoRepository.cs
+ Admin/AdministradorRepository.cs
+ Auth/AuthRepository.cs
+ Avaliacoes/AvaliacaoRepository.cs
+ Catalogos/
+  FestivalRepository.cs
+  FilmeRepository.cs
+ Compras/
+  CarrinhoRepository.cs
+  PedidoRepository.cs
+ Listas/
+  IListaStrategy.cs
+  ListaPessoalRepository.cs
+ Sessoes/SessaoRepository.cs
+ Utilizadores/
+  ClienteRepository.cs
+  MembroRepository.cs
 Services/
- AcessoService.cs
- AdministradorService.cs
- AuthService.cs
- AvaliacaoService.cs
- CarrinhoService.cs
- CheckoutFacade.cs
- CheckoutService.cs
- ClienteService.cs
- FavoritoStrategyService.cs
- FestivalService.cs
- FilmeService.cs
- ListaPessoalService.cs
- MembroService.cs
- QueroVerStrategyService.cs
- SessaoService.cs
- StripeCheckoutService.cs
- TmdbApiClient.cs
- TmdbServiceAdapter.cs
- VistoStrategyService.cs
+ Acessos/AcessoService.cs
+ Admin/AdministradorService.cs
+ Auth/AuthService.cs
+ Avaliacoes/AvaliacaoService.cs
+ Catalogos/
+  FestivalService.cs
+  FilmeService.cs
+  TmdbApiClient.cs
+  TmdbServiceAdapter.cs
+ Compras/
+  CarrinhoService.cs
+  CheckoutFacade.cs
+  CheckoutService.cs
+  StripeCheckoutService.cs
+ Listas/
+  FavoritoStrategyService.cs
+  ListaPessoalService.cs
+  VerDepoisStrategyService.cs
+  VistoStrategyService.cs
+ Sessoes/SessaoService.cs
+ Utilizadores/
+  ClienteService.cs
+  MembroService.cs
 
 [metadataReferences]
 <DOTNET>/packs/Microsoft.AspNetCore.App.Ref/10.0.3/ref/net10.0/
