@@ -8,6 +8,7 @@ using ProjetoES.API.Repositories;
 using ProjetoES.API.Services;
 using ProjetoES.API.Models;
 using ProjetoES.API.Services.Recomendacoes;
+using ProjetoES.API.Services.Premios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +67,9 @@ builder.Services.AddScoped<IRecomendacaoStrategy, PorGeneroStrategy>();
 builder.Services.AddScoped<IRecomendacaoStrategy, PorPopularidadeStrategy>();
 builder.Services.AddScoped<IRecomendacaoStrategy, PorFestivalStrategy>();
 builder.Services.AddScoped<RecomendacoesService>();
+builder.Services.AddScoped<IVotoObserver, LogVotoObserver>();
+builder.Services.AddScoped<IVotoObserver, LiderPremioObserver>();
+builder.Services.AddScoped<PremioService>();
 
 // ==========================================
 // JWT CONFIGURATION

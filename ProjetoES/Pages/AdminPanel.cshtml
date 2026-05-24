@@ -366,6 +366,88 @@
                     opacity: 0.4;
                 }
             }
+
+            .premio-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 14px 16px;
+                border: 1px solid #ede8f5;
+                border-radius: 12px;
+                margin-bottom: 10px;
+                background: white;
+            }
+
+            .premio-row-info {
+                flex: 1;
+            }
+
+            .premio-row-title {
+                font-size: 14px;
+                font-weight: 800;
+                color: #1a1a1a;
+                margin-bottom: 2px;
+            }
+
+            .premio-row-meta {
+                font-size: 12px;
+                color: #888;
+            }
+
+            .premio-row-actions {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .toggle-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+                cursor: pointer;
+                border: none;
+            }
+
+            .toggle-pill.open {
+                background: #edf7ee;
+                color: #185a2f;
+            }
+
+            .toggle-pill.closed {
+                background: #f4eefc;
+                color: #6b439b;
+            }
+
+            .form-premio {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .form-premio input,
+            .form-premio select {
+                padding: 10px 14px;
+                border: 1px solid #e0d8f0;
+                border-radius: 10px;
+                font-size: 14px;
+                font-family: inherit;
+                outline: none;
+            }
+
+            .form-premio input:focus,
+            .form-premio select:focus {
+                border-color: #7b57b8;
+            }
+
+            .form-premio-full {
+                grid-column: 1 / -1;
+            }
     </style>
 </head>
 
@@ -430,7 +512,7 @@
         <!-- QUICK ACTIONS -->
         <p class="section-title"><i class="fas fa-bolt"></i> Ações Rápidas</p>
         <div class="quick-actions">
-             <a href="/AdicionarFilmeAFestival" class="action-btn primary">
+            <a href="/AdicionarFilmeAFestival" class="action-btn primary">
                 <i class="fas fa-plus-circle"></i> Adicionar Filme a Festival
             </a>
             <a href="/AdicionarFilme" class="action-btn primary">
@@ -455,11 +537,43 @@
             </div>
         </div>
 
+        <div class="panel-section">
+            <p class="section-title">
+                <i class="fas fa-trophy"></i> Gerir Prémios
+            </p>
+
+            <div style="margin-bottom:20px;">
+                <label
+                style="font-size:13px; font-weight:700; color:#555; display:block; margin-bottom:8px;">Festival</label>
+                <select id="selectFestivalPremios" onchange="carregarPremiosAdmin()"
+                        style="padding:10px 14px; border:1px solid #e0d8f0; border-radius:10px; font-size:14px; font-family:inherit; outline:none; min-width:260px;">
+                    <option value="">Escolhe um festival...</option>
+                </select>
+            </div>
+
+            <div id="listaPremios" style="margin-bottom:24px;"></div>
+
+            <div id="formCriarPremio" style="display:none;">
+                <p style="font-size:14px; font-weight:800; color:#333; margin-bottom:12px;">
+                    <i class="fas fa-plus-circle" style="color:#7b57b8;"></i> Novo Prémio
+                </p>
+                <div class="form-premio">
+                    <input id="inputPremioNome" type="text" placeholder="Nome (ex: Melhor Filme)" />
+                    <input id="inputPremioDataLimite" type="datetime-local" />
+                    <input id="inputPremioDescricao" type="text" placeholder="Descrição" class="form-premio-full" />
+                </div>
+                <button onclick="handleCriarPremio()" class="action-btn primary"
+                        style="font-size:13px; padding:10px 18px;">
+                    <i class="fas fa-plus"></i> Criar Prémio
+                </button>
+            </div>
+        </div>
+
     </main>
 
     <script src="~/js/api-client.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
         ApiClient.renderAuthNavigation('navActions');
 
         // Verifica se é admin
@@ -468,6 +582,7 @@
         return;
         }
 
+        await iniciarSelectFestivais();
         loadDashboard();
         });
 
@@ -600,6 +715,107 @@
         badge.textContent = remaining;
         }
         }, 300);
+        }
+        }
+        async function iniciarSelectFestivais() {
+        try {
+        const festivais = await ApiClient.getFestivais();
+        const sel = document.getElementById('selectFestivalPremios');
+        festivais.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.nome;
+        sel.appendChild(opt);
+        });
+        } catch (e) { console.error(e); }
+        }
+
+        async function carregarPremiosAdmin() {
+        const festivalId = document.getElementById('selectFestivalPremios').value;
+        const lista = document.getElementById('listaPremios');
+        const form = document.getElementById('formCriarPremio');
+
+        if (!festivalId) { lista.innerHTML = ''; form.style.display = 'none'; return; }
+
+        form.style.display = 'block';
+        lista.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>';
+
+        try {
+        const premios = await ApiClient.getPremiosPorFestival(festivalId);
+        lista.innerHTML = '';
+
+        if (!Array.isArray(premios) || premios.length === 0) {
+        lista.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><p>Sem prémios para este festival.</p></div>';
+        return;
+        }
+
+        premios.forEach(p => {
+        const aberta = p.votacaoAberta ?? p.VotacaoAberta ?? false;
+        const row = document.createElement('div');
+        row.className = 'premio-row';
+        row.id = `premio-${p.id}`;
+        row.innerHTML = `
+        <div class="premio-row-info">
+        <div class="premio-row-title">${p.nome ?? p.Nome}</div>
+        <div class="premio-row-meta">${p.descricao ?? p.Descricao ?? ''}</div>
+        </div>
+        <div class="premio-row-actions">
+        <button class="toggle-pill ${aberta ? 'open' : 'closed'}" onclick="handleToggleVotacao(${p.id}, ${!aberta})">
+        <i class="fas ${aberta ? 'fa-vote-yea' : 'fa-lock'}"></i>
+        ${aberta ? 'Votação aberta' : 'Votação fechada'}
+        </button>
+        <button class="btn-action btn-delete" onclick="handleApagarPremio(${p.id})">
+        <i class="fas fa-trash"></i>
+        </button>
+        </div>
+        `;
+        lista.appendChild(row);
+        });
+        } catch (e) {
+        lista.innerHTML = '<div class="loading-state">Erro ao carregar prémios.</div>';
+        }
+        }
+
+        async function handleCriarPremio() {
+        const festivalId = parseInt(document.getElementById('selectFestivalPremios').value);
+        const nome = document.getElementById('inputPremioNome').value.trim();
+        const descricao = document.getElementById('inputPremioDescricao').value.trim();
+        const dataLimite = document.getElementById('inputPremioDataLimite').value;
+
+        if (!nome) { alert('Insere o nome do prémio.'); return; }
+
+        try {
+        await ApiClient.criarPremio({
+        nome,
+        descricao,
+        festivalId,
+        dataLimiteVotacao: dataLimite ? new Date(dataLimite).toISOString() : null
+        });
+        document.getElementById('inputPremioNome').value = '';
+        document.getElementById('inputPremioDescricao').value = '';
+        document.getElementById('inputPremioDataLimite').value = '';
+        await carregarPremiosAdmin();
+        } catch (e) {
+        alert(e.message || 'Erro ao criar prémio.');
+        }
+        }
+
+        async function handleToggleVotacao(premioId, novoEstado) {
+        try {
+        await ApiClient.toggleVotacaoPremio(premioId, novoEstado);
+        await carregarPremiosAdmin();
+        } catch (e) {
+        alert(e.message || 'Erro ao alterar votação.');
+        }
+        }
+
+        async function handleApagarPremio(premioId) {
+        if (!confirm('Apagar este prémio e todos os votos associados?')) return;
+        try {
+        await ApiClient.apagarPremio(premioId);
+        await carregarPremiosAdmin();
+        } catch (e) {
+        alert(e.message || 'Erro ao apagar prémio.');
         }
         }
     </script>

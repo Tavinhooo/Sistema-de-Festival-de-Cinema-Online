@@ -27,6 +27,8 @@ public class AppDbContext : DbContext
     public DbSet<ListaPessoal> ListaPessoais { get; set; }
     public DbSet<Administrador> Administradores { get; set; }
     public DbSet<LogAlteracaoAcesso> LogsAlteracaoAcessos { get; set; }
+    public DbSet<Premio> Premios { get; set; }
+    public DbSet<VotoPremio> VotosPremio { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -120,5 +122,33 @@ public class AppDbContext : DbContext
                 mb.Property(m => m.Pais).HasColumnName("Morada_Pais");
             });
         });
+
+        modelBuilder.Entity<VotoPremio>()
+    .HasIndex(v => new { v.PremioId, v.ClienteId })
+    .IsUnique();
+
+        modelBuilder.Entity<VotoPremio>()
+            .HasOne(v => v.Premio)
+            .WithMany(p => p.Votos)
+            .HasForeignKey(v => v.PremioId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<VotoPremio>()
+            .HasOne(v => v.Filme)
+            .WithMany()
+            .HasForeignKey(v => v.FilmeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<VotoPremio>()
+            .HasOne(v => v.Cliente)
+            .WithMany()
+            .HasForeignKey(v => v.ClienteId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Premio>()
+            .HasOne(p => p.Festival)
+            .WithMany()
+            .HasForeignKey(p => p.FestivalId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

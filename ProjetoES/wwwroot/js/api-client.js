@@ -135,7 +135,7 @@ const ApiClient = (() => {
       return (
         claims.role ??
         claims[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
         ] ??
         null
       );
@@ -359,7 +359,7 @@ const ApiClient = (() => {
         claims.sub ??
         claims.nameid ??
         claims[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
         ];
       const parsed = Number(userId);
       return Number.isFinite(parsed) ? parsed : null;
@@ -374,10 +374,21 @@ const ApiClient = (() => {
       request("DELETE", `/api/filmes/${filmeId}/festival/${festivalId}`),
     getFestivaisDisponiveis: () =>
       request("GET", "/api/festivais/disponiveis-para-filmes"),
-    associarFilmeAoFestival: (festivalId, filmeId, precoBilhete = null) => 
+    associarFilmeAoFestival: (festivalId, filmeId, precoBilhete = null) =>
       request("POST", `/api/festivais/${festivalId}/associar-filme`, { filmeId, precoBilhete }),
     getRecomendacoes: (userId) =>
-    request("GET", `/api/recomendacoes/${userId}`),
+      request("GET", `/api/recomendacoes/${userId}`),
+    getPremiosPorFestival: (festivalId) =>
+      request("GET", `/api/premios/festival/${festivalId}`),
+
+    votar: (premioId, filmeId) =>
+      request("POST", `/api/premios/${premioId}/votar`, { filmeId }),
+
+    getResultadosPremio: (premioId) =>
+      request("GET", `/api/premios/${premioId}/resultados`),
+    criarPremio: (dto) => request('POST', '/api/premios', dto),
+    apagarPremio: (id) => request('DELETE', `/api/premios/${id}`),
+    toggleVotacaoPremio: (id, aberta) => request('PATCH', `/api/premios/${id}/votacao`, aberta),
   };
 })();
 
