@@ -5,22 +5,26 @@ Manuel Gama (2106723),
 André Pereira (2052923)
 
 💻 Environment Setup
-
+Para rodar o codigo é necessário a instalação do postegresql e a criação da base de dados cinema_festival e repopular a base de dados através deste codigo abaixo
 
 ```powershell
 cd ProjetoES.API
 .\scripts\bootstrap-db.ps1 -RunApp
 psql -h localhost -U postgres -d cinema_festival -f cinema_festival_backup.sql
+
+Após isto, devemos rodar dois git terminal em um fazer cd ProjetoES e outro ProjetoES.API e rodar dotnet run
 ````text
 Member user:
 e-mail: joaoRatao@gmail.com
 password: 1234!
 
 Cliente use: 
-carlaOrnelas@hotmail.com
-4321!
+e-mail: carlaOrnelas@hotmail.com
+password: 4321!
 
 Admin user:
+e-mail: admin@festival.com
+password: Admin@123!
 
 ````
 
