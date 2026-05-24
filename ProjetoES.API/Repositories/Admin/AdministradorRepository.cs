@@ -101,8 +101,16 @@ namespace ProjetoES.API.Repositories
             }
         }
 
-        public async Task<IEnumerable<Avaliacao>> ObterTodasAvaliacoes() => await _context.Avaliacoes.ToListAsync();
-        public async Task<Avaliacao?> ObterAvaliacaoPorId(int id) => await _context.Avaliacoes.FindAsync(id);
+        public async Task<IEnumerable<Avaliacao>> ObterTodasAvaliacoes() => await _context.Avaliacoes
+            .Include(a => a.Filme)
+                .ThenInclude(f => f.Festivais)
+            .Include(a => a.Cliente)
+            .ToListAsync();
+        public async Task<Avaliacao?> ObterAvaliacaoPorId(int id) => await _context.Avaliacoes
+            .Include(a => a.Filme)
+                .ThenInclude(f => f.Festivais)
+            .Include(a => a.Cliente)
+            .FirstOrDefaultAsync(a => a.Id == id);
         public async Task<Avaliacao> AprovarAvaliacao(Avaliacao avaliacao)
         {
             avaliacao.IsReportado = true;

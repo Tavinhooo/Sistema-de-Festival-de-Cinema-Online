@@ -40,6 +40,8 @@
                     <button class="btn-pill" id="btnElenco">Elenco e Realizador</button>
                 </div>
 
+                <div id="adminFestivalActions" style="margin-top:12px;"></div>
+
                 <div id="movieSynopsis" style="margin-top:24px; line-height:1.8; color:#444; display:none;"></div>
                 <div id="movieCastInfo" style="margin-top:24px; line-height:1.8; color:#444; display:none;">
                     <p id="movieRealizer" style="font-size:14px; margin-bottom:8px;"></p>
@@ -413,6 +415,18 @@
                 const row   = document.getElementById('reviewsRow');
                 const empty = document.getElementById('reviewsEmpty');
 
+                const notas = Array.isArray(avaliacoes)
+                    ? avaliacoes
+                        .map(a => Number(a.classificacao ?? a.Classificacao))
+                        .filter(nota => Number.isFinite(nota))
+                    : [];
+                const mediaAvaliacoes = notas.length > 0
+                    ? notas.reduce((acc, nota) => acc + nota, 0) / notas.length
+                    : 0;
+                const totalAvaliacoes = notas.length;
+
+                document.getElementById('movieRating').textContent = `${mediaAvaliacoes.toFixed(1)} (${totalAvaliacoes} avaliações)`;
+
                 row.innerHTML = '';
                 row.appendChild(empty);
 
@@ -623,6 +637,31 @@
                 document.getElementById('movieRealizer').textContent = filme.realizador ? `🎬 Realizador: ${filme.realizador}` : 'Realizador: Desconhecido';
                 document.getElementById('movieCast').textContent = filme.elenco ? `🎭 Elenco: ${filme.elenco}` : 'Elenco: Desconhecido';
 
+                const adminFestivalActions = document.getElementById('adminFestivalActions');
+                const currentUserRole = ApiClient.getCurrentUserRole();
+                if (festivalIdQuery && currentUserRole === 'Administrador') {
+                    adminFestivalActions.innerHTML = `
+                        <button type="button" id="btnRemoverDoFestival" style="
+                            width:100%; padding:12px 16px; border:none; border-radius:14px;
+                            background:#c0392b; color:white; font-weight:800; cursor:pointer;
+                            box-shadow:0 10px 24px rgba(192,57,43,0.18);">
+                            <i class="fas fa-trash"></i> Remover do festival
+                        </button>`;
+
+                    document.getElementById('btnRemoverDoFestival')?.addEventListener('click', async () => {
+                        if (!confirm('Tens a certeza que queres remover este filme do festival?')) return;
+                        try {
+                            await ApiClient.desvincularFilmeDeFestival(Number(filmIdQuery), Number(festivalIdQuery));
+                            showMensagem('Filme removido do festival com sucesso!');
+                            window.location.href = `/GerirFilmesFestival?festivalId=${encodeURIComponent(festivalIdQuery)}`;
+                        } catch (error) {
+                            showMensagem(error.message || 'Não foi possível remover o filme do festival.', true);
+                        }
+                    });
+                } else {
+                    adminFestivalActions.innerHTML = '';
+                }
+
                 renderPoster(filme.posterUrl || '/images/default-poster.jpg', filme.titulo || 'Filme');
 
                 if (festivalIdQuery) {
@@ -705,7 +744,13 @@
                     await loadReviews(filmId);
                 } catch (error) {
                     console.error(error);
-                    showMensagem(error?.message || 'Não foi possível submeter a avaliação.', true);
+                    if (error?.status === 403) {
+                        showMensagem('Só clientes autenticados podem avaliar filmes.', true);
+                    } else if (error?.status === 401) {
+                        showMensagem('Tens de iniciar sessão para avaliar.', true);
+                    } else {
+                        showMensagem(error?.message || 'Não foi possível submeter a avaliação.', true);
+                    }
                 } finally {
                     btn.disabled = false;
                     btn.textContent = 'Submeter Avaliação';

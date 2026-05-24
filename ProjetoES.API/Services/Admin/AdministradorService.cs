@@ -320,6 +320,8 @@ namespace ProjetoES.API.Services
             Id = a.Id,
             ClienteId = a.ClienteId,
             FilmeId = a.FilmeId,
+            FilmeTitulo = a.Filme?.Titulo ?? string.Empty,
+            FestivalNome = a.Filme?.Festivais?.FirstOrDefault()?.Nome ?? string.Empty,
             Classificacao = a.Classificacao,
             Comentario = a.Comentario,
             DataAvaliacao = a.DataAvaliacao,

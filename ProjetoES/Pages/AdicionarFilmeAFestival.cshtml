@@ -313,8 +313,9 @@
                         </div>
 
                         <div>
-                            <label class="field-label" for="associationPrice">Preço do bilhete (€) (opcional)</label>
-                            <input id="associationPrice" class="field" type="number" step="0.01" min="0" placeholder="Deixa em branco para manter preço atual" />
+                            <label class="field-label" for="associationPrice">Preço do bilhete (€) *</label>
+                            <input id="associationPrice" class="field" type="number" step="0.01" min="0" required placeholder="Indica o preço do bilhete" />
+                            <div class="helper">Este valor é obrigatório para associar o filme ao festival.</div>
                         </div>
                     </div>
 
@@ -467,6 +468,13 @@ async function executarAssociacao(event) {
         // Optional price field on the form
         const priceInput = document.getElementById('associationPrice');
         const price = priceInput && priceInput.value.trim() !== '' ? Number(priceInput.value) : null;
+
+        if (price === null || Number.isNaN(price) || price <= 0) {
+            showMessage('O preço do bilhete do festival é obrigatório.', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Associar Filme';
+            return;
+        }
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A associar...';

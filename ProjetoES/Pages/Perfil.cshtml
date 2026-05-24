@@ -357,8 +357,12 @@
                         </div>
                     `;
 
-            // Carregar histórico e acessos em paralelo
-            await Promise.all([carregarHistorico(), carregarAcessos(userId), carregarLista(userId, 'QueroVer', 'queroVerContainer'), carregarLista(userId, 'Visto', 'vistoContainer'), carregarLista(userId, 'Favoritos', 'favoritosContainer')]);
+            // Carregar cada secção de forma independente para não bloquear o resto da página.
+            carregarHistorico().catch(console.error);
+            carregarAcessos(userId).catch(console.error);
+            carregarLista(userId, 'QueroVer', 'queroVerContainer').catch(console.error);
+            carregarLista(userId, 'Visto', 'vistoContainer').catch(console.error);
+            carregarLista(userId, 'Favoritos', 'favoritosContainer').catch(console.error);
         });
 
         function switchTab(tab) {
@@ -486,26 +490,31 @@
             const container = document.getElementById(containerId);
             try {
                 const listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
+                const listasNormalizadas = Array.isArray(listas) ? listas : [];
                 const tipoMap = { 'QueroVer': 0, 'Visto': 1, 'Favoritos': 2 };
-                const lista = listas.find(l => l.tipo === tipoMap[tipo]);
+                const lista = listasNormalizadas.find(l => (l.tipo ?? l.Tipo) === tipoMap[tipo]);
 
                 if (!lista || !lista.filmes || lista.filmes.length === 0) {
                     container.innerHTML = `<div class="empty-state"><i class="fas fa-film"></i> Lista vazia.</div>`;
                     return;
                 }
 
+                container.innerHTML = '';
+
                 const grid = document.createElement('div');
                 grid.className = 'acessos-grid';
 
-                lista.filmes.forEach(f => {
+                const filmes = Array.isArray(lista.filmes) ? lista.filmes : (Array.isArray(lista.Filmes) ? lista.Filmes : []);
+
+                filmes.forEach(f => {
                     const card = document.createElement('div');
                     card.className = 'acesso-card';
                     card.style.position = 'relative';
                     card.innerHTML = `
-                        <img src="${f.posterUrl || posterPlaceholder}"
-                            alt="${f.titulo}"
+                        <img src="${f.posterUrl ?? f.PosterUrl ?? posterPlaceholder}"
+                            alt="${f.titulo ?? f.Titulo ?? 'Filme'}"
                             onerror="this.onerror=null; this.src='${posterPlaceholder}';" />
-                        <div class="acesso-titulo">${f.titulo}</div>
+                        <div class="acesso-titulo">${f.titulo ?? f.Titulo ?? 'Filme'}</div>
                         <button data-filme-id="${f.id}" style="
                             position:absolute; top:8px; right:8px;
                             background:rgba(0,0,0,0.5); border:none; border-radius:50%;

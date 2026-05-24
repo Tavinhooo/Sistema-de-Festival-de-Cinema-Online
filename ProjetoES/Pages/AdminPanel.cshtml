@@ -535,7 +535,8 @@
         <div class="reported-meta">
         <span class="reported-author">${a.clienteId || 'Utilizador'}</span>
         <span class="reported-rating"><i class="far fa-star"></i> ${a.classificacao}</span>
-        <span class="reported-film">Filme #${a.filmeId}</span>
+        <span class="reported-film">${a.filmeTitulo || `Filme #${a.filmeId}`}</span>
+        ${a.festivalNome ? `<span class="reported-festival">${a.festivalNome}</span>` : ''}
         </div>
         <div class="reported-comment">${a.comentario || '<em>Sem comentário</em>'}</div>
         ${a.motivoReporte ? `<div style="margin-top:6px; font-size:12px; background:#fff3e0; color:#ef6c00; padding:4px 10px; border-radius:8px; display:inline-block; font-weight:600;">⚠️ ${a.motivoReporte}</div>` : ''}

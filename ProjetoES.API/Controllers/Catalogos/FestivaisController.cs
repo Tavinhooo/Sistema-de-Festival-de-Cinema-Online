@@ -131,7 +131,8 @@ public class FestivaisController : ControllerBase
             Descricao = festival.Descricao,
             DataInicio = festival.DataInicio,
             DataFim = festival.DataFim,
-            Estado = festival.Estado.ToString()
+                Estado = festival.Estado.ToString(),
+                Local = festival.Local
         });
     }
 

@@ -26,11 +26,24 @@
 
         <div class="page-header">
             <h2 class="section-title">Filmes do Festival</h2>
-            <button class="btn-filter" aria-label="Filtrar">
-                <i class="fas fa-filter"></i>
-            </button>
         </div>
-
+        <div id="festivalDescricaoContainer" style="margin-bottom:16px;">
+            <div style="padding:14px 16px; border-radius:12px; background:linear-gradient(180deg,#ffffff,#fbf8ff); border:1px solid rgba(165,133,214,0.18); box-shadow:0 6px 18px rgba(80,49,111,0.06);">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                    <div>
+                        <h3 style="margin:0; font-size:15px; color:#3a2a56;">Descrição do festival</h3>
+                        <div style="margin-top:6px; display:flex; gap:10px; font-size:13px; color:#6b5991;">
+                            <span id="festivalDataInicio" style="font-weight:700;">Início: —</span>
+                            <span id="festivalLocal" style="opacity:0.9;">Local: —</span>
+                        </div>
+                    </div>
+                </div>
+            <p id="festivalDescricaoTexto" style="margin:12px 0 0; font-size:13px; line-height:1.6; color:#5f4d73; max-height:4.8em; overflow:hidden; transition:max-height .22s ease;">Consulta a descrição do festival para escolher o passe mais adequado.</p>
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button id="btnExpandDescricao" onclick="toggleDescricao(this)" aria-expanded="false" style="background:transparent; border:none; color:#5f4d73; font-weight:700; cursor:pointer; font-size:13px; padding:6px 8px; border-radius:8px;">Mostrar mais</button>
+                </div>
+            </div>
+        </div>
         <section id="purchasePanel" style="display:none; margin-bottom:24px; padding:14px 18px; border-radius:16px; background:#f6f1ff; border:1px solid #e2d6f5; box-shadow:0 10px 24px rgba(107,67,155,0.08);">
             <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:space-between;">
                 <div style="display:flex; align-items:center; gap:12px; flex:1 1 260px; min-width:240px;">
@@ -42,6 +55,7 @@
                             <option value="Passe Completo">Passe Completo</option>
                         </select>
                         <div id="passeDescricaoTexto" style="font-size:12px; line-height:1.5; color:#6d5a84; min-height:36px; margin-top:2px;">Seleciona um tipo de bilhete para ver a descrição.</div>
+                        <div id="passeAvisoTexto" style="display:none; font-size:12px; line-height:1.5; color:#8a5d00; margin-top:4px; padding:9px 11px; border-radius:10px; background:#fff6da; border:1px solid #f1d98f;"></div>
                     </div>
 
                     <div style="display:flex; flex-direction:column; gap:2px; min-width:110px;">
@@ -187,21 +201,50 @@
 
         function updatePurchasePanel() {
             const panel = document.getElementById('purchasePanel');
+            const avisoEl = document.getElementById('passeAvisoTexto');
 
             if (!panel || !_festivalAtual) return;
 
-            if (_estadoAcesso.role === 'Administrador' || _estadoAcesso.temAcesso) {
-                panel.style.display = 'none';
-                return;
-            }
-
-            if (!_estadoAcesso.userId) {
+            if (_estadoAcesso.role === 'Administrador') {
                 panel.style.display = 'none';
                 return;
             }
 
             panel.style.display = 'block';
+            if (avisoEl) {
+                if (_estadoAcesso.temAcesso) {
+                    avisoEl.textContent = 'Já tens acesso a um dos filmes deste festival. O passe continua disponível para referência, mas confirma se ainda faz sentido adicioná-lo ao carrinho.';
+                    avisoEl.style.display = 'block';
+                } else {
+                    avisoEl.textContent = '';
+                    avisoEl.style.display = 'none';
+                }
+            }
+
             updatePrice();
+        }
+
+        function confirmPassPurchaseWarning() {
+            if (_estadoAcesso.temAcesso) {
+                return window.confirm('Já tens acesso a um dos filmes deste festival. Queres continuar mesmo assim?');
+            }
+
+            return true;
+        }
+
+        function toggleDescricao(btn) {
+            const p = document.getElementById('festivalDescricaoTexto');
+            if (!p) return;
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            if (expanded) {
+                p.style.maxHeight = '4.8em';
+                btn.textContent = 'Mostrar mais';
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                p.style.maxHeight = '1000px';
+                btn.textContent = 'Mostrar menos';
+                btn.setAttribute('aria-expanded', 'true');
+            }
         }
 
         async function ensureCart(userId) {
@@ -261,6 +304,11 @@
                 alert('Escolhe um tipo de bilhete primeiro.');
                 return;
             }
+
+            if (!confirmPassPurchaseWarning()) {
+                return;
+            }
+
             const btn = document.getElementById('btnAdicionarCarrinho');
 
             btn.disabled = true;
@@ -301,6 +349,11 @@
                 alert('Escolhe um tipo de bilhete primeiro.');
                 return;
             }
+
+            if (!confirmPassPurchaseWarning()) {
+                return;
+            }
+
             const btn = document.getElementById('btnComprarAgora');
 
             btn.disabled = true;
@@ -348,9 +401,42 @@
                         const festival = await ApiClient.getFestivalById(festivalId);
                         document.querySelector('.section-title').textContent = getFieldValue(festival, ['nome', 'Nome', 'nomeFestival', 'NomeFestival'], `Festival ${festivalId}`);
                         _festivalAtual = festival;
+                        const descricaoFestival = getFieldValue(festival, ['descricao', 'Descricao', 'sinopse', 'Sinopse', 'description', 'Description'], 'Consulta a descrição do festival para escolher o teu passe.');
+                        const descricaoEl = document.getElementById('festivalDescricaoTexto');
+                        if (descricaoEl) {
+                            descricaoEl.textContent = descricaoFestival;
+                        }
+                        const dataInicioRaw = getFieldValue(festival, ['dataInicio', 'DataInicio', 'inicio', 'Inicio', 'startDate', 'StartDate'], '');
+                        const localRaw = getFieldValue(festival, ['local', 'Local', 'localizacao', 'Localizacao', 'location', 'Location'], '');
+                        const dataEl = document.getElementById('festivalDataInicio');
+                        const localEl = document.getElementById('festivalLocal');
+                        if (dataEl) {
+                            try {
+                                if (dataInicioRaw) {
+                                    const d = new Date(dataInicioRaw);
+                                    const formatted = isNaN(d.getTime()) ? dataInicioRaw : d.toLocaleDateString('pt-PT', { day: '2-digit', month: 'long', year: 'numeric' });
+                                    dataEl.textContent = `Início: ${formatted}`;
+                                } else {
+                                    dataEl.textContent = 'Início: —';
+                                }
+                            } catch (e) {
+                                dataEl.textContent = `Início: ${dataInicioRaw || '—'}`;
+                            }
+                        }
+                        if (localEl) {
+                            localEl.textContent = localRaw ? `Local: ${localRaw}` : 'Local: —';
+                        }
                     } catch (err) {
                         document.querySelector('.section-title').textContent = `Festival ${festivalId}`;
                         _festivalAtual = { id: festivalId };
+                        const descricaoEl = document.getElementById('festivalDescricaoTexto');
+                        if (descricaoEl) {
+                            descricaoEl.textContent = 'Consulta a descrição do festival para escolher o teu passe.';
+                        }
+                        const dataEl = document.getElementById('festivalDataInicio');
+                        const localEl = document.getElementById('festivalLocal');
+                        if (dataEl) dataEl.textContent = 'Início: —';
+                        if (localEl) localEl.textContent = 'Local: —';
                     }
 
                     _estadoAcesso = await getFestivalAccessState(festivalId);
