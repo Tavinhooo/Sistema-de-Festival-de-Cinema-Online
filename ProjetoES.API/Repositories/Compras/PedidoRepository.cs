@@ -2,6 +2,9 @@ using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 using Microsoft.EntityFrameworkCore;
 
+/// <summary>
+/// Repositório de pedidos, responsável por gerenciar as operações relacionadas aos pedidos de compra dos clientes,
+///  incluindo a criação, atualização, eliminação e consulta de pedidos, bem como a obtenção do histórico de pedidos de um cliente específico.
 namespace ProjetoES.API.Repositories
 {
     public class PedidoRepository

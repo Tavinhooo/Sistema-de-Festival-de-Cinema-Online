@@ -1,5 +1,10 @@
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Modelo de prémio, representando um prémio atribuído a um filme em um festival, incluindo informações sobre o nome do prémio,
+    ///  descrição, data limite para votação e os votos associados ao prémio. O modelo de prémio é utilizado para representar os prémios
+    ///  disponíveis em um festival e para armazenar as informações relacionadas aos votos dos clientes para cada prémio.
+    /// </summary>
     public class Premio
     {
         public int Id { get; set; }

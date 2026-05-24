@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
 
 namespace ProjetoES.API.Models.External;
-
+/// <summary>
+/// Modelos para integração com a API do TMDb, representando os dados retornados pela API para filmes,
+/// </summary>
 public class TmdbVideoApiResponse
 {
     [JsonPropertyName("results")]

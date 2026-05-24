@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ProjetoES.API.Repositories
 {
+    /// <summary>
+    /// Repositório de administrador, responsável por gerenciar as operações relacionadas à administração do sistema,
+    ///  incluindo a criação, atualização e eliminação de filmes, festivais, sessões e utilizadores,
+    ///  bem como a aprovação e eliminação de avaliações e a consulta do histórico de pedidos.
+    /// </summary>
     public class AdministradorRepository : IAdministradorRepository
     {
         private readonly AppDbContext _context;

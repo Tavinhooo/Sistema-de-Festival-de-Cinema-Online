@@ -1,5 +1,8 @@
 namespace ProjetoES.API.DTOs;
 
+/// <summary>
+/// DTO para criar um novo filme, incluindo informações básicas e detalhes do filme.
+/// </summary>
 public class CreateFilmeDTO
 {
     public int? FestivalId { get; set; }

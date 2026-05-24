@@ -1,7 +1,10 @@
 namespace ProjetoES.API.Models
 {
     public enum EstadoAcesso { Ativo, Suspenso, Revogado }
-    
+    /// <summary>
+    /// Modelo de acesso, representando a aquisição de um filme por um cliente, incluindo informações sobre o cliente, filme,
+    ///  data de aquisição, validade e estado do acesso.
+    /// </summary>
     public class Acesso
     {
         public int Id { get; set; }

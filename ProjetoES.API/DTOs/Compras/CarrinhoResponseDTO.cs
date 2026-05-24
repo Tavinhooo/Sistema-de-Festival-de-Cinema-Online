@@ -1,5 +1,8 @@
 namespace ProjetoES.API.DTOs;
 
+/// <summary>
+/// DTO para a resposta de um carrinho de compras, incluindo o ID do carrinho, ID do utilizador, data de criação, lista de itens no carrinho e o total da compra.
+/// </summary>
 public class CarrinhoResponseDTO
 {
     public int Id { get; set; }

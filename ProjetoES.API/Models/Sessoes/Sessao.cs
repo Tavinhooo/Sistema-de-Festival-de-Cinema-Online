@@ -6,7 +6,10 @@ namespace ProjetoES.API.Models
 		HorarioFixo,
 		JanelaAcesso
 	}
-
+	/// <summary>
+	/// Modelo de sessão, representando uma sessão de exibição de um filme em um festival, incluindo informações sobre o festival,
+	///  filme, data e hora de início e fim da sessão, sala de exibição e tipo de sessão (ex: "Estreia", "Horário Fixo", "Janela de Acesso").
+	/// </summary>
 	public class Sessao
 	{
 		public int Id { get; set; }

@@ -3,6 +3,10 @@ using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 namespace ProjetoES.API.Repositories;
 
+/// <summary>
+/// Repositório de avaliações, responsável por gerenciar as operações relacionadas às avaliações dos filmes pelos clientes, 
+/// incluindo a criação, atualização, eliminação e consulta de avaliações, bem como a obtenção de avaliações reportadas para moderação.
+/// </summary>
 public class AvaliacaoRepository
 {
     private readonly AppDbContext _context;

@@ -1,5 +1,8 @@
 namespace ProjetoES.API.DTOs;
 
+/// <summary>
+/// DTO para a resposta de um filme, incluindo informações detalhadas como título, sinopse, gênero, ano, duração, média de avaliação, URLs de poster e trailer, realizador, elenco e os IDs dos festivais associados.
+/// </summary>
 public class FilmeResponseDTO
 {
     public int Id { get; set; }

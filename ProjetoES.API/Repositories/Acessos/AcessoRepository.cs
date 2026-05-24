@@ -5,6 +5,13 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
 
+/// <summary>
+/// Repositório de acessos, responsável por gerenciar os acessos dos clientes aos filmes, incluindo a criação de novos acessos,
+///  a verificação de acesso a um filme em um festival e a obtenção da lista de filmes com acesso para um cliente.
+///  O AcessoRepository interage com o banco de dados para armazenar e recuperar informações sobre os acessos dos clientes,
+/// e fornece métodos para realizar operações relacionadas aos acessos, como criar novos acessos,
+///  verificar se um cliente tem acesso a um filme em um festival específico e obter a lista de filmes aos quais um cliente tem acesso ativo.
+/// </summary>
 public class AcessoRepository
 {
     private readonly AppDbContext _context;

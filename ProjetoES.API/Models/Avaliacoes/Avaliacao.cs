@@ -1,5 +1,9 @@
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Modelo de avaliação, representando a avaliação de um filme por um cliente, incluindo informações sobre o cliente, filme,
+    ///  classificação, comentário, data da avaliação e informações sobre reportes de avaliações.
+    /// </summary>
     public class Avaliacao
     {
         public int Id { get; set; }

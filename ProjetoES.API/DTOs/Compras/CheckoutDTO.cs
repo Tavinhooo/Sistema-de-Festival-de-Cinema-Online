@@ -1,5 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
+/// <summary>
+/// DTOs relacionados ao processo de checkout, incluindo a requisição de checkout, resposta de itens do pedido, resposta do pedido e resultado do checkout com promoção automática de Membro para Cliente.
+/// </summary>
 namespace ProjetoES.API.DTOs
 {
     public class CheckoutRequestDTO

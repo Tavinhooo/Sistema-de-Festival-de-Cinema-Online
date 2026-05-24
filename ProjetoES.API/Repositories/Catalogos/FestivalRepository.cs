@@ -4,6 +4,11 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
 
+/// <summary>
+/// Repositório de festivais, responsável por gerenciar as operações relacionadas aos festivais de cinema,
+///  incluindo a criação, atualização, eliminação e consulta de festivais, bem como a associação de filmes aos festivais
+///  e a filtragem de festivais com base em critérios específicos.
+/// </summary>
 public class FestivalRepository
 {
     private readonly AppDbContext _context;

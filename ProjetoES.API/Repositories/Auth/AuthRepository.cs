@@ -3,7 +3,9 @@ using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
-
+/// <summary>
+/// Repositório de autenticação, responsável por gerenciar as operações relacionadas à autenticação de utilizadores.
+/// </summary>
 public class AuthRepository
 {
     private readonly AppDbContext _context;

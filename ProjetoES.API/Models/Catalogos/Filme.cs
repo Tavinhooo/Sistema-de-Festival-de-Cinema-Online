@@ -4,6 +4,11 @@ using System.Text.Json.Serialization;
 
 namespace ProjetoES.API.Models
 {
+
+    /// <summary>
+    /// Modelo de filme, representando um filme disponível no sistema, incluindo informações sobre o título, 
+    /// sinopse, gênero, ano de lançamento,
+    /// </summary>
     public class Filme
     {
 

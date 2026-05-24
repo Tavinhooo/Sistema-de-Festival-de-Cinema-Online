@@ -1,5 +1,11 @@
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Modelo de compra, representando uma compra realizada por um cliente, incluindo informações sobre o cliente, data da compra,
+    ///  valor total, método de pagamento, referência de pagamento, status da compra e os itens do pedido associados à compra.
+    ///  A compra é o resultado final do processo de compra, onde os clientes finalizam a compra dos filmes adicionados ao carrinho
+    ///  e criam um pedido para acessar os filmes adquiridos.
+    /// </summary>
     public class Compra
     {
         public int Id { get; set; }

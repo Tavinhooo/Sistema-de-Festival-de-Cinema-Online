@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Modelo de utilizador, representando um utilizador do sistema, que pode ser um membro, cliente ou administrador, dependendo do tipo de utilizador definido no campo TipoUtilizador. O modelo de utilizador inclui informações básicas como email, password hash, nome e sobrenome, além de informações específicas para cada tipo de utilizador, como data da primeira compra para clientes e data de promoção para administradores. A classe Utilizador é a classe base para os diferentes tipos de utilizadores no sistema, e a distinção entre os tipos é feita através do campo TipoUtilizador.
+    /// </summary>
     public abstract class UtilizadorBase
     {
         public int Id { get; set; }

@@ -1,5 +1,8 @@
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Enumeração para os tipos de utilizadores, representando as diferentes categorias de utilizadores no sistema, como "Membro", "Cliente" e "Administrador".
+    /// </summary>
     public enum TipoUtilizador
     {
         Membro = 1,           // Novo utilizador, registado mas sem compras

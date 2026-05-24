@@ -1,5 +1,10 @@
 namespace ProjetoES.API.Pricing;
 
+/// <summary>
+/// Fábrica para criar instâncias de IPrecoCalculator com base no tipo de acesso escolhido pelo cliente,
+///  permitindo a aplicação de diferentes estratégias de cálculo de preço para os bilhetes dos filmes,
+///  como preço base, passe diário ou passe completo, de forma flexível e modular.
+/// </summary>
 public static class PrecoCalculatorFactory
 {
     // Para BilheteSessao e AluguerDigital o preco é o do filme escolhido (PrecoBase)

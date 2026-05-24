@@ -3,6 +3,10 @@ using ProjetoES.API.DTOs;
 
 namespace ProjetoES.API.Interfaces
 {
+    /// <summary>
+    /// Interface para o serviço de administrador, que define os métodos para a gestão de filmes,
+    /// festivais, sessões, utilizadores, avaliações e histórico de pedidos.
+    /// </summary>
     public interface IAdministradorService
     {
         Task<FilmeDTO> GerirFilme(int adminId, FilmeDTO filmeDto);

@@ -3,7 +3,10 @@ using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
-
+/// <summary>
+/// Repositório de sessões, responsável por gerenciar as operações relacionadas às sessões de exibição dos filmes nos festivais,
+///  incluindo a criação, atualização, eliminação e consulta de sessões, bem como a obtenção de sessões por filme ou festival.
+/// </summary>
 public class SessaoRepository
 {
     private readonly AppDbContext _context;

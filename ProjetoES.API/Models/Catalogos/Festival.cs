@@ -1,5 +1,9 @@
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Modelo de festival, representando um festival de cinema, incluindo informações sobre o nome, datas, estado, descrição,
+    ///  local e os filmes associados ao festival.
+    /// </summary>
     public class Festival
     {
         public int Id { get; set; }

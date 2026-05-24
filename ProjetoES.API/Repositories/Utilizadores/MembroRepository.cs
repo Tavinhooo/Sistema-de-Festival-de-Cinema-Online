@@ -3,7 +3,10 @@ using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
-
+/// <summary>
+/// Repositório de membros, responsável por gerenciar as operações relacionadas aos membros,
+/// incluindo a obtenção de informações do membro e a atualização dos dados do membro.
+/// </summary>
 public class MembroRepository
 {
     private readonly AppDbContext _context;

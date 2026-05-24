@@ -4,6 +4,10 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
 
+/// <summary>
+/// Repositório de clientes, responsável por gerenciar as operações relacionadas aos clientes, incluindo a obtenção do histórico de compras,
+///  a gestão dos acessos reservados, a criação e atualização de avaliações, a promoção de membros a clientes e a consulta de informações do cliente, bem como a eliminação de avaliações.
+/// </summary>
 public class ClienteRepository
 {
     private readonly AppDbContext _context;

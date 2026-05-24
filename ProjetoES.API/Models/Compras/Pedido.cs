@@ -4,11 +4,13 @@ namespace ProjetoES.API.Models
 {
     public enum EstadoPedido { Pendente, Completo, Cancelado }
 
+    /// <summary>
+    /// Modelo de pedido, representando um pedido de compra realizado por um cliente, incluindo informações sobre o cliente, data do pedido,
+    /// </summary>
     public class Pedido
     {
         public int Id { get; set; }
 
-        // Fix: era MemberId/Membro (deprecated) e agora aponta para Utilizador
         public int UtilizadorId { get; set; }
         public virtual Utilizador? Utilizador { get; set; }
 

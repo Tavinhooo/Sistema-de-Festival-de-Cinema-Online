@@ -4,6 +4,11 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
 
+/// <summary>
+/// Repositório de carrinho, responsável por gerenciar as operações relacionadas ao carrinho de compras dos clientes,
+///  incluindo a criação, atualização, eliminação e consulta de carrinhos, bem como a gestão dos itens do carrinho e
+///  a limpeza do carrinho após a finalização da compra.
+/// </summary>
 public class CarrinhoRepository
 {
     private readonly AppDbContext _context;

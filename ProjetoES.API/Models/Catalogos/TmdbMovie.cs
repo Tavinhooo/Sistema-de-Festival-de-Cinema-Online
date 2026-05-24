@@ -2,6 +2,10 @@ using System.Text.Json.Serialization;
 
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Modelos para integração com a API do TMDb, representando os dados retornados pela API para filmes, 
+    /// detalhes de filmes, gêneros e vídeos/trailers.
+    /// </summary>
     public class TmdbSearchResponse
     {
         public List<TmdbMovie> Resultados { get; set; } = new();

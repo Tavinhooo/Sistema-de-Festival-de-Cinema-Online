@@ -7,6 +7,10 @@ namespace ProjetoES.API.Controllers;
 
 [ApiController]
 [Route("api/premios")]
+
+/// <summary>
+/// Controlador para gerir os prémios dos festivais, incluindo a criação de prémios,
+/// </summary>
 public class PremiosController : ControllerBase
 {
     private readonly PremioService _service;
@@ -21,7 +25,7 @@ public class PremiosController : ControllerBase
             ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? throw new UnauthorizedAccessException("Token inválido."));
 
-    // ── GET /api/premios/festival/{festivalId} ───────────────────────────
+    // ── GET /api/premios/festival/{festivalId}
     [HttpGet("festival/{festivalId:int}")]
     public ActionResult ObterPorFestival(int festivalId)
     {
@@ -45,7 +49,7 @@ public class PremiosController : ControllerBase
         return Ok(response);
     }
 
-    // ── GET /api/premios/{id}/resultados ────────────────────────────────
+    // ── GET /api/premios/{id}/resultados 
     [HttpGet("{id:int}/resultados")]
     public ActionResult ObterResultados(int id)
     {
@@ -56,7 +60,7 @@ public class PremiosController : ControllerBase
         catch (ArgumentException ex) { return NotFound(ex.Message); }
     }
 
-    // ── POST /api/premios/{id}/votar ────────────────────────────────────
+    // ── POST /api/premios/{id}/votar
     [HttpPost("{id:int}/votar")]
     [Authorize(Roles = "Cliente,Administrador")]
     public ActionResult Votar(int id, [FromBody] VotarDTO dto)
@@ -72,7 +76,7 @@ public class PremiosController : ControllerBase
         catch (UnauthorizedAccessException) { return Forbid(); }
     }
 
-    // ── POST /api/premios ── (Admin only) ───────────────────────────────
+    // ── POST /api/premios
     [HttpPost]
     [Authorize(Roles = "Administrador")]
     public ActionResult CriarPremio([FromBody] CriarPremioDTO dto)
@@ -85,7 +89,7 @@ public class PremiosController : ControllerBase
         catch (ArgumentException ex) { return BadRequest(ex.Message); }
     }
 
-    // ── DELETE /api/premios/{id} ── (Admin only) ─────────────────────────
+    // ── DELETE /api/premios/{id} 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Administrador")]
     public ActionResult EliminarPremio(int id)
@@ -98,7 +102,7 @@ public class PremiosController : ControllerBase
         catch (ArgumentException ex) { return NotFound(ex.Message); }
     }
 
-    // ── PATCH /api/premios/{id}/votacao ── (Admin only) ──────────────────
+    // ── PATCH /api/premios/{id}/votacao
     [HttpPatch("{id:int}/votacao")]
     [Authorize(Roles = "Administrador")]
     public ActionResult ToggleVotacao(int id, [FromBody] bool aberta)

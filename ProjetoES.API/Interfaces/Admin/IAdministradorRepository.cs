@@ -3,6 +3,13 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Interfaces
 {
+    /// <summary>
+    /// Interface para o repositório de administrador, que define os métodos para a gestão de filmes,
+    ///  festivais, sessões, utilizadores, avaliações e histórico de pedidos.
+    ///  Esta interface inclui métodos para criar, obter, atualizar e eliminar filmes, festivais e sessões,
+    ///  bem como para consultar o histórico geral e por utilizador.
+    ///  O repositório de administrador é responsável por fornecer as operações necessárias para a administração do sistema de festival de cinema online.
+    /// </summary>
     public interface IAdministradorRepository
     {
         Task<Filme> CriarFilme(Filme filme);

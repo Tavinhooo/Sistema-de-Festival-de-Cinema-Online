@@ -1,5 +1,9 @@
 namespace ProjetoES.API.DTOs
 {
+
+    /// <summary>
+    /// DTO para a resposta de um festival, incluindo informações detalhadas como nome, descrição, datas, estado e local do festival.
+    /// </summary>
     public class FestivalResponseDTO
     {
         public int Id { get; set; }

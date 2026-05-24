@@ -29,7 +29,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ==========================================
-// CORRECTED DI REGISTRATIONS
+// REGISTRATIONS
 // ==========================================
 builder.Services.AddScoped<FilmeService>();
 builder.Services.AddScoped<IAdministradorRepository, AdministradorRepository>();
@@ -120,47 +120,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// ==========================================
-// 2. DATA SEEDING: Create default Admin
-// ==========================================
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    context.Database.Migrate();
-
-    var adminEmail = "admin@festival.com";
-    var adminPasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123!");
-    var admin = context.Set<Utilizador>().FirstOrDefault(u => u.Email == adminEmail);
-
-    if (admin == null)
-    {
-        admin = new Utilizador
-        {
-            PrimeiroNome = "Administrador",
-            UltimoNome = "Principal",
-            Email = adminEmail,
-            PasswordHash = adminPasswordHash,
-            Tipo = TipoUtilizador.Administrador,
-            DataPromocaoAdmin = DateTime.UtcNow,
-            IsLogged = false
-        };
-
-        context.Add(admin);
-        context.SaveChanges();
-        Console.WriteLine("✅ SUCCESS: Default Admin created (Email: admin@festival.com | Password: Admin@123!)");
-    }
-    else if (admin.Tipo != TipoUtilizador.Administrador)
-    {
-        admin.PrimeiroNome = "Administrador";
-        admin.UltimoNome = "Principal";
-        admin.PasswordHash = adminPasswordHash;
-        admin.Tipo = TipoUtilizador.Administrador;
-        admin.DataPromocaoAdmin = admin.DataPromocaoAdmin ?? DateTime.UtcNow;
-        context.SaveChanges();
-        Console.WriteLine("✅ SUCCESS: Existing admin account promoted to Administrador (Email: admin@festival.com)");
-    }
-}
 
 app.Run();

@@ -4,7 +4,9 @@ using ProjetoES.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ProjetoES.API.Repositories;
-
+/// <summary>
+/// Repositório de filmes, responsável por gerenciar as operações relacionadas aos filmes, incluindo a criação, atualização, eliminação e consulta de filmes,
+/// </summary>
 public class FilmeRepository
 {
     private readonly AppDbContext _context;

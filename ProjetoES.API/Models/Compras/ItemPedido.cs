@@ -1,5 +1,10 @@
 namespace ProjetoES.API.Models
 {
+    /// <summary>
+    /// Modelo de item do pedido, representando um item dentro de um pedido de compra, incluindo informações sobre o filme,
+    ///  quantidade, tipo de acesso e preço unitário. O item do pedido é utilizado como parte do workflow de compra,
+    ///  onde os clientes adicionam filmes ao carrinho antes de finalizar a compra e criar um pedido.
+    /// </summary>
     public class ItemPedido
     {
         public int Id { get; set; }

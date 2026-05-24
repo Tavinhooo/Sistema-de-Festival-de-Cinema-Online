@@ -1,5 +1,8 @@
 namespace ProjetoES.API.DTOs;
 
+/// <summary>
+/// DTO para representar um filme em um festival, incluindo detalhes como título, sinopse, gênero, ano, duração, média de avaliação, URLs de poster e trailer, realizador, elenco, e informações do festival associado.
+/// </summary>
 public class FilmeFestivalDTO
 {
     public int Id { get; set; }

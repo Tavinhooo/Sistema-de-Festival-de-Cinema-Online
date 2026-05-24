@@ -1,5 +1,7 @@
 namespace ProjetoES.API.DTOs;
-
+/// <summary>
+/// DTOs relacionados ao histórico de compras, incluindo detalhes do pedido, itens do pedido e informações sobre o estado do pedido, datas de pedido e pagamento, e o preço total da compra.
+/// </summary>
 public class HistoricoComprasDTO
 {
     public int PedidoId { get; set; }

@@ -2,6 +2,10 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Interfaces
 {
+    /// <summary>
+    /// Interface para o serviço do TMDb, que define os métodos para pesquisar filmes, obter detalhes de filmes,
+    ///  obter trailers do YouTube e obter créditos de filmes a partir do TMDb.
+    /// </summary>
     public interface ITmdbService
     {
         Task<List<TmdbMovie>> PesquisarFilmesAsync(string query);

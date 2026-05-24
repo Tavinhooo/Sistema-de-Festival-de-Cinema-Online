@@ -5,6 +5,10 @@ using ProjetoES.API.Models;
 
 namespace ProjetoES.API.Repositories;
 
+/// <summary>
+///     Repositório de listas pessoais, responsável por gerenciar as operações relacionadas às listas pessoais de filmes dos membros,
+///     incluindo a criação, atualização, eliminação e consulta de listas pessoais.
+/// </summary>
 public class ListaPessoalRepository : IListaPessoalRepository
 {
     private readonly AppDbContext _context;

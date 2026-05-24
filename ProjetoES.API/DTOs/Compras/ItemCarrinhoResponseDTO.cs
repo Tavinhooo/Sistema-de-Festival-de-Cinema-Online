@@ -1,5 +1,7 @@
 namespace ProjetoES.API.DTOs;
-
+/// <summary>
+/// DTO para a resposta de um item no carrinho de compras, incluindo detalhes do filme, festival, quantidade, tipo de acesso, preços e se é um passe de festival.
+/// </summary>
 public class ItemCarrinhoResponseDTO
 {
     public int Id { get; set; }
