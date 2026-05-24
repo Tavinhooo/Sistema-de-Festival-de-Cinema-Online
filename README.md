@@ -5,28 +5,46 @@ Manuel Gama (2106723),
 André Pereira (2052923)
 
 💻 Environment Setup
-Para rodar o codigo é necessário a instalação do postegresql e a criação da base de dados cinema_festival e repopular a base de dados através deste codigo abaixo
+1. Instala o .NET SDK e o PostgreSQL.
+2. Usar o script cria a base, restaura os dados.
 
 ```powershell
 cd ProjetoES.API
-.\scripts\bootstrap-db.ps1 -RunApp
+.\scripts\bootstrap-db.ps1
 psql -h localhost -U postgres -d cinema_festival -f cinema_festival_backup.sql
+```
 
-Após isto, devemos rodar dois git terminal em um fazer cd ProjetoES e outro ProjetoES.API e rodar dotnet run
-````text
-Member user:
-e-mail: joaoRatao@gmail.com
-password: 1234!
+Depois podes arrancar os dois projetos em terminais separados:
 
-Cliente use: 
-e-mail: carlaOrnelas@hotmail.com
-password: 4321!
+```git terminal
+cd ProjetoES.API
+dotnet run
+```
 
-Admin user:
-e-mail: admin@festival.com
-password: Admin@123!
+```git terminal
+cd ProjetoES
+dotnet run
+```
 
-````
+Contas de teste:
+
+- Member: `joaoRatao@gmail.com` / `1234!`
+- Cliente: `carlaOrnelas@hotmail.com` / `4321!`
+- Admin: `admin@festival.com` / `Admin@123!`
+
+Exemplos de testes como utilizador:
+
+- Adicionar um filme ao carrinho e terminar a compra.
+- Abrir a lista de festivais e explorar os filmes de cada festival.
+- Ver os filmes já comprados na área pessoal.
+- Criar e consultar uma lista pessoal de filmes.
+
+Exemplos de testes como administrador:
+
+- Importar filmes para o catálogo.
+- Criar um novo festival.
+- Associar um filme a um festival.
+- Apagar uma avaliação reportada.
 
 ```text
 Sistema-de-Festival-de-Cinema-Online/
