@@ -6,7 +6,8 @@ using System.Text;
 using ProjetoES.API.Data;
 using ProjetoES.API.Repositories;
 using ProjetoES.API.Services;
-using ProjetoES.API.Models; // <-- 1. ADDED THIS REQUIRED NAMESPACE
+using ProjetoES.API.Models;
+using ProjetoES.API.Services.Recomendacoes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,10 @@ builder.Services.AddScoped<MembroRepository>();
 builder.Services.AddScoped<MembroService>();
 builder.Services.AddScoped<ClienteRepository>();
 builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<IRecomendacaoStrategy, PorGeneroStrategy>();
+builder.Services.AddScoped<IRecomendacaoStrategy, PorPopularidadeStrategy>();
+builder.Services.AddScoped<IRecomendacaoStrategy, PorFestivalStrategy>();
+builder.Services.AddScoped<RecomendacoesService>();
 
 // ==========================================
 // JWT CONFIGURATION

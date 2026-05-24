@@ -376,6 +376,8 @@ const ApiClient = (() => {
       request("GET", "/api/festivais/disponiveis-para-filmes"),
     associarFilmeAoFestival: (festivalId, filmeId, precoBilhete = null) => 
       request("POST", `/api/festivais/${festivalId}/associar-filme`, { filmeId, precoBilhete }),
+    getRecomendacoes: (userId) =>
+    request("GET", `/api/recomendacoes/${userId}`),
   };
 })();
 
