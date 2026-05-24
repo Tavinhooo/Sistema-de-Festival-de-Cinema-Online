@@ -102,7 +102,7 @@ namespace ProjetoES.API.Controllers
                     Estado = p.Estado.ToString(),
                     Itens = p.Itens.Select(i => new ItemPedidoDTO
                     {
-                        FilmeId = i.FilmeId,
+                        FilmeId = i.FilmeId ?? 0,
                         FilmeTitulo = i.Filme?.Titulo ?? "Filme",
                         TipoAcesso = i.TipoAcesso,
                         Quantidade = i.Quantidade,

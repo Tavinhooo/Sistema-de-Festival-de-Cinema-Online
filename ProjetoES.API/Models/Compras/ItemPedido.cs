@@ -4,7 +4,7 @@ namespace ProjetoES.API.Models
     {
         public int Id { get; set; }
         
-        public int FilmeId { get; set; }
+        public int? FilmeId { get; set; }
         public virtual Filme? Filme { get; set; }
 
         public int FestivalId { get; set; }

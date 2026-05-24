@@ -4,8 +4,7 @@ namespace ProjetoES.API.DTOs;
 
 public class ItemCarrinhoRequestDTO
 {
-    [Required]
-    public int FilmeId { get; set; }
+    public int? FilmeId { get; set; }
 
     [Required]
     public int FestivalId { get; set; }

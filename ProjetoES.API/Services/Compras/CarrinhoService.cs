@@ -1,6 +1,7 @@
 using ProjetoES.API.DTOs;
 using ProjetoES.API.Models;
 using ProjetoES.API.Repositories;
+using ProjetoES.API.Pricing;
 
 namespace ProjetoES.API.Services;
 
@@ -63,24 +64,32 @@ public class CarrinhoService
         if (dto.FestivalId <= 0)
             throw new ArgumentException("O festival é obrigatório.");
 
+        var ePasseFestival = EPasseFestival(dto.TipoAcesso);
+        if (!ePasseFestival && !dto.FilmeId.HasValue)
+            throw new ArgumentException("O filme é obrigatório.");
+
         var carrinho = _repository.ObterCarrinhoPorId(carrinhoId);
         if (carrinho == null)
             throw new ArgumentException("Carrinho não encontrado.");
 
-        var filme = _filmeRepository.ObterFilmePorId(dto.FilmeId);
-        if (filme == null)
-            throw new ArgumentException("Filme inválido.");
-
-        // Calcular preço via Decorator
         var filmesDoFestival = _filmeRepository.ObterFilmesPorFestival(dto.FestivalId);
-        var precosBilhetes = filmesDoFestival.Select(f => f.PrecoBilhete).ToList();
-        var precoBilheteFilme = _filmeRepository.ObterPrecoBilheteFestival(dto.FilmeId, dto.FestivalId);
+        if (filmesDoFestival.Count == 0)
+            throw new ArgumentException("Festival sem filmes.");
 
-        var calculator = ProjetoES.API.Pricing.PrecoCalculatorFactory.Criar(dto.TipoAcesso, precoBilheteFilme);
+        var precosBilhetes = filmesDoFestival.Select(f => f.PrecoBilhete).ToList();
+        var precoBilheteFilme = dto.FilmeId.HasValue
+            ? _filmeRepository.ObterPrecoBilheteFestival(dto.FilmeId.Value, dto.FestivalId)
+            : 0;
+
+        var calculator = PrecoCalculatorFactory.Criar(dto.TipoAcesso, precoBilheteFilme);
         var precoCalculado = calculator.CalcularPreco(precosBilhetes);
 
+        var filmeIdRepresentativo = dto.FilmeId ?? filmesDoFestival.First().Id;
+
         var itemExistente = carrinho.Itens.FirstOrDefault(i =>
-            i.FilmeId == dto.FilmeId &&
+            (ePasseFestival
+                ? EPasseFestival(i.TipoAcesso) && i.FestivalId == dto.FestivalId
+                : i.FilmeId == dto.FilmeId) &&
             i.FestivalId == dto.FestivalId &&
             i.TipoAcesso == dto.TipoAcesso);
 
@@ -93,7 +102,7 @@ public class CarrinhoService
         {
             carrinho.Itens.Add(new ItemPedido
             {
-                FilmeId = dto.FilmeId,
+                FilmeId = filmeIdRepresentativo,
                 FestivalId = dto.FestivalId,
                 Quantidade = dto.Quantidade,
                 PrecoUnitario = (double)precoCalculado,
@@ -137,12 +146,17 @@ public class CarrinhoService
         {
             Id = item.Id,
             FilmeId = item.FilmeId,
-            FilmeTitulo = item.Filme?.Titulo ?? string.Empty,
+            FilmeTitulo = EPasseFestival(item.TipoAcesso) ? item.TipoAcesso : item.Filme?.Titulo ?? string.Empty,
             FestivalId = item.FestivalId,
+            FestivalNome = item.Festival?.Nome ?? string.Empty,
             Quantidade = item.Quantidade,
             TipoAcesso = item.TipoAcesso,
+            PrecoOriginal = EPasseFestival(item.TipoAcesso)
+                ? (double)_filmeRepository.ObterFilmesPorFestival(item.FestivalId).Sum(f => f.PrecoBilhete)
+                : item.PrecoUnitario,
             PrecoUnitario = item.PrecoUnitario,
-            Subtotal = item.PrecoUnitario * item.Quantidade
+            Subtotal = item.PrecoUnitario * item.Quantidade,
+            IsFestivalPass = EPasseFestival(item.TipoAcesso)
         }).ToList();
 
         return new CarrinhoResponseDTO
@@ -171,5 +185,29 @@ public class CarrinhoService
         item.Quantidade = novaQuantidade;
         _repository.AtualizarCarrinho(carrinho);
         return MapearParaResponse(carrinho);
+    }
+
+    private static bool EPasseFestival(string tipoAcesso)
+    {
+        if (string.IsNullOrWhiteSpace(tipoAcesso)) return false;
+        var normalizado = RemoverAcentos(tipoAcesso.Trim().ToLowerInvariant());
+        return normalizado == "passe completo" || normalizado == "passe diario";
+    }
+
+    private static string RemoverAcentos(string texto)
+    {
+        var textoNormalizado = texto.Normalize(System.Text.NormalizationForm.FormD);
+        var builder = new System.Text.StringBuilder(texto.Length);
+
+        foreach (var caractere in textoNormalizado)
+        {
+            var categoria = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(caractere);
+            if (categoria != System.Globalization.UnicodeCategory.NonSpacingMark)
+            {
+                builder.Append(caractere);
+            }
+        }
+
+        return builder.ToString().Normalize(System.Text.NormalizationForm.FormC);
     }
 }

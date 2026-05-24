@@ -18,6 +18,8 @@ public class CarrinhoRepository
         return _context.Carrinhos
             .Include(c => c.Itens)
             .ThenInclude(i => i.Filme)
+            .Include(c => c.Itens)
+            .ThenInclude(i => i.Festival)
             .ToList();
     }
 
@@ -26,6 +28,8 @@ public class CarrinhoRepository
         return _context.Carrinhos
             .Include(c => c.Itens)
             .ThenInclude(i => i.Filme)
+            .Include(c => c.Itens)
+            .ThenInclude(i => i.Festival)
             .FirstOrDefault(c => c.Id == id);
     }
 
@@ -34,6 +38,8 @@ public class CarrinhoRepository
         return _context.Carrinhos
             .Include(c => c.Itens)
             .ThenInclude(i => i.Filme)
+            .Include(c => c.Itens)
+            .ThenInclude(i => i.Festival)
             .FirstOrDefault(c => c.UtilizadorId == utilizadorId);
     }
 
@@ -42,6 +48,8 @@ public class CarrinhoRepository
         return _context.Carrinhos
             .Include(c => c.Itens)
             .ThenInclude(i => i.Filme)
+            .Include(c => c.Itens)
+            .ThenInclude(i => i.Festival)
             .FirstOrDefault(c => c.UtilizadorId == utilizadorId);
     }
 

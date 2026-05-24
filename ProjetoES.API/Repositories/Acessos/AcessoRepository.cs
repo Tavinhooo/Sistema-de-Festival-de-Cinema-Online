@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProjetoES.API.DTOs;
 using ProjetoES.API.Data;
 using ProjetoES.API.Models;
 
@@ -51,12 +52,30 @@ Console.WriteLine($"Acessos: {System.Text.Json.JsonSerializer.Serialize(acessosC
         return false;
     }
     
-    public List<Filme> ObterFilmesComAcesso(int clienteId)
+    public List<AcessoResponseDTO> ObterFilmesComAcesso(int clienteId)
     {
-        return _context.Acessos
+        var acessos = _context.Acessos
             .Where(a => a.ClienteId == clienteId && a.Estado == EstadoAcesso.Ativo)
             .Include(a => a.Filme)
-            .Select(a => a.Filme)
+            .OrderByDescending(a => a.DataAquisicao)
+            .ToList();
+
+        return acessos
+            .GroupBy(a => new { a.FilmeId, a.FestivalId })
+            .Select(g => g.First())
+            .Select(a => new AcessoResponseDTO
+            {
+                Id = a.Id,
+                FilmeId = a.FilmeId,
+                FestivalId = a.FestivalId,
+                FilmeTitulo = a.Filme.Titulo,
+                PosterUrl = a.Filme.PosterUrl,
+                TipoAcesso = a.TipoAcesso,
+                DataAquisicao = a.DataAquisicao,
+                DataValidade = a.DataValidade,
+                Estado = a.Estado.ToString()
+            })
+            .OrderBy(a => a.FilmeTitulo)
             .ToList();
     }
 }

@@ -316,6 +316,8 @@
 
 @section Scripts {
     <script>
+        const posterPlaceholder = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22480%22 viewBox=%220 0 320 480%22%3E%3Crect width=%22320%22 height=%22480%22 fill=%22%23edeaf3%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2390909a%22 font-family=%22Arial%2Csans-serif%22 font-size=%2222%22%3EPoster indispon%C3%ADvel%3C/text%3E%3C/svg%3E';
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (!ApiClient.isAuthenticated()) {
                 window.location.href = '/Login';
@@ -419,10 +421,12 @@
             }
         }
 
-       async function carregarAcessos(userId) {
+        async function carregarAcessos(userId) {
             const container = document.getElementById('acessosContainer');
             try {
                 const filmes = await ApiClient.obterFilmesComAcesso(userId);
+
+                container.innerHTML = '';
 
                 if (!filmes || filmes.length === 0) {
                     container.innerHTML = `
@@ -437,18 +441,36 @@
                 grid.className = 'acessos-grid';
 
                 filmes.forEach(f => {
+                    const filmeId = f.filmeId ?? f.FilmeId;
+                    const festivalId = f.festivalId ?? f.FestivalId ?? null;
+                    const posterUrl = f.posterUrl ?? f.PosterUrl ?? posterPlaceholder;
+                    const titulo = f.filmeTitulo ?? f.FilmeTitulo ?? f.titulo ?? f.Titulo ?? 'Filme';
                     const card = document.createElement('div');
                     card.className = 'acesso-card';
+                    card.style.cursor = 'pointer';
+                    card.setAttribute('role', 'link');
+                    card.tabIndex = 0;
                     card.innerHTML = `
-                        <img src="${f.posterUrl || '/images/default-poster.jpg'}"
-                            alt="${f.titulo}"
-                            onerror="this.style.background='#edeaf3'; this.src='/images/default-poster.jpg';" />
-                        <div class="acesso-titulo">${f.titulo}</div>
-                        <span class="acesso-tipo">${f.tipoAcesso || 'Acesso'}</span>
-                        ${f.dataExpiracao
-                            ? `<div class="acesso-validade"><i class="fas fa-clock"></i> Até ${new Date(f.dataExpiracao).toLocaleDateString('pt-PT')}</div>`
+                        <img src="${posterUrl}"
+                            alt="${titulo}"
+                            onerror="this.onerror=null; this.src='${posterPlaceholder}';" />
+                        <div class="acesso-titulo">${titulo}</div>
+                        <span class="acesso-tipo">${f.tipoAcesso ?? f.TipoAcesso ?? 'Acesso'}</span>
+                        ${(f.dataValidade ?? f.DataValidade)
+                            ? `<div class="acesso-validade"><i class="fas fa-clock"></i> Até ${new Date(f.dataValidade ?? f.DataValidade).toLocaleDateString('pt-PT')}</div>`
                             : ''}
                     `;
+                    const goToCinema = () => {
+                        if (!filmeId || !festivalId) return;
+                        window.location.href = `/Cinema?id=${encodeURIComponent(filmeId)}&festivalId=${encodeURIComponent(festivalId)}`;
+                    };
+                    card.addEventListener('click', goToCinema);
+                    card.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            goToCinema();
+                        }
+                    });
                     grid.appendChild(card);
                 });
 
@@ -480,9 +502,9 @@
                     card.className = 'acesso-card';
                     card.style.position = 'relative';
                     card.innerHTML = `
-                        <img src="${f.posterUrl || '/images/default-poster.jpg'}"
+                        <img src="${f.posterUrl || posterPlaceholder}"
                             alt="${f.titulo}"
-                            onerror="this.style.background='#edeaf3'; this.src='/images/default-poster.jpg';" />
+                            onerror="this.onerror=null; this.src='${posterPlaceholder}';" />
                         <div class="acesso-titulo">${f.titulo}</div>
                         <button data-filme-id="${f.id}" style="
                             position:absolute; top:8px; right:8px;

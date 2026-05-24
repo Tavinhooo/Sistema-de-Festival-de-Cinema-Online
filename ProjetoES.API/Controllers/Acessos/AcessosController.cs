@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProjetoES.API.DTOs;
 using ProjetoES.API.Repositories;
 using ProjetoES.API.Models;
 
@@ -23,7 +24,7 @@ public class AcessosController : ControllerBase
     }
 
     [HttpGet("utilizador/{userId}/filmes")]
-    public ActionResult<List<Filme>> ObterFilmesComAcesso(int userId)
+    public ActionResult<List<AcessoResponseDTO>> ObterFilmesComAcesso(int userId)
     {
         return Ok(_repository.ObterFilmesComAcesso(userId));
     }
