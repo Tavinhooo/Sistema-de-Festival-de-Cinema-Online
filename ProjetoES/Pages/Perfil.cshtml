@@ -442,7 +442,7 @@
                     card.innerHTML = `
                         <img src="${f.posterUrl || '/images/default-poster.jpg'}"
                             alt="${f.titulo}"
-                            onerror="this.style.background='#edeaf3'; this.removeAttribute('src');" />
+                            onerror="this.style.background='#edeaf3'; this.src='/images/default-poster.jpg';" />
                         <div class="acesso-titulo">${f.titulo}</div>
                         <span class="acesso-tipo">${f.tipoAcesso || 'Acesso'}</span>
                         ${f.dataExpiracao
@@ -482,7 +482,7 @@
                     card.innerHTML = `
                         <img src="${f.posterUrl || '/images/default-poster.jpg'}"
                             alt="${f.titulo}"
-                            onerror="this.style.background='#edeaf3'; this.removeAttribute('src');" />
+                            onerror="this.style.background='#edeaf3'; this.src='/images/default-poster.jpg';" />
                         <div class="acesso-titulo">${f.titulo}</div>
                         <button data-filme-id="${f.id}" style="
                             position:absolute; top:8px; right:8px;

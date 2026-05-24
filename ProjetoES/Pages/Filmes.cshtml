@@ -137,7 +137,7 @@
             if (festivalId && userId && !temAcesso) {
                 try {
                     temAcesso = await ApiClient.verificarAcessoFestival(userId, festivalId);
-                } catch {
+                } catch (err) {
                     temAcesso = false;
                 }
             }
@@ -213,7 +213,7 @@
                 const cart = await ApiClient.getCartByUser(userId);
                 carrinhoId = cart.id;
                 return carrinhoId;
-            } catch {
+            } catch (err) {
                 const cart = await ApiClient.createCart(userId);
                 carrinhoId = cart.id;
                 return carrinhoId;
@@ -268,9 +268,18 @@
 
             try {
                 const carrinho = await ensureCart(userId);
-                const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso);
                 const filmeId = getFilmId(_filmesAtuais[0]) ?? null;
-                await ApiClient.addToCart(carrinho, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+                if (tipoAcesso && tipoAcesso.toLowerCase().includes('passe completo')) {
+                    const filmes = await ApiClient.getFilmesByFestival(_festivalAtual.id);
+                    for (const f of filmes) {
+                        const fid = getFilmId(f);
+                        const precoUnitario = Number(f.precoBilhete ?? f.PrecoBilhete ?? 0) * 0.7;
+                        await ApiClient.addToCart(carrinho, fid, 1, tipoAcesso, precoUnitario, _festivalAtual.id);
+                    }
+                } else {
+                    const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso);
+                    await ApiClient.addToCart(carrinho, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+                }
 
                 btn.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
                 setTimeout(() => {
@@ -305,9 +314,18 @@
 
             try {
                 const carrinho = await ensureCart(userId);
-                const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso);
                 const filmeId = getFilmId(_filmesAtuais[0]) ?? null;
-                await ApiClient.addToCart(carrinho, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+                if (tipoAcesso && tipoAcesso.toLowerCase().includes('passe completo')) {
+                    const filmes = await ApiClient.getFilmesByFestival(_festivalAtual.id);
+                    for (const f of filmes) {
+                        const fid = getFilmId(f);
+                        const precoUnitario = Number(f.precoBilhete ?? f.PrecoBilhete ?? 0) * 0.7;
+                        await ApiClient.addToCart(carrinho, fid, 1, tipoAcesso, precoUnitario, _festivalAtual.id);
+                    }
+                } else {
+                    const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso);
+                    await ApiClient.addToCart(carrinho, filmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
+                }
                 window.location.href = '/Carrinho';
             } catch (err) {
                 alert(err.message || 'Não foi possível processar a compra.');
@@ -342,7 +360,7 @@
                         const festival = await ApiClient.getFestivalById(festivalId);
                         document.querySelector('.section-title').textContent = getFieldValue(festival, ['nome', 'Nome', 'nomeFestival', 'NomeFestival'], `Festival ${festivalId}`);
                         _festivalAtual = festival;
-                    } catch {
+                    } catch (err) {
                         document.querySelector('.section-title').textContent = `Festival ${festivalId}`;
                         _festivalAtual = { id: festivalId };
                     }

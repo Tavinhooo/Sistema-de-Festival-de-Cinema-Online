@@ -152,7 +152,7 @@
         let carrinho;
         try {
         carrinho = await ApiClient.getCartByUser(userId);
-        } catch {
+        } catch (err) {
         carrinho = await ApiClient.createCart(userId);
         }
 

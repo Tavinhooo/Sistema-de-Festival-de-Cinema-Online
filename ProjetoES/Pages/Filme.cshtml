@@ -335,9 +335,13 @@
         async function carregarEstadoListas() {
             const userId = ApiClient.getCurrentUserId();
             if (!userId) return;
-
             const filmId = Number(getQueryParam('id'));
-            const listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
+            let listas = [];
+            try {
+                listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
+            } catch (err) {
+                return;
+            }
 
             Object.keys(LISTA_CONFIG).forEach(tipo => {
                 const config = LISTA_CONFIG[tipo];
@@ -541,12 +545,16 @@
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.style.cssText = 'cursor:pointer; overflow:hidden; position:relative;';
+
+                    const poster = f.posterUrl || f.PosterUrl || f.posterUrlCompleto || f.PosterUrlCompleto || '/images/default-poster.jpg';
+                    const titulo = f.titulo || f.Titulo || f.nome || f.Nome || f.title || 'Filme';
+
                     card.innerHTML = `
-                        <img src="${f.posterUrl || '/images/default-poster.jpg'}" alt="${f.titulo}"
+                        <img src="${poster}" alt="${titulo}"
                             style="width:100%; height:100%; object-fit:cover; border-radius:20px;" />
                         <div style="position:absolute; bottom:0; left:0; right:0; padding:10px 12px;
                             background:linear-gradient(transparent,rgba(0,0,0,0.7)); border-radius:0 0 20px 20px;">
-                            <p style="color:white; font-size:13px; font-weight:700; margin:0;">${f.titulo}</p>
+                            <p style="color:white; font-size:13px; font-weight:700; margin:0;">${titulo}</p>
                         </div>`;
                     card.addEventListener('click', () => {
                         const otherId = f.id ?? f.filmeId ?? f.FilmeId;
@@ -562,37 +570,73 @@
         // ── Load principal ────────────────────────────────────────
 
         async function loadFilm() {
-            const filmId     = getQueryParam('id');
-            const festivalId = getQueryParam('festivalId');
+            const filmIdQuery = getQueryParam('id');
+            let festivalIdQuery = getQueryParam('festivalId');
+
+            
+
+            if (!filmIdQuery) {
+                document.getElementById('movieTitle').textContent = 'Filme indisponível';
+                return;
+            }
 
             try {
-                const filme = await ApiClient.getFilmeById(filmId, festivalId);
+                // Fetch film (try festival-scoped first when festivalId present)
+                let filme = null;
+                if (festivalIdQuery) {
+                    try {
+                        filme = await ApiClient.getFilmeById(filmIdQuery, festivalIdQuery);
+                    } catch (err) {
+                        if (err && err.status === 404) {
+                            
+                            filme = await ApiClient.getFilmeById(filmIdQuery);
+                        } else {
+                            throw err;
+                        }
+                    }
+                } else {
+                    filme = await ApiClient.getFilmeById(filmIdQuery);
+                }
 
-                document.getElementById('movieTitle').textContent    = filme.titulo || 'Filme';
+                // Infer festivalId when missing using returned film data
+                if (!festivalIdQuery) {
+                    const inferred = filme.festivalId ?? (filme.FestivalIds && filme.FestivalIds.length ? filme.FestivalIds[0] : null) ?? filme.festivalId;
+                    if (inferred) {
+                        festivalIdQuery = String(inferred);
+                        try {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('festivalId', festivalIdQuery);
+                            window.history.replaceState({}, '', url.toString());
+                        
+                        } catch (e) { /* ignore */ }
+                    }
+                }
+
+                // Populate UI
+                document.getElementById('movieTitle').textContent = filme.titulo || 'Filme';
                 document.getElementById('modalMovieTitle').textContent = filme.titulo || 'filme';
-                document.getElementById('movieRating').textContent   = `${Number(filme.mediaAvaliacao || 0).toFixed(1)} (Rating)`;
-                document.getElementById('movieGenres').textContent   = filme.genero || '';
-                document.getElementById('movieMeta').textContent     = `${filme.ano || ''}   ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : ''}`;
-                document.getElementById('moviePrice').textContent    = festivalId ? `Preço do bilhete: €${Number(filme.precoBilhete || 0).toFixed(2)}` : '';
+                document.getElementById('movieRating').textContent = `${Number(filme.mediaAvaliacao || 0).toFixed(1)} (Rating)`;
+                document.getElementById('movieGenres').textContent = filme.genero || '';
+                document.getElementById('movieMeta').textContent = `${filme.ano || ''}   ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : ''}`;
+                document.getElementById('moviePrice').textContent = festivalIdQuery ? `Preço do bilhete: €${Number(filme.precoBilhete || 0).toFixed(2)}` : '';
                 document.getElementById('movieSynopsis').textContent = filme.sinopse || '';
                 document.getElementById('movieRealizer').textContent = filme.realizador ? `🎬 Realizador: ${filme.realizador}` : 'Realizador: Desconhecido';
-                document.getElementById('movieCast').textContent     = filme.elenco ? `🎭 Elenco: ${filme.elenco}` : 'Elenco: Desconhecido';
+                document.getElementById('movieCast').textContent = filme.elenco ? `🎭 Elenco: ${filme.elenco}` : 'Elenco: Desconhecido';
 
                 renderPoster(filme.posterUrl || '/images/default-poster.jpg', filme.titulo || 'Filme');
 
-                if (festivalId) {
-                    await renderAccessState(filmId, festivalId, filme);
+                if (festivalIdQuery) {
+                    await renderAccessState(filmIdQuery, festivalIdQuery, filme);
                 } else {
                     renderTrailer(filme.trailerUrl || '');
                 }
 
                 await carregarEstadoListas();
 
-                if (festivalId) await loadRelatedMovies(festivalId, filmId);
-                await loadReviews(filmId);
-
+                if (festivalIdQuery) await loadRelatedMovies(festivalIdQuery, filmIdQuery);
+                await loadReviews(filmIdQuery);
             } catch (error) {
-                console.error(error);
+                console.error('Erro ao carregar filme:', error);
                 document.getElementById('movieTitle').textContent = 'Filme indisponível';
             }
         }
@@ -637,17 +681,22 @@
                 });
             });
 
-            document.querySelector('.btn-submit').addEventListener('click', async () => {
+            document.querySelector('.btn-submit').addEventListener('click', async function () {
                 if (!selectedRating) { showMensagem('Seleciona uma nota antes de submeter.', true); return; }
                 if (!ApiClient.isAuthenticated()) { window.location.href = '/Login'; return; }
 
                 const filmId = getQueryParam('id');
+                const btn = this;
+                btn.disabled = true;
+                btn.textContent = 'A submeter...';
+
                 try {
                     await ApiClient.post('/api/cliente/avaliacoes', {
-                        filmeId:        Number(filmId),
-                        classificacao:  selectedRating,
-                        comentario:     document.getElementById('avaliacaoComentario').value.trim()
+                        FilmeId: Number(filmId),
+                        Classificacao: selectedRating,
+                        Comentario: document.getElementById('avaliacaoComentario').value.trim()
                     });
+
                     showMensagem('Avaliação submetida com sucesso!');
                     modalAvaliacao.classList.remove('active');
                     selectedRating = null;
@@ -656,7 +705,10 @@
                     await loadReviews(filmId);
                 } catch (error) {
                     console.error(error);
-                    showMensagem(error.message || 'Não foi possível submeter a avaliação.', true);
+                    showMensagem(error?.message || 'Não foi possível submeter a avaliação.', true);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Submeter Avaliação';
                 }
             });
 

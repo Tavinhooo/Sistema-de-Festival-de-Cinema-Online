@@ -278,7 +278,7 @@ const ApiClient = (() => {
       let carrinho;
       try {
         carrinho = await ApiClient.getCartByUser(userId);
-      } catch {
+      } catch (err) {
         carrinho = await ApiClient.createCart(userId);
       }
 
@@ -298,11 +298,17 @@ const ApiClient = (() => {
       window.location.href = "/Checkout";
     },
 
-    verificarAcessoFestival: (userId, festivalId) =>
-      request(
-        "GET",
-        `/api/acessos/utilizador/${userId}/festival/${festivalId}`,
-      ),
+    verificarAcessoFestival: async (userId, festivalId) => {
+      if (!userId) return false;
+      // The backend exposes only `/api/acessos/utilizador/{userId}/filmes`.
+      // Fetch films the user has access to and check if any belong to the festival.
+      const filmes = await request("GET", `/api/acessos/utilizador/${userId}/filmes`);
+      if (!filmes || !Array.isArray(filmes)) return false;
+      return filmes.some(f => {
+        const festId = f.festivalId ?? f.FestivalId ?? (f.FestivalIds && f.FestivalIds[0]) ?? (f.festivais && f.festivais[0]?.festivalId);
+        return Number(festId) === Number(festivalId);
+      });
+    },
     obterFilmesComAcesso: (userId) =>
       request("GET", `/api/acessos/utilizador/${userId}/filmes`),
 
