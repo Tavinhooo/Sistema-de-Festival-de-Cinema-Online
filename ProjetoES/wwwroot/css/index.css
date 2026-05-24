@@ -180,3 +180,30 @@ body {
     height: 35px;
     border-radius: 8px;
 }
+
+/* NAVBAR - estilos em falta */
+.cart-link {
+    color: #333;
+    font-size: 20px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.cart-link:hover {
+    color: #111;
+}
+
+.cart-icon {
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+}
+
+.btn-login {
+    background-color: #e5e5e5;
+    color: #333;
+}
+
+.navbar {
+    background: white;
+}

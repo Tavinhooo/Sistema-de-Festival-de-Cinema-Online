@@ -1,0 +1,21 @@
+<header class="navbar">
+    <a asp-page="/Index" class="logo" aria-label="Ir para a página inicial" style="display:flex; align-items:center; text-decoration:none; gap:2px;">
+        <span style="display:flex; align-items:center; justify-content:center; line-height:1; margin-right:2px; transform: translateY(1px); text-decoration:none;">
+            <span style="font-family: Georgia, 'Times New Roman', serif; font-size:28px; font-weight:700; letter-spacing:0.025em; color:#6b439b; text-shadow:0 1px 0 rgba(255,255,255,0.7); text-decoration:none;">FestiFilm</span>
+        </span>
+        <img src="~/images/logo.png" alt="Logo do festival" style="width: 160px; height: 62px; object-fit: contain; display: block;" />
+    </a>
+    
+    <div class="search-container">
+        <input type="text" placeholder="Pesquisa Geral">
+        <i class="fas fa-search"></i>
+    </div>
+
+    <div class="nav-actions" id="navActions">
+        <a asp-page="/Carrinho" class="cart-link" aria-label="Abrir carrinho">
+            <i class="fas fa-shopping-cart cart-icon"></i>
+        </a>
+        <a class="btn btn-signin" asp-page="/Login">Sign in</a>
+        <a class="btn btn-register" asp-page="/Register">Register</a>
+    </div>
+</header>

@@ -1,159 +1,380 @@
 @page
 @{
     ViewData["Title"] = "Checkout";
-    Layout = null; 
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ProjetoES</title>
-    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="~/css/checkout.css" />
+    <style>
+            .total-row {
+                display: flex;
+                justify-content: space-between;
+                font-size: 20px;
+                font-weight: 800;
+                color: white;
+                margin-top: 24px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            .empty-cart-msg {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 14px;
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .item-tag {
+                display: inline-block;
+                padding: 2px 8px;
+                border-radius: 6px;
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                margin-bottom: 6px;
+            }
+
+            .btn-pay:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            .success-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.6);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .success-overlay.active {
+                display: flex;
+            }
+
+            .success-box {
+                background: white;
+                border-radius: 24px;
+                padding: 48px 40px;
+                text-align: center;
+                max-width: 420px;
+                width: 100%;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+            }
+
+            .success-icon {
+                width: 72px;
+                height: 72px;
+                background: linear-gradient(135deg, #4caf50, #2e7d32);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+                font-size: 32px;
+                color: white;
+            }
+
+            .success-box h2 {
+                font-size: 22px;
+                font-weight: 800;
+                margin-bottom: 10px;
+                color: #1a1a1a;
+            }
+
+            .success-box p {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 28px;
+                line-height: 1.6;
+            }
+
+            .btn-success {
+                display: inline-block;
+                padding: 14px 32px;
+                background: linear-gradient(135deg, #7b57b8, #50316f);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                font-size: 15px;
+                font-weight: 700;
+                cursor: pointer;
+                text-decoration: none;
+            }
+
+            #payment-feedback {
+                margin-top: 12px;
+                font-size: 13px;
+                min-height: 20px;
+                font-weight: 600;
+            }
+    </style>
 </head>
+
 <body>
 
     <div class="checkout-wrapper">
-        
+
+        <!-- ESQUERDA: RESUMO DO PEDIDO -->
         <aside class="summary-section">
             <h2 class="summary-title">Resumo do Pedido</h2>
-            
-            <div class="order-items">
-                
-                <div class="order-item">
-                    <div class="item-image"></div>
-                    <div class="item-details">
-                        <div class="item-title">Festival da Batata Doce</div>
-                        <div>
-                            <div class="item-row"><span>Data</span> <span>X/X/X</span></div>
-                            <div class="item-row"><span>Sessão</span> <span>X</span></div>
-                            <div class="item-row"><span>Preço Total</span> <span>15€</span></div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="order-item">
-                    <div class="item-image"></div>
-                    <div class="item-details">
-                        <div class="item-title">Festival da Pêra Mole</div>
-                        <div>
-                            <div class="item-row"><span>Data</span> <span>X/X/X</span></div>
-                            <div class="item-row"><span>Sessão</span> <span>X</span></div>
-                            <div class="item-row"><span>Preço Total</span> <span>40€</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="order-item">
-                    <div class="item-image"></div>
-                    <div class="item-details">
-                        <div class="item-title">Festival do Caroço</div>
-                        <div>
-                            <div class="item-row"><span>Data</span> <span>X/X/X</span></div>
-                            <div class="item-row"><span>Sessão</span> <span>X</span></div>
-                            <div class="item-row"><span>Preço Total</span> <span>10€</span></div>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="order-items" id="orderItems">
+                <p class="empty-cart-msg"><i class="fas fa-spinner fa-spin"></i> A carregar...</p>
             </div>
 
-            <button type="button" class="btn-pay">Pagar X€</button>
+            <div class="total-row">
+                <span>Total</span>
+                <span id="totalPreco">€0.00</span>
+            </div>
+
+            <div id="payment-feedback"></div>
+            <button type="button" class="btn-pay" id="btnPagar" disabled>
+                <i class="fas fa-lock"></i> Pagar Agora
+            </button>
         </aside>
 
+        <!-- DIREITA: FORMULÁRIO -->
         <main class="form-section">
-            
             <h1 class="form-main-title">Complete o seu pedido</h1>
 
-            <form action="#" method="POST">
-                
-                <h3 class="section-subtitle">Detalhes Pessoais</h3>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Primeiro nome</label>
-                        <input type="text" placeholder="Escreva O Seu Primeiro Nome...">
-                    </div>
-                    <div class="input-group">
-                        <label>Último nome</label>
-                        <input type="text" placeholder="Escreva O Seu Último Nome...">
-                    </div>
-                    <div class="input-group">
-                        <label>Email</label>
-                        <input type="email" placeholder="Escreva Seu Email...">
-                    </div>
-                    <div class="input-group">
-                        <label>Número de Telefone</label>
-                        <input type="tel" placeholder="Escreva O Seu Número De Telefone...">
-                    </div>
+            <h3 class="section-subtitle">Detalhes Pessoais</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Primeiro Nome</label>
+                    <input type="text" id="primeiroNome" placeholder="O seu primeiro nome...">
                 </div>
-
-                <h3 class="section-subtitle">Detalhes de Pagamento</h3>
-                
-                <div class="payment-methods">
-                    <i class="fab fa-cc-visa"></i>
-                    <i class="fab fa-cc-stripe"></i>
-                    <i class="fab fa-cc-paypal"></i>
-                    <i class="fab fa-cc-mastercard"></i>
-                    <i class="fab fa-google-pay"></i>
+                <div class="input-group">
+                    <label>Último Nome</label>
+                    <input type="text" id="ultimoNome" placeholder="O seu último nome...">
                 </div>
-
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Titular do Cartão</label>
-                        <input type="text" placeholder="Escreva O Nome Do Titular...">
-                    </div>
-                    <div class="input-group">
-                        <label>Número do Cartão</label>
-                        <input type="text" placeholder="Enter Your Card Number...">
-                    </div>
-                    <div class="input-group">
-                        <label>CVV</label>
-                        <input type="text" placeholder="Exemplo: 123">
-                    </div>
-                    <div class="input-group">
-                        <label>Data de Validade</label>
-                        <input type="text" placeholder="MM/YY">
-                    </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="O seu email...">
                 </div>
-
-                <h3 class="section-subtitle">Morada de Faturação</h3>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Nome do Destinatário</label>
-                        <input type="text" placeholder="Escreva O Nome Do Destinatário...">
-                    </div>
-                    <div class="input-group">
-                        <label>Morada</label>
-                        <input type="text" placeholder="Sua Morada...">
-                    </div>
-                    <div class="input-group">
-                        <label>País</label>
-                        <input type="text" placeholder="Seu País...">
-                    </div>
-                    <div class="input-group">
-                        <label>Cidade</label>
-                        <input type="text" placeholder="Sua Cidade...">
-                    </div>
-                    <div class="input-group">
-                        <label>Localidade</label>
-                        <input type="text" placeholder="Sua Localidade...">
-                    </div>
-                    <div class="input-group">
-                        <label>Código Postal</label>
-                        <input type="text" placeholder="Exemplo: 9000-002">
-                    </div>
+                <div class="input-group">
+                    <label>Número de Telefone</label>
+                    <input type="tel" id="telefone" placeholder="O seu número de telefone...">
                 </div>
+            </div>
 
-            </form>
+            <h3 class="section-subtitle">Detalhes de Pagamento</h3>
+            <div class="payment-methods">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-stripe"></i>
+                <i class="fab fa-cc-paypal"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-google-pay"></i>
+            </div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Titular do Cartão</label>
+                    <input type="text" id="titular" placeholder="Nome no cartão...">
+                </div>
+                <div class="input-group">
+                    <label>Número do Cartão</label>
+                    <input type="text" id="numCartao" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="input-group">
+                    <label>CVV</label>
+                    <input type="text" id="cvv" placeholder="123" maxlength="3">
+                </div>
+                <div class="input-group">
+                    <label>Data de Validade</label>
+                    <input type="text" id="validade" placeholder="MM/AA" maxlength="5">
+                </div>
+            </div>
 
+            <h3 class="section-subtitle">Morada de Faturação</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Nome do Destinatário</label>
+                    <input type="text" id="destinatario" placeholder="Nome do destinatário...">
+                </div>
+                <div class="input-group">
+                    <label>Morada</label>
+                    <input type="text" id="morada" placeholder="A sua morada...">
+                </div>
+                <div class="input-group">
+                    <label>País</label>
+                    <input type="text" id="pais" placeholder="O seu país...">
+                </div>
+                <div class="input-group">
+                    <label>Cidade</label>
+                    <input type="text" id="cidade" placeholder="A sua cidade...">
+                </div>
+                <div class="input-group">
+                    <label>Localidade</label>
+                    <input type="text" id="localidade" placeholder="A sua localidade...">
+                </div>
+                <div class="input-group">
+                    <label>Código Postal</label>
+                    <input type="text" id="codigoPostal" placeholder="9000-002" maxlength="8">
+                </div>
+            </div>
         </main>
-
     </div>
 
-</body>
+    <!-- MODAL DE SUCESSO -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-box">
+            <div class="success-icon"><i class="fas fa-check"></i></div>
+            <h2>Compra Concluída!</h2>
+            <p>O teu pedido foi processado com sucesso.<br>
+                Já tens acesso aos filmes dos festivais adquiridos.</p>
+                <a href="/" class="btn-success">Voltar ao Início</a>
+            </div>
+        </div>
+
+        <script src="~/js/api-client.js"></script>
+        <script>
+            let _carrinhoId = null;
+
+            // Formatação do número do cartão
+            document.getElementById('numCartao').addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '').substring(0, 16);
+            e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
+            });
+
+            // Formatação da validade
+            document.getElementById('validade').addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '').substring(0, 4);
+            if (val.length >= 3) val = val.substring(0, 2) + '/' + val.substring(2);
+            e.target.value = val;
+            });
+
+            function showFeedback(msg, isError) {
+            const el = document.getElementById('payment-feedback');
+            el.textContent = msg;
+            el.style.color = isError ? '#ffcdd2' : '#c8e6c9';
+            }
+
+            function validarFormulario() {
+            const campos = [
+            { id: 'primeiroNome', nome: 'Primeiro Nome' },
+            { id: 'ultimoNome', nome: 'Último Nome' },
+            { id: 'email', nome: 'Email' },
+            { id: 'titular', nome: 'Titular do Cartão' },
+            { id: 'numCartao', nome: 'Número do Cartão' },
+            { id: 'cvv', nome: 'CVV' },
+            { id: 'validade', nome: 'Data de Validade' },
+            { id: 'morada', nome: 'Morada' },
+            ];
+            for (const campo of campos) {
+            if (!document.getElementById(campo.id).value.trim()) {
+            showFeedback(`Por favor preenche o campo: ${campo.nome}`, true);
+            return false;
+            }
+            }
+            const cvv = document.getElementById('cvv').value.trim();
+            if (!/^\d{3}$/.test(cvv)) {
+            showFeedback('CVV inválido — deve ter 3 dígitos.', true);
+            return false;
+            }
+            const validade = document.getElementById('validade').value.trim();
+            if (!/^\d{2}\/\d{2}$/.test(validade)) {
+            showFeedback('Data de validade inválida — formato MM/AA.', true);
+            return false;
+            }
+            return true;
+            }
+
+            async function carregarCarrinho() {
+            const userId = ApiClient.getCurrentUserId();
+            if (!userId) {
+            window.location.href = '/Login';
+            return;
+            }
+
+            try {
+            const carrinho = await ApiClient.getCartByUser(userId);
+            _carrinhoId = carrinho.id;
+
+            const container = document.getElementById('orderItems');
+            container.innerHTML = '';
+
+            if (!carrinho.itens || carrinho.itens.length === 0) {
+            container.innerHTML = '<p class="empty-cart-msg">O carrinho está vazio.</p>';
+            return;
+            }
+
+            carrinho.itens.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'order-item';
+            div.innerHTML = `
+            <div class="item-image"></div>
+            <div class="item-details">
+            <div class="item-title">${item.filmeTitulo || 'Filme'}</div>
+            <span class="item-tag">${item.tipoAcesso || ''}</span>
+            <div class="item-row">
+            <span>Quantidade</span>
+            <span>${item.quantidade}</span>
+            </div>
+            <div class="item-row">
+            <span>Preço Unit.</span>
+            <span>€${Number(item.precoUnitario).toFixed(2)}</span>
+            </div>
+            <div class="item-row">
+            <span>Subtotal</span>
+            <span>€${Number(item.subtotal).toFixed(2)}</span>
+            </div>
+            </div>
+            `;
+            container.appendChild(div);
+            });
+
+            document.getElementById('totalPreco').textContent =
+            `€${Number(carrinho.total).toFixed(2)}`;
+
+            document.getElementById('btnPagar').disabled = false;
+
+            } catch (e) {
+            document.getElementById('orderItems').innerHTML =
+            '<p class="empty-cart-msg">Erro ao carregar o carrinho.</p>';
+            console.error(e);
+            }
+            }
+
+            document.getElementById('btnPagar').addEventListener('click', async () => {
+            if (!validarFormulario()) return;
+
+            const btn = document.getElementById('btnPagar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A processar...';
+            showFeedback('', false);
+
+            try {
+            const resultado = await ApiClient.processCheckout('Cartão');
+
+            // Se o utilizador foi promovido a Cliente, atualiza o token
+            if (resultado.novoToken) {
+            ApiClient.setToken(resultado.novoToken);
+            }
+
+            document.getElementById('successOverlay').classList.add('active');
+            } catch (e) {
+            showFeedback(e.message || 'Erro ao processar o pagamento.', true);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-lock"></i> Pagar Agora';
+            }
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+            carregarCarrinho();
+            });
+        </script>
+    </body>
+
 </html>

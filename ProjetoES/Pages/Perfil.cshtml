@@ -1,118 +1,544 @@
 @page
 @{
-    ViewData["Title"] = "Área do Utilizador";
-    Layout = null;
+    ViewData["Title"] = "O Meu Perfil";
 }
 
-<!DOCTYPE html>
-<html lang="pt-PT">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] - ProjetoES</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/perfil.css" />
-</head>
-<body>
+<style>
+    .perfil-shell {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px 60px;
+        font-family: 'Inter', sans-serif;
+    }
 
-    <header class="navbar">
-        <div class="logo"><i class="fa-brands fa-figma"></i></div>
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisar nos meus filmes...">
-        </div>
-        <div class="nav-actions">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            <div class="avatar-circle" style="width:35px; height:35px; font-size:14px; margin:0;">JJ</div>
-        </div>
-    </header>
+    .perfil-hero {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    }
 
-    <div class="profile-container">
-        <aside class="profile-sidebar">
-            <div class="user-preview">
-                <div class="avatar-circle">JJ</div>
-                <h3>John Jones</h3>
-                <p>Membro desde 2025</p>
-            </div>
+    .perfil-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+    }
 
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active"><i class="fas fa-ticket-alt"></i> Meus Acessos</a>
-                <a href="#" class="nav-item"><i class="fas fa-list"></i> Minhas Listas</a>
-                <a href="#" class="nav-item"><i class="fas fa-history"></i> Histórico de Compras</a>
-                <a href="#" class="nav-item"><i class="fas fa-user-cog"></i> Definições</a>
-                <a href="/" class="nav-item" style="margin-top: 20px; color: #e53935;"><i class="fas fa-sign-out-alt"></i> Sair</a>
-            </nav>
-        </aside>
+    .perfil-info h1 {
+        font-size: 22px;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+    }
 
-        <main class="profile-content">
-            
-            <section class="section-header">
-                <h2>Meus Acessos Reservados</h2>
-                <p style="font-size: 14px; color: #666;">Tens 3 acessos ativos para este festival.</p>
-                
-                <div class="access-grid" style="margin-top:25px;">
-                    <div class="access-card">
-                        <div class="access-thumb"></div>
-                        <div class="access-info">
-                            <span class="access-type type-bilhete">Bilhete de Sessão</span>
-                            <h4>Festival da Batata Doce</h4>
-                            <p style="font-size:11px; color:#777;">Sessão: 14/05 às 21:00</p>
-                            <button class="btn-watch">Ver Agora</button>
-                        </div>
-                    </div>
-                    <div class="access-card">
-                        <div class="access-thumb"></div>
-                        <div class="access-info">
-                            <span class="access-type type-passe">Passe Completo</span>
-                            <h4>Festival do Caroço</h4>
-                            <p style="font-size:11px; color:#777;">Acesso ilimitado</p>
-                            <button class="btn-watch">Explorar Filmes</button>
-                        </div>
-                    </div>
-                    <div class="access-card">
-                        <div class="access-thumb"></div>
-                        <div class="access-info">
-                            <span class="access-type type-aluguer">Aluguer Digital</span>
-                            <h4>Batman: O Início</h4>
-                            <p style="font-size:11px; color:#777;">Expira em: 46h</p>
-                            <button class="btn-watch">Retomar Filme</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    .perfil-info p {
+        font-size: 14px;
+        color: #888;
+        margin: 0;
+    }
 
-            <section class="section-header" style="margin-top: 50px;">
-                <h2>Histórico Recente</h2>
-                <table class="history-table" style="margin-top:20px;">
-                    <thead>
-                        <tr>
-                            <th>ID Pedido</th>
-                            <th>Data</th>
-                            <th>Item</th>
-                            <th>Valor</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>#ES-9482</td>
-                            <td>12/03/2026</td>
-                            <td>Passe Completo + 1 Bilhete</td>
-                            <td>55.00€</td>
-                            <td class="status-pago">Pago</td>
-                        </tr>
-                        <tr>
-                            <td>#ES-9421</td>
-                            <td>10/03/2026</td>
-                            <td>Aluguer Digital</td>
-                            <td>4.50€</td>
-                            <td class="status-pago">Pago</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 8px;
+        color: white;
+    }
 
-        </main>
+    .section-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .section-title i {
+        color: #7b57b8;
+    }
+
+    /* HISTÓRICO */
+    .historico-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #7b57b8;
+    }
+
+    .historico-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .historico-id {
+        font-size: 12px;
+        color: #aaa;
+        font-weight: 600;
+    }
+
+    .historico-data {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .historico-total {
+        font-size: 20px;
+        font-weight: 800;
+        color: #7b57b8;
+    }
+
+    .historico-estado {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .historico-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-top: 1px solid #f0f0f0;
+        font-size: 14px;
+    }
+
+    .historico-item-titulo {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .historico-item-tipo {
+        font-size: 11px;
+        font-weight: 700;
+        background: #f0ebfb;
+        color: #6b439b;
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-left: 8px;
+    }
+
+    .historico-item-preco {
+        font-weight: 700;
+        color: #333;
+    }
+
+    /* ACESSOS */
+    .acessos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
+
+    .acesso-card {
+        background: white;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .acesso-card img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 10px;
+        background: #edeaf3;
+    }
+
+    .acesso-titulo {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1a1a1a;
+        line-height: 1.3;
+    }
+
+    .acesso-tipo {
+        font-size: 11px;
+        font-weight: 700;
+        background: #f0ebfb;
+        color: #6b439b;
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: inline-block;
+        width: fit-content;
+    }
+
+    .acesso-validade {
+        font-size: 11px;
+        color: #aaa;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #aaa;
+        font-size: 14px;
+        background: white;
+        border-radius: 16px;
+    }
+
+    .empty-state i {
+        font-size: 40px;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .tab-btn {
+        padding: 10px 20px;
+        border-radius: 20px;
+        border: 2px solid #e0d8f0;
+        background: white;
+        color: #666;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .tab-btn.active {
+        background: linear-gradient(135deg, #7b57b8, #50316f);
+        color: white;
+        border-color: transparent;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+</style>
+
+<div class="perfil-shell">
+
+    <!-- HERO -->
+    <div class="perfil-hero" id="perfilHero">
+        <div style="color:#aaa; font-size:14px;">A carregar perfil...</div>
     </div>
 
-</body>
-</html>
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('historico')">
+            <i class="fas fa-receipt"></i> Histórico de Compras
+        </button>
+        <button class="tab-btn" onclick="switchTab('acessos')">
+            <i class="fas fa-film"></i> Filmes com Acesso
+        </button>
+        <button class="tab-btn" onclick="switchTab('queroVer')">
+            <i class="fas fa-plus-circle"></i> Ver Depois
+        </button>
+        <button class="tab-btn" onclick="switchTab('visto')">
+            <i class="fas fa-eye"></i> Visto
+        </button>
+        <button class="tab-btn" onclick="switchTab('favoritos')">
+            <i class="fas fa-heart"></i> Favoritos
+        </button>
+
+</div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="tab-content active" id="tab-historico">
+        <div class="section-title"><i class="fas fa-receipt"></i> Histórico de Compras</div>
+        <div id="historicoContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
+    <!-- ACESSOS -->
+    <div class="tab-content" id="tab-acessos">
+        <div class="section-title"><i class="fas fa-film"></i> Filmes com Acesso</div>
+        <div id="acessosContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-queroVer">
+        <div class="section-title"><i class="fas fa-plus-circle"></i> Ver Depois</div>
+        <div id="queroVerContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-visto">
+        <div class="section-title"><i class="fas fa-eye"></i> Visto</div>
+        <div id="vistoContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-favoritos">
+        <div class="section-title"><i class="fas fa-heart"></i> Favoritos</div>
+        <div id="favoritosContainer">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> A carregar...</div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script>
+        const posterPlaceholder = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22480%22 viewBox=%220 0 320 480%22%3E%3Crect width=%22320%22 height=%22480%22 fill=%22%23edeaf3%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2390909a%22 font-family=%22Arial%2Csans-serif%22 font-size=%2222%22%3EPoster indispon%C3%ADvel%3C/text%3E%3C/svg%3E';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!ApiClient.isAuthenticated()) {
+                window.location.href = '/Login';
+                return;
+            }
+
+            const userId = ApiClient.getCurrentUserId();
+            const token = ApiClient.getToken();
+            const payload = token.split('.')[1];
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            const paddedBase64 = base64 + '='.repeat((4 - base64.length % 4) % 4);
+            const jsonBytes = Uint8Array.from(atob(paddedBase64), c => c.charCodeAt(0));
+            const claims = JSON.parse(new TextDecoder('utf-8').decode(jsonBytes));
+            const name = claims.name ?? claims.unique_name ?? 'Utilizador';
+            const email = claims.email ?? '';
+            const role = claims.role ?? 'Membro';
+
+            const roleConfig = {
+                'Administrador': { color: '#e53935', label: 'Admin', icon: 'fa-shield-alt' },
+                'Cliente': { color: '#f9a825', label: 'Cliente', icon: 'fa-star' },
+                'Membro': { color: '#1e88e5', label: 'Membro', icon: 'fa-user' },
+            };
+            const rc = roleConfig[role] ?? { color: '#888', label: role, icon: 'fa-user' };
+            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+            // Renderizar hero
+            document.getElementById('perfilHero').innerHTML = `
+                        <div class="perfil-avatar" style="background:${rc.color}; box-shadow: 0 0 0 4px ${rc.color}33;">
+                            ${initials}
+                        </div>
+                        <div class="perfil-info">
+                            <h1>${name}</h1>
+                            <p>${email}</p>
+                            <span class="role-badge" style="background:${rc.color};">
+                                <i class="fas ${rc.icon}"></i> ${rc.label}
+                            </span>
+                        </div>
+                    `;
+
+            // Carregar histórico e acessos em paralelo
+            await Promise.all([carregarHistorico(), carregarAcessos(userId), carregarLista(userId, 'QueroVer', 'queroVerContainer'), carregarLista(userId, 'Visto', 'vistoContainer'), carregarLista(userId, 'Favoritos', 'favoritosContainer')]);
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick') === `switchTab('${tab}')`);
+            });
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        async function carregarHistorico() {
+            const container = document.getElementById('historicoContainer');
+            try {
+                const pedidos = await ApiClient.getCheckoutHistory();
+
+                if (!pedidos || pedidos.length === 0) {
+                    container.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-receipt"></i>
+                                    Ainda não tens compras.<br>Explora os festivais e adquire o teu passe!
+                                </div>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                pedidos.forEach(pedido => {
+                    const data = new Date(pedido.dataPedido).toLocaleDateString('pt-PT', {
+                        day: '2-digit', month: 'long', year: 'numeric'
+                    });
+
+                    const itensHtml = (pedido.itens || []).map(item => `
+                                <div class="historico-item">
+                                    <div>
+                                        <span class="historico-item-titulo">${item.filmeTitulo || 'Filme'}</span>
+                                        <span class="historico-item-tipo">${item.tipoAcesso || ''}</span>
+                                    </div>
+                                    <span class="historico-item-preco">€${Number(item.precoUnitario).toFixed(2)}</span>
+                                </div>
+                            `).join('');
+
+                    const card = document.createElement('div');
+                    card.className = 'historico-card';
+                    card.innerHTML = `
+                                <div class="historico-header">
+                                    <div>
+            <div class="historico-id">Pedido #${pedido.pedidoId}</div>                            
+                                        <div class="historico-data">${data}</div>
+                                        <span class="historico-estado">${pedido.estado || 'Completo'}</span>
+                                    </div>
+                                    <div class="historico-total">€${Number(pedido.precoTotal).toFixed(2)}</div>
+                                </div>
+                                ${itensHtml}
+                            `;
+                    container.appendChild(card);
+                });
+
+            } catch (e) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i> Erro ao carregar histórico.</div>`;
+                console.error(e);
+            }
+        }
+
+        async function carregarAcessos(userId) {
+            const container = document.getElementById('acessosContainer');
+            try {
+                const filmes = await ApiClient.obterFilmesComAcesso(userId);
+
+                container.innerHTML = '';
+
+                if (!filmes || filmes.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-film"></i>
+                            Ainda não tens filmes.<br>Compra um passe para começar a ver!
+                        </div>`;
+                    return;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'acessos-grid';
+
+                filmes.forEach(f => {
+                    const filmeId = f.filmeId ?? f.FilmeId;
+                    const festivalId = f.festivalId ?? f.FestivalId ?? null;
+                    const posterUrl = f.posterUrl ?? f.PosterUrl ?? posterPlaceholder;
+                    const titulo = f.filmeTitulo ?? f.FilmeTitulo ?? f.titulo ?? f.Titulo ?? 'Filme';
+                    const card = document.createElement('div');
+                    card.className = 'acesso-card';
+                    card.style.cursor = 'pointer';
+                    card.setAttribute('role', 'link');
+                    card.tabIndex = 0;
+                    card.innerHTML = `
+                        <img src="${posterUrl}"
+                            alt="${titulo}"
+                            onerror="this.onerror=null; this.src='${posterPlaceholder}';" />
+                        <div class="acesso-titulo">${titulo}</div>
+                        <span class="acesso-tipo">${f.tipoAcesso ?? f.TipoAcesso ?? 'Acesso'}</span>
+                        ${(f.dataValidade ?? f.DataValidade)
+                            ? `<div class="acesso-validade"><i class="fas fa-clock"></i> Até ${new Date(f.dataValidade ?? f.DataValidade).toLocaleDateString('pt-PT')}</div>`
+                            : ''}
+                    `;
+                    const goToCinema = () => {
+                        if (!filmeId || !festivalId) return;
+                        window.location.href = `/Cinema?id=${encodeURIComponent(filmeId)}&festivalId=${encodeURIComponent(festivalId)}`;
+                    };
+                    card.addEventListener('click', goToCinema);
+                    card.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            goToCinema();
+                        }
+                    });
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+
+            } catch (e) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i> Erro ao carregar filmes.</div>`;
+                console.error(e);
+            }
+        }
+
+        async function carregarLista(userId, tipo, containerId) {
+            const container = document.getElementById(containerId);
+            try {
+                const listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
+                const tipoMap = { 'QueroVer': 0, 'Visto': 1, 'Favoritos': 2 };
+                const lista = listas.find(l => l.tipo === tipoMap[tipo]);
+
+                if (!lista || !lista.filmes || lista.filmes.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-film"></i> Lista vazia.</div>`;
+                    return;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'acessos-grid';
+
+                lista.filmes.forEach(f => {
+                    const card = document.createElement('div');
+                    card.className = 'acesso-card';
+                    card.style.position = 'relative';
+                    card.innerHTML = `
+                        <img src="${f.posterUrl || posterPlaceholder}"
+                            alt="${f.titulo}"
+                            onerror="this.onerror=null; this.src='${posterPlaceholder}';" />
+                        <div class="acesso-titulo">${f.titulo}</div>
+                        <button data-filme-id="${f.id}" style="
+                            position:absolute; top:8px; right:8px;
+                            background:rgba(0,0,0,0.5); border:none; border-radius:50%;
+                            width:28px; height:28px; color:white; cursor:pointer;
+                            display:flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    card.querySelector('button').addEventListener('click', async () => {
+                        if (!confirm('Remover da lista?')) return;
+                        try {
+                            await ApiClient.delete(`/api/listaspessoais/${lista.id}/filmes/${f.id}`);
+                            card.remove();
+                        } catch (e) {
+                            showMensagem(e.message || 'Erro ao remover.', true);
+                        }
+                    });
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+
+            } catch (e) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i> Erro ao carregar.</div>`;
+                console.error(e);
+            }
+        }
+    function showMensagem(msg, isError = false) {
+        const toast = document.getElementById('mensagem');
+        toast.textContent = msg;
+        toast.style.background = isError ? '#c0392b' : '#1a1a1a';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }   
+    </script>
+}

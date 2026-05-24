@@ -23,8 +23,9 @@
                 
                 <h1>Bem Vindo!</h1>
                 <p class="subtitle">Insira as credenciais da sua conta</p>
+                <div id="login-message" style="display:none; margin-bottom:16px; padding:12px 14px; border-radius:10px; font-size:0.95rem;"></div>
 
-                <form action="#" method="POST">
+                <form id="login-form" action="#" method="POST" novalidate>
                     
                     <div class="input-group">
                         <div class="label-row">
@@ -38,7 +39,7 @@
                             <label for="password">Password</label>
                             <a href="#" class="forgot-password">forgot password</a>
                         </div>
-                        <input type="password" id="password" name="password" placeholder="Nome" required>
+                        <input type="password" id="password" name="password" placeholder="Senha" required>
                     </div>
 
                     <div class="checkbox-row">
@@ -63,7 +64,7 @@
                 </div>
 
                 <p class="register-link">
-                    Não tem conta? <a href="#">Registe-se</a>
+                    Não tem conta? <a href="/Register">Registe-se</a>
                 </p>
 
             </div>
@@ -88,6 +89,43 @@
         </div>
 
     </div>
+
+    <script src="~/js/api-client.js"></script>
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const loginMessage = document.getElementById('login-message');
+
+        function showLoginMessage(text, isError) {
+            loginMessage.textContent = text;
+            loginMessage.style.display = 'block';
+            loginMessage.style.background = isError ? '#ffe8e8' : '#e7f7ec';
+            loginMessage.style.color = isError ? '#8a1f1f' : '#135c2a';
+            loginMessage.style.border = isError ? '1px solid #f2b8b8' : '1px solid #b7e1c1';
+        }
+
+        loginForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+
+            try {
+                const response = await ApiClient.login(email, password);
+                const token = response.token || response.Token;
+
+                if (!token) {
+                    throw new Error('Resposta de login não contém token.');
+                }
+
+                ApiClient.setToken(token, remember);
+                showLoginMessage('Login concluído. A redirecionar...', false);
+                setTimeout(() => window.location.href = '/', 1000);
+            } catch (error) {
+                showLoginMessage(error.message || 'Erro ao iniciar sessão.', true);
+            }
+        });
+    </script>
 
 </body>
 </html>

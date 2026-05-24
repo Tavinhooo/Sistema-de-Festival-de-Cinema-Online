@@ -6,138 +6,109 @@
 
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ProjetoES</title>
-    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/filme.css" />
-    
     <link rel="stylesheet" href="~/css/modais.css" />
 </head>
+
 <body>
 
-    <header class="navbar">
-        <div class="logo">
-            <i class="fa-brands fa-figma"></i>
-        </div>
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisa Geral">
-            <i class="fas fa-search"></i>
-        </div>
-        <div class="nav-actions">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            <a class="btn btn-signin" asp-page="/Login">Sign in</a>
-            <a class="btn btn-register" asp-page="/Register">Register</a>
-        </div>
-    </header>
+    @await Html.PartialAsync("_Header")
 
     <main class="main-content">
-        
         <div class="movie-hero">
-            
             <div class="movie-info-col">
                 <div class="movie-header">
-                    <div class="movie-poster">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
-                        </div>
-                    </div>
+                    <div class="movie-poster" id="moviePoster"></div>
                     <div class="movie-details">
-                        <h1>Título do Filme</h1>
-                        <p>8.1 (Rating)</p>
-                        <p>Gêneros do Filme</p>
-                        <p>2026 &nbsp;&nbsp; 2h:12min &nbsp;&nbsp; +16</p>
+                        <h1 id="movieTitle">A carregar...</h1>
+                        <p id="movieRating">0.0 (Rating)</p>
+                        <p id="movieGenres"></p>
+                        <p id="movieMeta"></p>
+                        <p id="moviePrice" style="font-weight:800; color:#6b439b; font-size:1.1rem;"></p>
                     </div>
                 </div>
 
                 <div class="movie-buttons">
-                    <button class="btn-pill">Sinopse</button>
-                    <button class="btn-pill">Elenco e Realizador</button>
-                    <button class="btn-add-cart">Adicionar ao carrinho</button>
+                    <button class="btn-pill" id="btnSinopse">Sinopse</button>
+                    <button class="btn-pill" id="btnElenco">Elenco e Realizador</button>
+                </div>
+
+                <div id="movieSynopsis" style="margin-top:24px; line-height:1.8; color:#444; display:none;"></div>
+                <div id="movieCastInfo" style="margin-top:24px; line-height:1.8; color:#444; display:none;">
+                    <p id="movieRealizer" style="font-size:14px; margin-bottom:8px;"></p>
+                    <p id="movieCast" style="font-size:14px;"></p>
                 </div>
             </div>
 
             <div class="movie-trailer-col">
-                <h2 class="trailer-title">Trailer:</h2>
-                <div class="trailer-box">
-                    <i class="far fa-play-circle"></i>
+                <h2 class="trailer-title" id="playerLabel">Trailer:</h2>
+
+                <div class="trailer-box" id="trailerBox">
+                    <i class="far fa-play-circle" id="trailerPlaceholderIcon"></i>
                 </div>
-                
-                <div class="trailer-actions">
-                    <div class="action-item">
-                        <i class="fas fa-plus-circle"></i> Ver Depois
-                    </div>
-                    <div class="action-item" id="btnAbrirAvaliacao" style="cursor: pointer;">
-                        <i class="far fa-star"></i> Avaliar
-                    </div>
-                    <div class="action-item">
-                        <i class="far fa-eye"></i> Visto
-                    </div>
+
+                <div id="accessCta" style="margin-top:16px;"></div>
+
+                <div class="trailer-actions" id="trailerActions" style="display:none;">
+                    <button type="button" class="action-item list-action" id="btnVerDepois" data-list-type="QueroVer">
+                        <span class="action-icon"><i class="fas fa-plus-circle"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Ver Depois</span>
+                            <span class="action-subtitle">Guardar para mais tarde</span>
+                        </span>
+                    </button>
+                    <button type="button" class="action-item" id="btnAbrirAvaliacao">
+                        <span class="action-icon"><i class="far fa-star"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Avaliar</span>
+                            <span class="action-subtitle">Partilhar a tua opinião</span>
+                        </span>
+                    </button>
+                    <button type="button" class="action-item list-action" id="btnVisto" data-list-type="Visto">
+                        <span class="action-icon"><i class="far fa-eye"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Visto</span>
+                            <span class="action-subtitle">Marcar como assistido</span>
+                        </span>
+                    </button>
+                    <button type="button" class="action-item list-action" id="btnFavoritos" data-list-type="Favoritos">
+                        <span class="action-icon"><i class="far fa-heart"></i></span>
+                        <span class="action-copy">
+                            <span class="action-title">Favorito</span>
+                            <span class="action-subtitle">Adicionar à tua lista</span>
+                        </span>
+                    </button>
                 </div>
             </div>
-            
         </div>
 
         <div>
-            <div class="section-badge">Relacionados</div>
-            <div class="card-row">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div class="card">
-                        <div class="shapes-placeholder">
-                            <div style="width: 100%; display:flex; justify-content:center;">
-                                <div class="shape-triangle"></div>
-                            </div>
-                            <div class="shape shape-star"></div>
-                            <div class="shape shape-square"></div>
-                        </div>
-                    </div>
-                }
-            </div>
+            <div class="section-badge">Outros filmes deste festival</div>
+            <div class="card-row" id="relatedMovies"></div>
         </div>
 
         <div>
             <div class="section-badge">Avaliações</div>
-            <div class="reviews-row">
-                @for (int i = 0; i < 4; i++)
-                {
-                    <div class="review-card">
-                        <div class="review-header" style="justify-content: space-between; width: 100%;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span>John Jones</span>
-                                <i class="far fa-star"></i> 9
-                            </div>
-                            <button class="btn-reportar-comentario" style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
-                                <i class="fas fa-flag"></i>
-                            </button>
-                        </div>
-                        <div class="review-body">
-                            Comentario: Este filme é excelente, recomendo vivamente a todos!
-                        </div>
-                    </div>
-                }
+            <div class="reviews-row" id="reviewsRow">
+                <p id="reviewsEmpty" style="color:#888; font-size:14px; display:none;">Ainda não há avaliações para este filme.</p>
             </div>
         </div>
-
     </main>
 
     <div class="modal-overlay" id="modalAvaliacao">
         <div class="modal-box">
-            
             <div class="modal-header">
                 <h2>Avaliar Filme</h2>
                 <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
             </div>
-
-            <p style="font-size: 14px; color: #666;">Qual é a tua nota para o <strong>Título do Filme</strong>?</p>
-
+            <p style="font-size:14px; color:#666;">Qual é a tua nota para o <strong id="modalMovieTitle">filme</strong>?</p>
             <div class="rating-scale">
                 <button class="rating-btn">1</button>
                 <button class="rating-btn">2</button>
@@ -150,86 +121,602 @@
                 <button class="rating-btn">9</button>
                 <button class="rating-btn">10</button>
             </div>
-
+            <textarea id="avaliacaoComentario" placeholder="Escreve um comentário (opcional)..."
+                style="width:100%; margin-top:16px; padding:12px; border-radius:12px; border:1px solid #ddd;
+                       font-family:inherit; font-size:14px; resize:vertical; min-height:80px; outline:none;"></textarea>
             <div class="modal-footer">
                 <button class="btn-cancel" type="button">Cancelar</button>
                 <button class="btn-submit" type="button">Submeter Avaliação</button>
             </div>
-
         </div>
     </div>
+    <div id="mensagem"></div>
 
-    <div class="modal-overlay" id="modalDenuncia">
-        <div class="modal-box">
-            
-            <div class="modal-header">
-                <h2>Denunciar Comentário</h2>
-                <button class="btn-close" type="button"><i class="fas fa-times"></i></button>
-            </div>
-
-            <div class="form-group">
-                <label>Motivo da Denúncia</label>
-                <select>
-                    <option value="">Selecione um motivo...</option>
-                    <option value="spam">Spam ou Publicidade</option>
-                    <option value="ofensivo">Linguagem Ofensiva</option>
-                    <option value="spoiler">Contém Spoilers</option>
-                    <option value="outro">Outro motivo</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Detalhes Adicionais (Opcional)</label>
-                <textarea placeholder="Explique brevemente porque este comentário viola as regras..."></textarea>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn-cancel" type="button">Cancelar</button>
-                <button class="btn-submit" type="button" style="background-color: #e53935;">Denunciar</button>
-            </div>
-
-        </div>
-    </div>
-
+    <script src="~/js/api-client.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos
-            const btnAvaliar = document.getElementById('btnAbrirAvaliacao');
-            const btnsDenunciar = document.querySelectorAll('.btn-reportar-comentario');
-            const modalAvaliacao = document.getElementById('modalAvaliacao');
-            const modalDenuncia = document.getElementById('modalDenuncia');
-            const botoesFechar = document.querySelectorAll('.btn-close, .btn-cancel');
+        const LISTA_CONFIG = {
+            QueroVer: { tipo: 0, buttonId: 'btnVerDepois', label: 'Ver Depois', iconAdd: 'fa-plus-circle', iconRemove: 'fa-check-circle', subtitleAdd: 'Guardar para mais tarde', subtitleRemove: 'Remover da lista' },
+            Visto: { tipo: 1, buttonId: 'btnVisto', label: 'Visto', iconAdd: 'fa-eye', iconRemove: 'fa-check-circle', subtitleAdd: 'Marcar como assistido', subtitleRemove: 'Remover da lista' },
+            Favoritos: { tipo: 2, buttonId: 'btnFavoritos', label: 'Favorito', iconAdd: 'fa-heart', iconRemove: 'fa-check-circle', subtitleAdd: 'Adicionar à tua lista', subtitleRemove: 'Remover da lista' }
+        };
 
-            // Abrir Avaliação
-            if(btnAvaliar) {
-                btnAvaliar.addEventListener('click', function() {
-                    modalAvaliacao.classList.add('active');
-                });
+        const estadoListas = {
+            QueroVer: { listaId: null, hasFilm: false },
+            Visto: { listaId: null, hasFilm: false },
+            Favoritos: { listaId: null, hasFilm: false }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ApiClient.renderAuthNavigation('navActions');
+        });
+
+        function getQueryParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        function formatMinutes(minutes) {
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            return `${h}h:${String(m).padStart(2, '0')}min`;
+        }
+
+        function renderPoster(url, title) {
+            document.getElementById('moviePoster').innerHTML =
+                `<img src="${url}" alt="${title}" style="width:100%; height:100%; object-fit:cover; border-radius:20px;" />`;
+        }
+
+        // ── Player ───────────────────────────────────────────────
+
+        function renderFullPlayer(filme) {
+            const box   = document.getElementById('trailerBox');
+            const icon  = document.getElementById('trailerPlaceholderIcon');
+            const label = document.getElementById('playerLabel');
+
+            label.textContent = 'A ver:';
+            if (icon) icon.remove();
+            box.innerHTML = '';
+
+            if (filme.trailerUrl) {
+                const iframe = document.createElement('iframe');
+                iframe.src = filme.trailerUrl + '?rel=0&modestbranding=1';
+                iframe.title = 'Visualização do Filme';
+                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                iframe.allowFullscreen = true;
+                iframe.style.cssText = 'width:100%; height:100%; border:none; border-radius:10px;';
+                box.appendChild(iframe);
+            } else {
+                box.innerHTML = '<p style="color:#666; font-size:14px; position:absolute;">Conteúdo indisponível</p>';
+            }
+        }
+
+        function renderTrailer(trailerUrl) {
+            const box  = document.getElementById('trailerBox');
+            const icon = document.getElementById('trailerPlaceholderIcon');
+
+            if (trailerUrl) {
+                if (icon) icon.remove();
+                const iframe = document.createElement('iframe');
+                iframe.src = trailerUrl + '?rel=0&modestbranding=1';
+                iframe.title = 'Trailer do Filme';
+                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                iframe.allowFullscreen = true;
+                iframe.style.cssText = 'width:100%; height:100%; border:none; border-radius:10px;';
+                box.appendChild(iframe);
+            } else {
+                if (icon) icon.style.opacity = '0.4';
+                const msg = document.createElement('p');
+                msg.textContent = 'Trailer indisponível';
+                msg.style.cssText = 'position:absolute; bottom:16px; color:#666; font-size:14px;';
+                box.appendChild(msg);
+            }
+        }
+
+        // ── Acesso ───────────────────────────────────────────────
+
+        function renderCinemaButton(cta, filmId, festivalId, userId) {
+            cta.innerHTML = `
+                <div style="background:linear-gradient(135deg,#f7f2ff,#efe4ff); border:1px solid #d9c8f3; border-radius:16px; padding:20px; text-align:center;">
+                    <i class="fas fa-circle-play" style="font-size:28px; color:#7b57b8; margin-bottom:10px; display:block;"></i>
+                    <p style="font-size:14px; color:#50316f; font-weight:700; margin-bottom:14px;">
+                        Tens acesso ativo a este filme
+                    </p>
+                    <button type="button" id="btnAbrirCinema"
+                        style="padding:10px 18px; border-radius:20px; border:none; background:linear-gradient(135deg,#7b57b8,#50316f);
+                               color:white; font-weight:800; font-size:13px; cursor:pointer; box-shadow:0 10px 22px rgba(123,87,184,0.25);">
+                        Ver em Cinema
+                    </button>
+                    ${!userId ? '' : ''}
+                </div>`;
+
+            document.getElementById('btnAbrirCinema')?.addEventListener('click', () => {
+                window.location.href = `/Cinema?id=${encodeURIComponent(filmId)}&festivalId=${encodeURIComponent(festivalId)}`;
+            });
+        }
+
+        function renderBuyButton(cta, festivalId, userId) {
+            const tipos = [
+                { label: 'Bilhete',         tipo: 'Bilhete de Sessão' },
+                { label: 'Passe Diário',    tipo: 'Passe Diário' },
+                { label: 'Passe Completo',  tipo: 'Passe Completo' },
+                { label: 'Aluguer Digital', tipo: 'Aluguer Digital' },
+            ];
+
+            cta.innerHTML = `
+                <div style="background:#f0ebfb; border:1px solid #d4c3f0; border-radius:16px; padding:20px; text-align:center;">
+                    <i class="fas fa-lock" style="font-size:28px; color:#7b57b8; margin-bottom:10px; display:block;"></i>
+                    <p style="font-size:14px; color:#50316f; font-weight:700; margin-bottom:16px;">
+                        Adquire um acesso para ver este filme
+                    </p>
+                    <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;">
+                        ${tipos.map(t => `
+                            <button onclick="comprar('${t.tipo}')"
+                                style="padding:8px 16px; border-radius:20px; border:1.5px solid #7b57b8;
+                                       background:white; color:#7b57b8; font-weight:700; font-size:13px;
+                                       cursor:pointer; transition:all 0.15s;"
+                                onmouseover="this.style.background='#7b57b8';this.style.color='white'"
+                                onmouseout="this.style.background='white';this.style.color='#7b57b8'">
+                                ${t.label}
+                            </button>`).join('')}
+                    </div>
+                    ${!userId ? `<p style="margin-top:12px; font-size:12px; color:#888;">
+                        <a href="/Login" style="color:#7b57b8; font-weight:700;">Inicia sessão</a> para comprar
+                    </p>` : ''}
+                </div>`;
+        }
+
+        async function renderAccessState(filmId, festivalId, filme) {
+            const userId  = ApiClient.getCurrentUserId();
+            const role    = ApiClient.getCurrentUserRole();
+            const cta     = document.getElementById('accessCta');
+            const actions = document.getElementById('trailerActions');
+
+            renderTrailer(filme.trailerUrl || '');
+
+            if (role === 'Administrador') {
+                if (actions) actions.style.display = '';
+                renderCinemaButton(cta, filmId, festivalId, userId);
+                return;
+            }
+            try {
+                const fId = Number(filmId);
+                const festId = Number(festivalId);
+
+                if (isNaN(fId) || isNaN(festId)) {
+                    console.warn('IDs inválidos para verificação de acesso:', filmId, festivalId);
+                    renderBuyButton(cta, festivalId, userId);
+                    return;
+                }
+
+                const url = `/api/acessos/utilizador/${userId}/festival/${festId}/filme/${fId}/verificar`;
+                console.log('A testar acesso na rota:', url);
+
+                let temAcesso = false;
+                if (typeof ApiClient.get === 'function') {
+                    temAcesso = await ApiClient.get(url);
+                } else {
+                    const resposta = await fetch(url);
+                    temAcesso = await resposta.json();
+                }
+                console.log('Resultado do acesso obtido:', temAcesso, typeof temAcesso);
+
+                if (temAcesso === true) {
+                    if (actions) actions.style.display = '';
+                    renderCinemaButton(cta, filmId, festivalId, userId);
+                } else {
+                    renderBuyButton(cta, festivalId, userId);
+                }
+            } catch (error) {
+                console.error("Erro controlado ao verificar acesso:", error);
+                renderBuyButton(cta, festivalId, userId);
+            }
+        }
+
+        function getListaButton(tipo) {
+            const config = LISTA_CONFIG[tipo];
+            return config ? document.getElementById(config.buttonId) : null;
+        }
+
+        function atualizarEstadoBotaoLista(tipo, ativo) {
+            const config = LISTA_CONFIG[tipo];
+            const button = getListaButton(tipo);
+            if (!config || !button) return;
+
+            const icon = button.querySelector('.action-icon i');
+            const subtitle = button.querySelector('.action-subtitle');
+            const title = button.querySelector('.action-title');
+
+            button.classList.toggle('is-active', ativo);
+            button.setAttribute('aria-pressed', String(ativo));
+            if (title) title.textContent = config.label;
+            if (subtitle) subtitle.textContent = ativo ? config.subtitleRemove : config.subtitleAdd;
+            if (icon) icon.className = `fas ${ativo ? config.iconRemove : config.iconAdd}`;
+        }
+
+        async function carregarEstadoListas() {
+            const userId = ApiClient.getCurrentUserId();
+            if (!userId) return;
+            const filmId = Number(getQueryParam('id'));
+            let listas = [];
+            try {
+                listas = await ApiClient.get(`/api/listaspessoais/membro/${userId}`);
+            } catch (err) {
+                return;
             }
 
-            // Abrir Denúncia
-            btnsDenunciar.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    modalDenuncia.classList.add('active');
+            Object.keys(LISTA_CONFIG).forEach(tipo => {
+                const config = LISTA_CONFIG[tipo];
+                const lista = listas.find(l => l.tipo === config.tipo);
+                const hasFilm = !!(lista?.filmes || []).some(f => Number(f.id ?? f.filmeId ?? f.FilmeId) === filmId);
+
+                estadoListas[tipo] = {
+                    listaId: lista?.id ?? null,
+                    hasFilm
+                };
+
+                atualizarEstadoBotaoLista(tipo, hasFilm);
+            });
+        }
+
+        async function toggleLista(tipo) {
+            const userId = ApiClient.getCurrentUserId();
+            if (!userId) { window.location.href = '/Login'; return; }
+
+            const config = LISTA_CONFIG[tipo];
+            const filmId = Number(getQueryParam('id'));
+            const currentState = estadoListas[tipo] ?? { listaId: null, hasFilm: false };
+
+            try {
+                let listaId = currentState.listaId;
+
+                if (!listaId) {
+                    const listaCriada = await ApiClient.post(`/api/listaspessoais?membroId=${userId}&tipo=${config.tipo}`, {});
+                    listaId = listaCriada.id;
+                    estadoListas[tipo].listaId = listaId;
+                }
+
+                if (currentState.hasFilm) {
+                    await ApiClient.delete(`/api/listaspessoais/${listaId}/filmes/${filmId}`);
+                    estadoListas[tipo].hasFilm = false;
+                    atualizarEstadoBotaoLista(tipo, false);
+                    showMensagem(`Filme removido de "${config.label}".`);
+                    return;
+                }
+
+                await ApiClient.post(`/api/listaspessoais/${listaId}/filmes/${filmId}`, {});
+                estadoListas[tipo].hasFilm = true;
+                atualizarEstadoBotaoLista(tipo, true);
+                showMensagem(`Filme adicionado a "${config.label}"!`);
+            } catch (error) {
+                showMensagem(error.message || 'Não foi possível adicionar à lista.', true);
+            }
+        }
+
+        async function comprar(tipoAcesso) {
+            const userId = ApiClient.getCurrentUserId();
+            if (!userId) { window.location.href = '/Login'; return; }
+
+            const filmId    = getQueryParam('id');
+            const festivalId = getQueryParam('festivalId');
+
+            try {
+                await ApiClient.comprarAgora(userId, Number(festivalId), Number(filmId), tipoAcesso, 1);
+            } catch (error) {
+                showMensagem(error.message || 'Não foi possível iniciar a compra.', true);
+            }
+        }
+
+        // ── Avaliações ───────────────────────────────────────────
+
+        async function loadReviews(filmId) {
+            try {
+                const avaliacoes = await ApiClient.get(`/api/avaliacoes/filme/${filmId}`);
+                const row   = document.getElementById('reviewsRow');
+                const empty = document.getElementById('reviewsEmpty');
+
+                row.innerHTML = '';
+                row.appendChild(empty);
+
+                if (!avaliacoes || avaliacoes.length === 0) {
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                empty.style.display = 'none';
+                const currentUserId   = ApiClient.getCurrentUserId();
+                const currentUserRole = ApiClient.getCurrentUserRole();
+
+                avaliacoes.forEach(a => {
+                    const podeApagar = currentUserId && (a.clienteId === currentUserId || currentUserRole === 'Administrador');
+
+                    const card = document.createElement('div');
+                    card.className = 'review-card';
+                    card.innerHTML = `
+                        <div class="review-header" style="justify-content:space-between; width:100%;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span>${a.clienteNome || 'Utilizador'}</span>
+                                <i class="far fa-star"></i> ${a.classificacao}
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                ${podeApagar ? `<button class="btn-apagar-avaliacao" data-id="${a.id}"
+                                    style="background:none; border:none; color:#e57373; cursor:pointer;" title="Apagar">
+                                    <i class="fas fa-trash"></i></button>` : ''}
+                                <button class="btn-reportar-comentario"
+                                    style="background:none; border:none; color:#bbb; cursor:pointer;" title="Denunciar">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="review-body">${a.comentario || ''}</div>`;
+
+                    card.querySelector('.btn-apagar-avaliacao')?.addEventListener('click', async () => {
+                        if (!confirm('Tens a certeza que queres apagar esta avaliação?')) return;
+                        try {
+                            if (currentUserRole === 'Administrador') {
+                                await ApiClient.delete(`/api/admin/${currentUserId}/avaliacoes/${a.id}`);
+                            } else {
+                                await ApiClient.delete(`/api/cliente/avaliacoes/${a.id}`);
+                            }
+                            await loadReviews(filmId);
+                        } catch (error) {
+                            showMensagem(error.message || 'Não foi possível apagar a avaliação.', true);
+                        }
+                    });
+
+                    card.querySelector('.btn-reportar-comentario')?.addEventListener('click', async () => {
+                        if (!ApiClient.isAuthenticated()) {
+                            showMensagem('Tens de estar autenticado para denunciar uma avaliação.', true);
+                            return;
+                        }
+
+                        const motivos = ['Assédio', 'Spam', 'Conteúdo ofensivo', 'Informação falsa', 'Outro'];
+
+                        document.body.insertAdjacentHTML('beforeend', `
+                            <div id="modalReporte" style="position:fixed; inset:0; background:rgba(0,0,0,0.5);
+                                z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px;">
+                                <div style="background:white; border-radius:20px; padding:28px; width:100%;
+                                    max-width:420px; box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+                                    <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:6px;">Denunciar avaliação</h3>
+                                    <p style="font-size:13px; color:#888; margin-bottom:20px;">Qual o motivo da denúncia?</p>
+                                    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+                                        ${motivos.map(m => `
+                                            <label style="display:flex; align-items:center; gap:12px; padding:12px 16px;
+                                                border:1px solid #ede8f5; border-radius:12px; cursor:pointer;"
+                                                onmouseover="this.style.background='#f5f0fc'"
+                                                onmouseout="this.style.background='white'">
+                                                <input type="radio" name="motivoReporte" value="${m}"
+                                                    style="accent-color:#7b57b8; width:16px; height:16px;" />
+                                                <span style="font-size:14px; font-weight:600;">${m}</span>
+                                            </label>`).join('')}
+                                    </div>
+                                    <div style="display:flex; gap:10px; justify-content:flex-end;">
+                                        <button id="btnCancelarReporte" style="padding:10px 20px; border-radius:10px;
+                                            border:1px solid #ddd; background:white; font-weight:600; cursor:pointer; font-size:14px;">
+                                            Cancelar
+                                        </button>
+                                        <button id="btnSubmeterReporte" style="padding:10px 20px; border-radius:10px;
+                                            border:none; background:linear-gradient(135deg,#7b57b8,#50316f);
+                                            color:white; font-weight:700; cursor:pointer; font-size:14px;">
+                                            Denunciar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>`);
+
+                        const modalReporte = document.getElementById('modalReporte');
+
+                        document.getElementById('btnCancelarReporte').addEventListener('click', () => modalReporte.remove());
+
+                        document.getElementById('btnSubmeterReporte').addEventListener('click', async () => {
+                            const selected = document.querySelector('input[name="motivoReporte"]:checked');
+                            if (!selected) { showMensagem('Seleciona um motivo antes de denunciar.', true); return; }
+                            try {
+                                await ApiClient.post(`/api/avaliacoes/${a.id}/reportar`, { motivo: selected.value });
+                                modalReporte.remove();
+                                showMensagem('Avaliação denunciada. O administrador irá analisá-la.');
+                            } catch (error) {
+                                showMensagem(error.message || 'Não foi possível denunciar a avaliação.', true);
+                            }
+                        });
+                    });
+
+                    row.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar avaliações:', error);
+            }
+        }
+
+        // ── Filmes relacionados ───────────────────────────────────
+
+        async function loadRelatedMovies(festivalId, currentFilmId) {
+            try {
+                const filmes = await ApiClient.getFilmesByFestival(festivalId);
+                const row    = document.getElementById('relatedMovies');
+                row.innerHTML = '';
+
+                const outros = filmes.filter(f => Number(f.id ?? f.filmeId ?? f.FilmeId) !== Number(currentFilmId));
+
+                if (outros.length === 0) {
+                    row.innerHTML = '<p style="color:#888; font-size:14px;">Não há outros filmes neste festival.</p>';
+                    return;
+                }
+
+                outros.forEach(f => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.cssText = 'cursor:pointer; overflow:hidden; position:relative;';
+
+                    const poster = f.posterUrl || f.PosterUrl || f.posterUrlCompleto || f.PosterUrlCompleto || '/images/default-poster.jpg';
+                    const titulo = f.titulo || f.Titulo || f.nome || f.Nome || f.title || 'Filme';
+
+                    card.innerHTML = `
+                        <img src="${poster}" alt="${titulo}"
+                            style="width:100%; height:100%; object-fit:cover; border-radius:20px;" />
+                        <div style="position:absolute; bottom:0; left:0; right:0; padding:10px 12px;
+                            background:linear-gradient(transparent,rgba(0,0,0,0.7)); border-radius:0 0 20px 20px;">
+                            <p style="color:white; font-size:13px; font-weight:700; margin:0;">${titulo}</p>
+                        </div>`;
+                    card.addEventListener('click', () => {
+                        const otherId = f.id ?? f.filmeId ?? f.FilmeId;
+                        window.location.href = `/Filme?id=${otherId}&festivalId=${festivalId}`;
+                    });
+                    row.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar filmes relacionados:', error);
+            }
+        }
+
+        // ── Load principal ────────────────────────────────────────
+
+        async function loadFilm() {
+            const filmIdQuery = getQueryParam('id');
+            let festivalIdQuery = getQueryParam('festivalId');
+
+            
+
+            if (!filmIdQuery) {
+                document.getElementById('movieTitle').textContent = 'Filme indisponível';
+                return;
+            }
+
+            try {
+                // Fetch film (try festival-scoped first when festivalId present)
+                let filme = null;
+                if (festivalIdQuery) {
+                    try {
+                        filme = await ApiClient.getFilmeById(filmIdQuery, festivalIdQuery);
+                    } catch (err) {
+                        if (err && err.status === 404) {
+                            
+                            filme = await ApiClient.getFilmeById(filmIdQuery);
+                        } else {
+                            throw err;
+                        }
+                    }
+                } else {
+                    filme = await ApiClient.getFilmeById(filmIdQuery);
+                }
+
+                // Infer festivalId when missing using returned film data
+                if (!festivalIdQuery) {
+                    const inferred = filme.festivalId ?? (filme.FestivalIds && filme.FestivalIds.length ? filme.FestivalIds[0] : null) ?? filme.festivalId;
+                    if (inferred) {
+                        festivalIdQuery = String(inferred);
+                        try {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('festivalId', festivalIdQuery);
+                            window.history.replaceState({}, '', url.toString());
+                        
+                        } catch (e) { /* ignore */ }
+                    }
+                }
+
+                // Populate UI
+                document.getElementById('movieTitle').textContent = filme.titulo || 'Filme';
+                document.getElementById('modalMovieTitle').textContent = filme.titulo || 'filme';
+                document.getElementById('movieRating').textContent = `${Number(filme.mediaAvaliacao || 0).toFixed(1)} (Rating)`;
+                document.getElementById('movieGenres').textContent = filme.genero || '';
+                document.getElementById('movieMeta').textContent = `${filme.ano || ''}   ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : ''}`;
+                document.getElementById('moviePrice').textContent = festivalIdQuery ? `Preço do bilhete: €${Number(filme.precoBilhete || 0).toFixed(2)}` : '';
+                document.getElementById('movieSynopsis').textContent = filme.sinopse || '';
+                document.getElementById('movieRealizer').textContent = filme.realizador ? `🎬 Realizador: ${filme.realizador}` : 'Realizador: Desconhecido';
+                document.getElementById('movieCast').textContent = filme.elenco ? `🎭 Elenco: ${filme.elenco}` : 'Elenco: Desconhecido';
+
+                renderPoster(filme.posterUrl || '/images/default-poster.jpg', filme.titulo || 'Filme');
+
+                if (festivalIdQuery) {
+                    await renderAccessState(filmIdQuery, festivalIdQuery, filme);
+                } else {
+                    renderTrailer(filme.trailerUrl || '');
+                }
+
+                await carregarEstadoListas();
+
+                if (festivalIdQuery) await loadRelatedMovies(festivalIdQuery, filmIdQuery);
+                await loadReviews(filmIdQuery);
+            } catch (error) {
+                console.error('Erro ao carregar filme:', error);
+                document.getElementById('movieTitle').textContent = 'Filme indisponível';
+            }
+        }
+        function showMensagem(msg, isError = false) {
+            const toast = document.getElementById('mensagem');
+            toast.textContent = msg;
+            toast.style.background = isError ? '#c0392b' : '#1a1a1a';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ── Eventos ───────────────────────────────────────────────
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalAvaliacao = document.getElementById('modalAvaliacao');
+            const botoesFechar   = document.querySelectorAll('.btn-close, .btn-cancel');
+            let selectedRating   = null;
+
+            document.getElementById('btnSinopse')?.addEventListener('click', () => {
+                const el = document.getElementById('movieSynopsis');
+                el.style.display = el.style.display === 'none' ? 'block' : 'none';
+            });
+
+            document.getElementById('btnElenco')?.addEventListener('click', () => {
+                const el = document.getElementById('movieCastInfo');
+                el.style.display = el.style.display === 'none' ? 'block' : 'none';
+            });
+
+            document.getElementById('btnAbrirAvaliacao')?.addEventListener('click', () => {
+                modalAvaliacao.classList.add('active');
+            });
+
+            botoesFechar.forEach(btn => btn.addEventListener('click', () => {
+                modalAvaliacao.classList.remove('active');
+            }));
+
+            document.querySelectorAll('.rating-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedRating = Number(this.textContent);
                 });
             });
 
-            // Fechar qualquer modal
-            botoesFechar.forEach(btn => {
-                btn.addEventListener('click', function() {
+            document.querySelector('.btn-submit').addEventListener('click', async function () {
+                if (!selectedRating) { showMensagem('Seleciona uma nota antes de submeter.', true); return; }
+                if (!ApiClient.isAuthenticated()) { window.location.href = '/Login'; return; }
+
+                const filmId = getQueryParam('id');
+                const btn = this;
+                btn.disabled = true;
+                btn.textContent = 'A submeter...';
+
+                try {
+                    await ApiClient.post('/api/cliente/avaliacoes', {
+                        FilmeId: Number(filmId),
+                        Classificacao: selectedRating,
+                        Comentario: document.getElementById('avaliacaoComentario').value.trim()
+                    });
+
+                    showMensagem('Avaliação submetida com sucesso!');
                     modalAvaliacao.classList.remove('active');
-                    modalDenuncia.classList.remove('active');
-                });
+                    selectedRating = null;
+                    document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                    document.getElementById('avaliacaoComentario').value = '';
+                    await loadReviews(filmId);
+                } catch (error) {
+                    console.error(error);
+                    showMensagem(error?.message || 'Não foi possível submeter a avaliação.', true);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Submeter Avaliação';
+                }
             });
-            
-            // Bónus: Selecionar a nota no modal de avaliação
-            const ratingBtns = document.querySelectorAll('.rating-btn');
-            ratingBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    ratingBtns.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
+
+            document.getElementById('btnVerDepois')?.addEventListener('click', () => toggleLista('QueroVer'));
+            document.getElementById('btnVisto')?.addEventListener('click', () => toggleLista('Visto'));
+            document.getElementById('btnFavoritos')?.addEventListener('click', () => toggleLista('Favoritos'));
+
+            loadFilm();
         });
     </script>
 

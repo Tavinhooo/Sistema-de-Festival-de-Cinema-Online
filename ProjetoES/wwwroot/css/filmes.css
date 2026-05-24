@@ -198,3 +198,29 @@ body {
     height: 35px;
     border-radius: 8px;
 }
+
+/* SKELETON LOADER */
+.skeleton-card {
+    height: 340px;
+    background: linear-gradient(90deg, #efeff6 25%, #e6e6ee 37%, #efeff6 63%);
+    background-size: 400% 100%;
+    border-radius: 20px;
+    animation: shimmer 1.4s ease infinite;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.skeleton-line {
+    height: 14px;
+    width: 60%;
+    background: rgba(255,255,255,0.3);
+    border-radius: 8px;
+    margin: 8px 0;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

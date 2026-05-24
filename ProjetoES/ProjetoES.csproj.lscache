@@ -420,19 +420,26 @@ obj/Debug/net10.0/ProjetoES.GeneratedMSBuildEditorConfig.editorconfig
 
 [additionalFiles]
 Pages/
+ AdicionarFestival.cshtml
+ AdicionarFilme.cshtml
+ AdicionarFilmeAFestival.cshtml
  Admin.cshtml
+ AdminPanel.cshtml
  Carrinho.cshtml
  Checkout.cshtml
  Cinema.cshtml
  Error.cshtml
+ Festivais.cshtml
  Filme.cshtml
  Filmes.cshtml
+ GerirFilmesFestival.cshtml
  Index.cshtml
  Login.cshtml
  Perfil.cshtml
  Privacy.cshtml
  Register.cshtml
  Shared/
+  _Header.cshtml
   _Layout.cshtml
   _ValidationScriptsPartial.cshtml
  Sucesso.cshtml
@@ -441,19 +448,26 @@ Pages/
 
 [dynamicFiles]
 Pages/
+ AdicionarFestival.cshtml
+ AdicionarFilme.cshtml
+ AdicionarFilmeAFestival.cshtml
  Admin.cshtml
+ AdminPanel.cshtml
  Carrinho.cshtml
  Checkout.cshtml
  Cinema.cshtml
  Error.cshtml
+ Festivais.cshtml
  Filme.cshtml
  Filmes.cshtml
+ GerirFilmesFestival.cshtml
  Index.cshtml
  Login.cshtml
  Perfil.cshtml
  Privacy.cshtml
  Register.cshtml
  Shared/
+  _Header.cshtml
   _Layout.cshtml
   _ValidationScriptsPartial.cshtml
  Sucesso.cshtml

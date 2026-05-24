@@ -111,27 +111,10 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="festivalsTableBody">
                         <tr>
-                            <td>#001</td>
-                            <td><strong>Festival da Batata Doce</strong></td>
-                            <td>10/05/2026</td>
-                            <td>15/05/2026</td>
-                            <td><span class="badge badge-active">Ativo</span></td>
-                            <td>
-                                <button class="action-btn" title="Editar"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn" title="Gerir Filmes"><i class="fas fa-film"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#002</td>
-                            <td><strong>Festival da Pêra Mole</strong></td>
-                            <td>20/06/2026</td>
-                            <td>25/06/2026</td>
-                            <td><span class="badge badge-draft">Agendado</span></td>
-                            <td>
-                                <button class="action-btn" title="Editar"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn" title="Gerir Filmes"><i class="fas fa-film"></i></button>
+                            <td colspan="6" style="text-align:center; padding:40px 20px; color:#999;">
+                                <i class="fas fa-spinner fa-spin"></i> A carregar festivais...
                             </td>
                         </tr>
                     </tbody>
@@ -140,6 +123,67 @@
 
         </div>
     </main>
+
+    <script src="~/js/api-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadFestivals);
+
+        async function loadFestivals() {
+            try {
+                const festivais = await ApiClient.getFestivais();
+                renderFestivalsTable(festivais);
+            } catch (error) {
+                console.error('Erro ao carregar festivais:', error);
+                document.getElementById('festivalsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:40px 20px; color:#999;">
+                            Erro ao carregar festivais
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderFestivalsTable(festivais) {
+            const tbody = document.getElementById('festivalsTableBody');
+            
+            if (!festivais || festivais.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:40px 20px; color:#999;">
+                            <i class="fas fa-inbox"></i> Nenhum festival criado
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = festivais.map((f, index) => {
+                const badgeClass = f.estado === 'Ativo' ? 'badge-active' : 'badge-draft';
+                const badgeText = f.estado || 'Ativo';
+                const dataInicio = new Date(f.dataInicio).toLocaleDateString('pt-PT');
+                const dataFim = new Date(f.dataFim).toLocaleDateString('pt-PT');
+
+                return `
+                    <tr>
+                        <td>#${String(f.id).padStart(3, '0')}</td>
+                        <td><strong>${f.nome}</strong></td>
+                        <td>${dataInicio}</td>
+                        <td>${dataFim}</td>
+                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                        <td>
+                            <button class="action-btn" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn" title="Gerir Filmes" onclick="gerirFilmes(${f.id})"><i class="fas fa-film"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function gerirFilmes(festivalId) {
+            window.location.href = `/DetalhesFestival/${festivalId}`;
+        }
+    </script>
 
 </body>
 </html>

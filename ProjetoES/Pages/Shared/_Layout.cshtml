@@ -8,28 +8,29 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ProjetoES.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/index.css" />
+    <link rel="stylesheet" href="~/css/filmes.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">ProjetoES</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <header class="navbar">
+        <a asp-page="/Index" class="logo" aria-label="Ir para a página inicial">
+            <img src="~/images/logo.png" alt="Logo do festival" style="width: 200px; height: 77px; object-fit: contain; display: block;" />
+        </a>
+        
+        <div class="search-container">
+            <input type="text" placeholder="Pesquisa Geral">
+            <i class="fas fa-search"></i>
+        </div>
+
+        <div class="nav-actions" id="navActions">
+            <a asp-page="/Carrinho" class="cart-link" aria-label="Abrir carrinho">
+                <i class="fas fa-shopping-cart cart-icon"></i>
+            </a>
+            <a class="btn btn-signin" asp-page="/Login">Sign in</a>
+            <a class="btn btn-register" asp-page="/Register">Register</a>
+        </div>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -45,8 +46,16 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/api-client.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof ApiClient !== 'undefined' && ApiClient.renderAuthNavigation) {
+            ApiClient.renderAuthNavigation('navActions');
+        }
+    });
+</script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

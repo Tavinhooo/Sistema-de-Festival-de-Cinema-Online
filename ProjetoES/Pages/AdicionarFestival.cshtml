@@ -1,0 +1,273 @@
+@page
+@{
+    ViewData["Title"] = "Criar Festival";
+}
+
+<style>
+    .film-import-shell {
+        min-height: 100vh;
+        padding: 40px 20px 64px;
+        background:
+            radial-gradient(circle at top left, rgba(122, 92, 188, 0.16), transparent 28%),
+            radial-gradient(circle at top right, rgba(232, 181, 104, 0.14), transparent 24%),
+            linear-gradient(180deg, #faf8ff 0%, #f5f2fa 100%);
+        font-family: 'Inter', sans-serif;
+        color: #1f1b29;
+    }
+
+    .film-import-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(119, 89, 177, 0.12);
+        border-radius: 28px;
+        box-shadow: 0 22px 60px rgba(24, 16, 40, 0.12);
+        overflow: hidden;
+    }
+
+    .film-import-hero {
+        padding: 28px 32px;
+        background: linear-gradient(135deg, #251433 0%, #50316f 60%, #6c4aa4 100%);
+        color: white;
+    }
+
+    .film-import-hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 800;
+    }
+
+    .film-import-hero p {
+        margin: 0;
+        opacity: 0.88;
+        line-height: 1.6;
+    }
+
+    .film-import-body { padding: 32px; }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    .field, .select, .textarea {
+        width: 100%;
+        border: 1px solid #ddd9e6;
+        border-radius: 16px;
+        background: white;
+        padding: 14px 16px;
+        font: inherit;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .field:focus, .select:focus, .textarea:focus {
+        outline: none;
+        border-color: #7b57b8;
+        box-shadow: 0 0 0 4px rgba(123, 87, 184, 0.14);
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: .9rem;
+        font-weight: 700;
+        color: #4d425f;
+    }
+
+    .primary-btn, .ghost-btn {
+        border: 0;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+
+    .primary-btn {
+        background: linear-gradient(135deg, #7b57b8, #50316f);
+        color: white;
+        box-shadow: 0 16px 24px rgba(79, 48, 111, 0.22);
+    }
+
+    .ghost-btn {
+        background: #f0ebfb;
+        color: #432b66;
+    }
+
+    .primary-btn:hover, .ghost-btn:hover { transform: translateY(-1px); }
+
+    .notice {
+        display: none;
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        font-weight: 600;
+    }
+
+    .notice.success {
+        display: block;
+        background: #edf7ee;
+        color: #185a2f;
+        border: 1px solid #bfe1c5;
+    }
+
+    .notice.error {
+        display: block;
+        background: #ffecec;
+        color: #872626;
+        border: 1px solid #f4bcbc;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .helper {
+        font-size: .84rem;
+        color: #6f6782;
+        margin-top: 8px;
+    }
+
+    @@media (max-width: 600px) {
+        .form-grid { grid-template-columns: 1fr; }
+        .actions { flex-direction: column; }
+    }
+</style>
+
+<div class="film-import-shell">
+    <div class="film-import-card">
+        <div class="film-import-hero">
+            <h1>Criar Festival</h1>
+            <p>Esta área é reservada a administradores. Preenche os dados para criar um novo festival de cinema.</p>
+        </div>
+
+        <div class="film-import-body">
+            <div id="message" class="notice"></div>
+            <div id="adminGuard" class="helper" style="display:none; padding: 18px 0; font-weight: 700;"></div>
+
+            <div id="adminContent">
+                <form id="festivalForm">
+                    <div class="form-grid">
+
+                        <div class="full">
+                            <label class="field-label" for="nome">Nome do Festival</label>
+                            <input id="nome" class="field" type="text" placeholder="Ex: Festival de Cinema de Lisboa" required />
+                        </div>
+
+                        <div class="full">
+                            <label class="field-label" for="descricao">Descrição</label>
+                            <textarea id="descricao" class="textarea" rows="4" placeholder="Descreve o festival..." required></textarea>
+                        </div>
+                        
+                        <div class="full">
+                            <label class="field-label" for="local">Local</label>
+                            <input id="local" class="field" type="text" placeholder="Ex: Lisboa, Porto" required />
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="dataInicio">Data de Início</label>
+                            <input id="dataInicio" class="field" type="date" required />
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="dataFim">Data de Fim</label>
+                            <input id="dataFim" class="field" type="date" required />
+                        </div>
+
+                        <div class="full">
+                            <label class="field-label" for="estado">Estado</label>
+                            <select id="estado" class="select" required>
+                                    <option value="">-- Seleciona o estado --</option>
+                                    <option value="0">Futuro</option>
+                                    <option value="1">Ativo</option>
+                                    <option value="2">Cancelado</option>
+                                    <option value="3">Arquivado</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="primary-btn">Criar Festival</button>
+                        <button type="button" class="ghost-btn" id="clearBtn">Limpar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/api-client.js"></script>
+<script>
+    const messageBox = document.getElementById('message');
+
+    function showMessage(text, type) {
+        messageBox.className = `notice ${type}`;
+        messageBox.textContent = text;
+    }
+
+    function clearMessage() {
+        messageBox.className = 'notice';
+        messageBox.textContent = '';
+    }
+
+    async function submitFestival(event) {
+        event.preventDefault();
+        clearMessage();
+
+        const dataInicio = document.getElementById('dataInicio').value;
+        const dataFim = document.getElementById('dataFim').value;
+
+        if (dataFim < dataInicio) {
+            showMessage('A data de fim não pode ser anterior à data de início.', 'error');
+            return;
+        }
+
+        const payload = {
+            nome: document.getElementById('nome').value.trim(),
+            descricao: document.getElementById('descricao').value.trim(),
+            local: document.getElementById('local').value.trim(),
+            dataInicio: dataInicio,
+            dataFim: dataFim,
+            estado: Number(document.getElementById('estado').value)
+        };
+
+        try {
+            await ApiClient.post('/api/festivais', payload);
+            showMessage('Festival criado com sucesso!', 'success');
+            document.getElementById('festivalForm').reset();
+        } catch (error) {
+            console.error(error);
+            showMessage(error.message || 'Não foi possível criar o festival.', 'error');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!ApiClient.isAuthenticated()) {
+            window.location.href = '/Login';
+            return;
+        }
+
+        if (ApiClient.getCurrentUserRole() !== 'Administrador') {
+            document.getElementById('adminContent').style.display = 'none';
+            const guard = document.getElementById('adminGuard');
+            guard.style.display = 'block';
+            guard.textContent = 'Apenas administradores podem criar festivais.';
+            return;
+        }
+
+        document.getElementById('festivalForm').addEventListener('submit', submitFestival);
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('festivalForm').reset();
+            clearMessage();
+        });
+    });
+</script>

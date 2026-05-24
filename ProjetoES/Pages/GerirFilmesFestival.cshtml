@@ -1,0 +1,748 @@
+@page
+@{
+    ViewData["Title"] = "Gerir Filmes do Festival";
+}
+
+<style>
+    .festival-manager-shell {
+        min-height: 100vh;
+        padding: 40px 20px 64px;
+        background:
+            radial-gradient(circle at top left, rgba(122, 92, 188, 0.16), transparent 28%),
+            radial-gradient(circle at top right, rgba(232, 181, 104, 0.14), transparent 24%),
+            linear-gradient(180deg, #faf8ff 0%, #f5f2fa 100%);
+        font-family: 'Inter', sans-serif;
+        color: #1f1b29;
+    }
+
+    .festival-manager-card {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(119, 89, 177, 0.12);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(122, 92, 188, 0.08);
+    }
+
+    .festival-hero {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 32px;
+        align-items: flex-start;
+    }
+
+    .festival-hero h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        color: #1f1b29;
+    }
+
+    .festival-hero p {
+        color: #777;
+        font-size: .95rem;
+        line-height: 1.6;
+        margin: 12px 0 0;
+    }
+
+    .festival-selection {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 32px;
+    }
+
+    .festival-select-wrapper {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+    }
+
+    .festival-select-wrapper label {
+        font-size: .9rem;
+        font-weight: 600;
+        color: #1f1b29;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .festival-select-wrapper select {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid rgba(119, 89, 177, 0.2);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: .95rem;
+        background: white;
+        color: #1f1b29;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .festival-select-wrapper select:hover,
+    .festival-select-wrapper select:focus {
+        border-color: #7b57b8;
+        box-shadow: 0 0 0 3px rgba(122, 92, 188, 0.1);
+        outline: none;
+    }
+
+    .festival-info {
+        background: rgba(122, 92, 188, 0.08);
+        border: 1px solid rgba(122, 92, 188, 0.12);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 32px;
+        display: none;
+    }
+
+    .festival-info.active {
+        display: block;
+    }
+
+    .festival-info h3 {
+        margin: 0 0 12px;
+        font-size: 1.05rem;
+        color: #1f1b29;
+    }
+
+    .festival-info p {
+        margin: 0;
+        font-size: .9rem;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .films-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        margin-top: 32px;
+    }
+
+    @@media (max-width: 900px) {
+        .films-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .films-section h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0 0 20px;
+        color: #1f1b29;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .films-section h2 i {
+        color: #7b57b8;
+    }
+
+    .films-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 500px;
+        overflow-y: auto;
+        padding-right: 8px;
+    }
+
+    .films-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .films-list::-webkit-scrollbar-track {
+        background: rgba(122, 92, 188, 0.08);
+        border-radius: 3px;
+    }
+
+    .films-list::-webkit-scrollbar-thumb {
+        background: #7b57b8;
+        border-radius: 3px;
+    }
+
+    .film-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: rgba(122, 92, 188, 0.04);
+        border: 1px solid rgba(122, 92, 188, 0.1);
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+
+    .film-item:hover {
+        background: rgba(122, 92, 188, 0.08);
+        border-color: rgba(122, 92, 188, 0.2);
+    }
+
+    .film-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .film-item-title {
+        font-weight: 600;
+        color: #1f1b29;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .film-item-meta {
+        font-size: .85rem;
+        color: #999;
+        margin: 4px 0 0;
+    }
+
+    .film-item-price {
+        font-weight: 700;
+        color: #7b57b8;
+        font-size: .95rem;
+        min-width: max-content;
+    }
+
+    .film-item-action {
+        display: flex;
+        gap: 6px;
+    }
+
+    .film-btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: .85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .film-btn-add {
+        background: #7b57b8;
+        color: white;
+    }
+
+    .film-btn-add:hover {
+        background: #6a47a0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(122, 92, 188, 0.3);
+    }
+
+    .film-btn-add:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .film-btn-remove {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .film-btn-remove:hover {
+        background: #fecaca;
+    }
+
+    .add-film-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-size: .9rem;
+        font-weight: 600;
+        color: #1f1b29;
+        margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 10px 12px;
+        border: 1px solid rgba(119, 89, 177, 0.2);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: .95rem;
+        background: white;
+        color: #1f1b29;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #7b57b8;
+        box-shadow: 0 0 0 3px rgba(122, 92, 188, 0.1);
+        outline: none;
+    }
+
+    .add-film-btn {
+        padding: 12px 20px;
+        background: #7b57b8;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: .95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .add-film-btn:hover:not(:disabled) {
+        background: #6a47a0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(122, 92, 188, 0.3);
+    }
+
+    .add-film-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 12px;
+    }
+
+    .empty-state p {
+        margin: 0;
+        font-size: .95rem;
+    }
+
+    .notice {
+        display: none;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: .95rem;
+        line-height: 1.6;
+        font-weight: 500;
+    }
+
+    .notice.active {
+        display: block;
+    }
+
+    .notice.success {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #bfdbfe;
+    }
+
+    .notice.error {
+        background: #ffecec;
+        color: #872626;
+        border: 1px solid #f4bcbc;
+    }
+
+    .notice.info {
+        background: #eff6ff;
+        color: #164e63;
+        border: 1px solid #bfdbfe;
+    }
+
+    .guard {
+        text-align: center;
+        padding: 40px 20px;
+        background: #fff;
+        border-radius: 12px;
+    }
+
+    .guard i {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .guard p {
+        color: #999;
+        font-size: .95rem;
+        margin: 0;
+    }
+</style>
+
+@await Html.PartialAsync("_Header")
+
+<main class="festival-manager-shell">
+    <div class="festival-manager-card">
+        <div class="festival-hero">
+            <div>
+                <h1><i class="fas fa-clapperboard"></i> Gerir Filmes do Festival</h1>
+                <p>Seleciona um festival e adiciona filmes existentes ou cria novos filmes.</p>
+            </div>
+        </div>
+
+        <!-- Guard para verificar autenticação -->
+        <div id="adminGuard" style="display:none;">
+            <div class="guard">
+                <i class="fas fa-lock"></i>
+                <p>Apenas administradores podem aceder a esta página.</p>
+            </div>
+        </div>
+
+        <!-- Conteúdo principal -->
+        <div id="mainContent">
+            <!-- Mensagens -->
+            <div id="message" class="notice"></div>
+
+            <!-- Seleção de Festival -->
+            <div class="festival-selection">
+                <div class="festival-select-wrapper">
+                    <label>Seleciona um Festival</label>
+                    <select id="festivalSelect">
+                        <option value="">-- Carrega os festivais --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Informação do Festival -->
+            <div id="festivalInfo" class="festival-info">
+                <h3 id="festivalName"></h3>
+                <p><strong>Datas:</strong> <span id="festivalDates"></span></p>
+                <p><strong>Local:</strong> <span id="festivalLocal"></span></p>
+                <p><strong>Descrição:</strong> <span id="festivalDesc"></span></p>
+            </div>
+
+            <!-- Container com duas colunas: Filmes Disponíveis e Filmes do Festival -->
+            <div id="filmsSections" style="display:none;">
+                <div class="films-container">
+                    <!-- Coluna 1: Filmes Disponíveis -->
+                    <div class="films-section">
+                        <h2><i class="fas fa-plus-circle"></i> Filmes Disponíveis</h2>
+                        <div id="availableFilmsList" class="films-list">
+                            <div class="empty-state">
+                                <i class="fas fa-film"></i>
+                                <p>Nenhum filme disponível</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna 2: Filmes do Festival -->
+                    <div class="films-section">
+                        <h2><i class="fas fa-check-circle"></i> Filmes do Festival</h2>
+                        <div id="festivalFilmsList" class="films-list">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <p>Nenhum filme adicionado</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário para adicionar novo filme -->
+                <div style="margin-top: 32px; padding-top: 32px; border-top: 1px solid rgba(119, 89, 177, 0.1);">
+                    <h2><i class="fas fa-star"></i> Criar e Adicionar Novo Filme</h2>
+                    <p style="color: #999; margin-top: 8px;">Preenche os dados para criar um novo filme e adiciona-o a este festival.</p>
+                    <form id="newFilmForm" class="add-film-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label for="newFilmTitle">Título *</label>
+                                <input id="newFilmTitle" type="text" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="newFilmAno">Ano *</label>
+                                <input id="newFilmAno" type="number" min="1900" max="2099" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newFilmSinopse">Sinopse *</label>
+                            <textarea id="newFilmSinopse" rows="3" required style="padding: 10px 12px; border: 1px solid rgba(119, 89, 177, 0.2); border-radius: 8px; font-family: inherit; font-size: .95rem; resize: vertical;"></textarea>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label for="newFilmGenero">Género *</label>
+                                <input id="newFilmGenero" type="text" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="newFilmDuracao">Duração (minutos) *</label>
+                                <input id="newFilmDuracao" type="number" min="1" required />
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label for="newFilmPoster">URL do Poster *</label>
+                                <input id="newFilmPoster" type="url" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="newFilmTrailer">URL do Trailer</label>
+                                <input id="newFilmTrailer" type="url" />
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label for="newFilmRealizador">Realizador</label>
+                                <input id="newFilmRealizador" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label for="newFilmElenco">Elenco</label>
+                                <input id="newFilmElenco" type="text" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newFilmPrice">Preço do Bilhete (€) *</label>
+                            <input id="newFilmPrice" type="number" min="0" step="0.01" required />
+                        </div>
+
+                        <button type="submit" class="add-film-btn">
+                            <i class="fas fa-save"></i> Criar e Adicionar Filme
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="~/js/api-client.js"></script>
+<script>
+    let currentFestivalId = null;
+    let allFilmes = [];
+    let festivalFilmes = [];
+
+    // Guard de acesso
+    document.addEventListener('DOMContentLoaded', async () => {
+        const role = ApiClient.getCurrentUserRole();
+        if (role !== 'Administrador') {
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('adminGuard').style.display = 'block';
+            return;
+        }
+
+        await loadFestivals();
+        setupEventListeners();
+    });
+
+    function showMessage(text, type = 'info') {
+        const msg = document.getElementById('message');
+        msg.textContent = text;
+        msg.className = `notice active ${type}`;
+        msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearMessage() {
+        document.getElementById('message').className = 'notice';
+    }
+
+    async function loadFestivals() {
+        try {
+            const festivais = await ApiClient.getFestivaisDisponiveis();
+            const select = document.getElementById('festivalSelect');
+            select.innerHTML = '<option value="">-- Seleciona um Festival --</option>';
+            
+            festivais.forEach(f => {
+                const option = document.createElement('option');
+                option.value = f.id;
+                option.textContent = f.nome;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            showMessage('Erro ao carregar festivais: ' + error.message, 'error');
+        }
+    }
+
+    function setupEventListeners() {
+        document.getElementById('festivalSelect').addEventListener('change', async (e) => {
+            currentFestivalId = Number(e.target.value) || null;
+            clearMessage();
+
+            if (!currentFestivalId) {
+                document.getElementById('filmsSections').style.display = 'none';
+                document.getElementById('festivalInfo').classList.remove('active');
+                return;
+            }
+
+            await loadFestivalData();
+            document.getElementById('filmsSections').style.display = 'block';
+        });
+
+        document.getElementById('newFilmForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await submitNewFilm();
+        });
+    }
+
+    async function loadFestivalData() {
+        try {
+            const festival = await ApiClient.getFestivalById(currentFestivalId);
+            displayFestivalInfo(festival);
+
+            // Carregar filmes
+            allFilmes = await ApiClient.getFilmes();
+            festivalFilmes = await ApiClient.getFilmesByFestival(currentFestivalId);
+
+            renderFilmeLists();
+        } catch (error) {
+            showMessage('Erro ao carregar dados: ' + error.message, 'error');
+        }
+    }
+
+    function displayFestivalInfo(festival) {
+        document.getElementById('festivalName').textContent = festival.nome || 'Festival';
+        document.getElementById('festivalDates').textContent = 
+            `${new Date(festival.dataInicio).toLocaleDateString('pt-PT')} - ${new Date(festival.dataFim).toLocaleDateString('pt-PT')}`;
+        document.getElementById('festivalLocal').textContent = festival.local || 'N/A';
+        document.getElementById('festivalDesc').textContent = festival.descricao || 'Sem descrição';
+        document.getElementById('festivalInfo').classList.add('active');
+    }
+
+    function renderFilmeLists() {
+        const availableList = document.getElementById('availableFilmsList');
+        const festivalList = document.getElementById('festivalFilmsList');
+
+        // Filmes disponíveis (não estão no festival)
+        const festivalFilmeIds = festivalFilmes.map(f => f.id);
+        const available = allFilmes.filter(f => !festivalFilmeIds.includes(f.id));
+
+        if (available.length === 0) {
+            availableList.innerHTML = '<div class="empty-state"><i class="fas fa-film"></i><p>Todos os filmes já estão neste festival</p></div>';
+        } else {
+            availableList.innerHTML = available.map(f => `
+                <div class="film-item">
+                    <div class="film-item-info">
+                        <p class="film-item-title">${f.titulo}</p>
+                        <p class="film-item-meta">${f.ano} • ${f.genero}</p>
+                    </div>
+                    <div class="film-item-action">
+                        <button class="film-btn film-btn-add" onclick="addFilmToFestival(${f.id})">
+                            <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filmes do festival
+        if (festivalFilmes.length === 0) {
+            festivalList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhum filme adicionado a este festival</p></div>';
+        } else {
+            festivalList.innerHTML = festivalFilmes.map(f => `
+                <div class="film-item">
+                    <div class="film-item-info">
+                        <p class="film-item-title">${f.titulo}</p>
+                        <p class="film-item-meta">${f.ano} • ${f.genero}</p>
+                    </div>
+                    <div class="film-item-price">€${Number(f.precoBilhete).toFixed(2)}</div>
+                    <div class="film-item-action">
+                        <button class="film-btn film-btn-remove" onclick="removeFilmFromFestival(${f.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    async function addFilmToFestival(filmeId) {
+        const priceStr = prompt('Preço do bilhete (€):', '10.00');
+        if (priceStr === null) return;
+
+        const price = parseFloat(priceStr);
+        if (isNaN(price) || price < 0) {
+            showMessage('Preço inválido', 'error');
+            return;
+        }
+
+        try {
+            showMessage('A adicionar filme...', 'info');
+            await ApiClient.vincularFilmeAoFestival(filmeId, currentFestivalId, price);
+            showMessage('Filme adicionado com sucesso!', 'success');
+            await loadFestivalData();
+        } catch (error) {
+            showMessage('Erro ao adicionar filme: ' + error.message, 'error');
+        }
+    }
+
+    async function removeFilmFromFestival(filmeId) {
+        if (!confirm('Tens a certeza que queres remover este filme?')) return;
+
+        try {
+            showMessage('A remover filme...', 'info');
+            await ApiClient.desvincularFilmeDeFestival(filmeId, currentFestivalId);
+            showMessage('Filme removido com sucesso!', 'success');
+            await loadFestivalData();
+        } catch (error) {
+            showMessage('Erro ao remover filme: ' + error.message, 'error');
+        }
+    }
+
+    async function submitNewFilm() {
+        if (!currentFestivalId) {
+            showMessage('Seleciona um festival primeiro', 'error');
+            return;
+        }
+
+        const titulo = document.getElementById('newFilmTitle').value.trim();
+        const ano = Number(document.getElementById('newFilmAno').value);
+        const sinopse = document.getElementById('newFilmSinopse').value.trim();
+        const genero = document.getElementById('newFilmGenero').value.trim();
+        const duracao = Number(document.getElementById('newFilmDuracao').value);
+        const posterUrl = document.getElementById('newFilmPoster').value.trim();
+        const trailerUrl = document.getElementById('newFilmTrailer').value.trim();
+        const realizador = document.getElementById('newFilmRealizador').value.trim();
+        const elenco = document.getElementById('newFilmElenco').value.trim();
+        const precoBilhete = Number(document.getElementById('newFilmPrice').value);
+
+        if (!titulo || !sinopse || !genero || !posterUrl) {
+            showMessage('Preenche todos os campos obrigatórios', 'error');
+            return;
+        }
+
+        try {
+            showMessage('A criar filme...', 'info');
+            await ApiClient.criarFilme({
+                titulo,
+                sinopse,
+                genero,
+                ano,
+                duracaoMinutos: duracao,
+                posterUrl,
+                trailerUrl,
+                realizador,
+                elenco,
+                festivalId: currentFestivalId,
+                precoBilhete
+            });
+
+            showMessage('Filme criado e adicionado com sucesso!', 'success');
+            document.getElementById('newFilmForm').reset();
+            await loadFestivalData();
+        } catch (error) {
+            showMessage('Erro ao criar filme: ' + error.message, 'error');
+        }
+    }
+</script>

@@ -6,84 +6,35 @@
 
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - ProjetoES</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/index.css" />
     <link rel="stylesheet" href="~/css/carrinho.css" />
 </head>
+
 <body>
 
-    <header class="navbar">
-        <div class="logo"><i class="fa-brands fa-figma"></i></div>
-        <div class="search-container">
-            <input type="text" placeholder="Pesquisar mais filmes...">
-        </div>
-        <div class="nav-actions">
-            <div class="avatar-circle" style="width:35px; height:35px; background:#edeaf3; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:12px; font-weight:700;">JJ</div>
-        </div>
-    </header>
+    @await Html.PartialAsync("_Header")
 
     <div class="cart-container">
         <h1 class="cart-title">O Meu Carrinho</h1>
 
-        <div class="cart-items">
-            
-            <div class="cart-item">
-                <div class="item-img"></div>
-                <div class="item-info">
-                    <div class="item-header">
-                        <span class="item-name">Festival da Batata Doce</span>
-                        <span class="item-price">15.00€</span>
-                    </div>
-                    <span class="item-tag tag-bilhete">Bilhete de Sessão</span>
-                    <div class="item-details">
-                        <p><strong>Sessão:</strong> Estreia Noturna</p>
-                        <p><strong>Horário:</strong> 14/05/2026 - 21:00</p>
-                    </div>
-                </div>
-                <button class="btn-remove"><i class="fas fa-trash-alt"></i> Remover</button>
+        <div class="cart-items" id="cartItems">
+            <div style="text-align:center; padding: 40px; color: #aaa;">
+                <i class="fas fa-spinner fa-spin" style="font-size:28px;"></i>
+                <p style="margin-top:12px; font-size:15px;">A carregar o teu carrinho...</p>
             </div>
-
-            <div class="cart-item">
-                <div class="item-img"></div>
-                <div class="item-info">
-                    <div class="item-header">
-                        <span class="item-name">Festival do Caroço</span>
-                        <span class="item-price">40.00€</span>
-                    </div>
-                    <span class="item-tag tag-passe">Passe Completo</span>
-                    <div class="item-details">
-                        <p><strong>Duração:</strong> Todo o Festival</p>
-                        <p><strong>Datas:</strong> 10/05 a 20/05</p>
-                    </div>
-                </div>
-                <button class="btn-remove"><i class="fas fa-trash-alt"></i> Remover</button>
-            </div>
-
-            <div class="cart-item">
-                <div class="item-img"></div>
-                <div class="item-info">
-                    <div class="item-header">
-                        <span class="item-name">Batman: O Início</span>
-                        <span class="item-price">4.50€</span>
-                    </div>
-                    <span class="item-tag tag-aluguer">Aluguer Digital</span>
-                    <div class="item-details">
-                        <p><strong>Prazo:</strong> 48 horas após primeiro play</p>
-                    </div>
-                </div>
-                <button class="btn-remove"><i class="fas fa-trash-alt"></i> Remover</button>
-            </div>
-
         </div>
 
         <aside class="cart-summary">
             <h3 style="margin-bottom: 20px;">Resumo</h3>
             <div class="summary-row">
                 <span>Subtotal</span>
-                <span>59.50€</span>
+                <span id="summarySubtotal">0.00€</span>
             </div>
             <div class="summary-row">
                 <span>Taxas</span>
@@ -92,14 +43,164 @@
             <div class="summary-total">
                 <div class="summary-row" style="margin:0; color: #111;">
                     <span>Total</span>
-                    <span>59.50€</span>
+                    <span id="summaryTotal">0.00€</span>
                 </div>
             </div>
-
-            <button class="btn-checkout" onclick="location.href='/Checkout'">Finalizar Compra</button>
+            <button class="btn-checkout" id="btnCheckout" onclick="location.href='/Checkout'">Finalizar Compra</button>
             <a href="/" class="btn-back">Continuar a comprar</a>
         </aside>
     </div>
 
+    <script src="~/js/api-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        ApiClient.renderAuthNavigation('navActions');
+        loadCarrinho();
+        });
+
+        let carrinhoId = null;
+
+        function getTipoTag(tipo) {
+        const t = (tipo || '').toLowerCase();
+        if (t.includes('bilhete')) return { cls: 'tag-bilhete', label: 'Bilhete de Sessão' };
+        if (t.includes('passe')) return { cls: 'tag-passe', label: 'Passe Completo' };
+        return { cls: 'tag-aluguer', label: 'Aluguer Digital' };
+        }
+
+        function renderCarrinho(carrinho) {
+        carrinhoId = carrinho.id;
+        const container = document.getElementById('cartItems');
+
+        if (!carrinho.itens || carrinho.itens.length === 0) {
+        container.innerHTML = `
+        <div style="text-align:center; padding: 60px 20px; color: #aaa;">
+        <i class="fas fa-shopping-cart" style="font-size:48px; margin-bottom:16px; display:block; color:#ddd;"></i>
+        <p style="font-size:16px; font-weight:600;">O teu carrinho está vazio.</p>
+        <a href="/" style="display:inline-block; margin-top:16px; color:#9f75a0; font-weight:600; text-decoration:none;">Ver festivais</a>
+        </div>
+        `;
+        atualizarResumo(0);
+        document.getElementById('btnCheckout').disabled = true;
+        document.getElementById('btnCheckout').style.opacity = '0.5';
+        return;
+        }
+
+        container.innerHTML = '';
+        carrinho.itens.forEach(item => {
+        const tag = getTipoTag(item.tipoAcesso);
+        const isPassCompleto = !!item.isFestivalPass;
+        const precoOriginal = Number(item.precoOriginal ?? item.precoUnitario ?? 0);
+        const precoDesconto = Number(item.precoUnitario ?? 0);
+        const card = document.createElement('div');
+        card.className = 'cart-item';
+        card.id = `item-${item.id}`;
+        card.innerHTML = `
+        <div class="item-img" style="background:#edeaf3; border-radius:10px; overflow:hidden;">
+        <div style="width:100%; height:100%; background:#edeaf3; display:flex; align-items:center; justify-content:center;">
+        <i class="fas fa-film" style="font-size:28px; color:#c4a8e8;"></i>
+        </div>
+        </div>
+        <div class="item-info">
+        <div class="item-header">
+        <span class="item-name">${isPassCompleto ? `${item.festivalNome || 'Festival'} - ${item.tipoAcesso || 'Passe'}` : (item.filmeTitulo || 'Filme')}</span>
+        <span class="item-price">${Number(item.subtotal).toFixed(2)}€</span>
+        </div>
+        <span class="item-tag ${tag.cls}">${tag.label}</span>
+        <div class="item-details">
+        <p><strong>Festival:</strong> ${item.festivalNome || item.festivalId}</p>
+        ${isPassCompleto ? `
+        <p><strong>Preço original:</strong> <span style="text-decoration:line-through; color:#888;">${precoOriginal.toFixed(2)}€</span></p>
+        <p><strong>Preço com desconto:</strong> ${precoDesconto.toFixed(2)}€</p>
+        ` : `
+        <p><strong>Preço unitário:</strong> ${precoDesconto.toFixed(2)}€</p>
+        `}
+        <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+        <strong style="font-size:13px;">Quantidade:</strong>
+        <div style="display:flex; align-items:center; gap:8px;">
+        <button onclick="alterarQuantidade(${item.id}, ${item.quantidade - 1})" 
+        style="width:28px; height:28px; border-radius:6px; border:1px solid #ddd; background:white; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;">−</button>
+        <span id="qty-${item.id}" style="font-weight:700; min-width:20px; text-align:center;">${item.quantidade}</span>
+        <button onclick="alterarQuantidade(${item.id}, ${item.quantidade + 1})"
+        style="width:28px; height:28px; border-radius:6px; border:1px solid #ddd; background:white; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;">+</button>
+        </div>
+        </div>
+        </div>
+        </div>
+        <button class="btn-remove" onclick="removerItem(${item.id})">
+        <i class="fas fa-trash-alt"></i> Remover
+        </button>
+        `;
+        container.appendChild(card);
+        });
+
+        atualizarResumo(carrinho.total);
+        }
+
+        function atualizarResumo(total) {
+        document.getElementById('summarySubtotal').textContent = `${Number(total).toFixed(2)}€`;
+        document.getElementById('summaryTotal').textContent = `${Number(total).toFixed(2)}€`;
+        }
+
+        async function loadCarrinho() {
+        try {
+        const userId = ApiClient.getCurrentUserId();
+
+        if (!userId) {
+        // Visitante sem conta — carrinho local não implementado
+        document.getElementById('cartItems').innerHTML = `
+        <div style="text-align:center; padding:60px 20px; color:#aaa;">
+        <i class="fas fa-user" style="font-size:40px; margin-bottom:14px; display:block; color:#ddd;"></i>
+        <p style="font-size:15px; font-weight:600;">Faz login para veres o teu carrinho.</p>
+        <a href="/Login" style="display:inline-block; margin-top:14px; color:#9f75a0; font-weight:700; text-decoration:none;">Fazer login</a>
+        </div>
+        `;
+        return;
+        }
+
+        let carrinho;
+        try {
+        carrinho = await ApiClient.getCartByUser(userId);
+        } catch (err) {
+        carrinho = await ApiClient.createCart(userId);
+        }
+
+        renderCarrinho(carrinho);
+        } catch (error) {
+        console.error(error);
+        document.getElementById('cartItems').innerHTML = `
+        <div style="text-align:center; padding:40px; color:#e57373;">
+        <p>Erro ao carregar o carrinho. Tenta novamente.</p>
+        </div>
+        `;
+        }
+        }
+
+        async function removerItem(itemId) {
+        if (!confirm('Remover este item do carrinho?')) return;
+        try {
+        const carrinho = await ApiClient.delete(`/api/carrinhos/${carrinhoId}/itens/${itemId}`);
+        renderCarrinho(carrinho);
+        } catch (error) {
+        alert(error.message || 'Não foi possível remover o item.');
+        }
+        }
+
+        async function alterarQuantidade(itemId, novaQuantidade) {
+        if (novaQuantidade < 1) {
+        await removerItem(itemId);
+        return;
+        }
+
+        try {
+        const carrinho = await ApiClient.put(`/api/carrinhos/${carrinhoId}/itens/${itemId}`, {
+        quantidade: novaQuantidade
+        });
+        renderCarrinho(carrinho);
+        } catch (error) {
+        alert(error.message || 'Não foi possível atualizar a quantidade.');
+        }
+        }
+    </script>
 </body>
+
 </html>

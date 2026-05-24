@@ -1,6 +1,6 @@
 @page
 @{
-    ViewData["Title"] = "A ver filme";
+    ViewData["Title"] = "Sala de Cinema";
     Layout = null;
 }
 
@@ -8,54 +8,357 @@
 <html lang="pt-PT">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ProjetoES</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/cinema.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/filmes.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cinema.css" asp-append-version="true" />
 </head>
 <body>
+    @await Html.PartialAsync("_Header")
 
-    <header class="cinema-topbar">
-        <a href="/Perfil" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Voltar aos Meus Acessos
-        </a>
-        
-        <div style="color: #666; font-size: 14px;">
-            <i class="fas fa-shield-alt"></i> Ligação Segura
-        </div>
-    </header>
+    <main class="cinema-shell">
+        <section class="cinema-hero">
+            <div class="player-card">
+                <div class="player-stage" id="playerStage">
+                    <div class="player-overlay">
+                        <div class="player-topline">
+                            <span class="status-pill" id="accessBadge">A validar acesso...</span>
+                            <a class="ghost-link" id="backLink" href="/Filme">Voltar ao filme</a>
+                        </div>
 
-    <main class="player-wrapper">
-        <div class="video-container">
-            <div class="video-placeholder">
-                <i class="fas fa-play-circle play-button" title="Iniciar Filme"></i>
+                        <div class="player-info">
+                            <p class="player-kicker">Web Cinema</p>
+                            <h2 id="playerMovieTitle">A carregar...</h2>
+                            <p class="player-subtitle" id="playerMovieSubtitle">A validar a tua sessão e o conteúdo disponível.</p>
+                            <div class="player-tags">
+                                <span id="playerFestivalTag">Festival</span>
+                                <span id="playerDurationTag">Duração</span>
+                                <span id="playerAccessTag">Acesso</span>
+                            </div>
+                        </div>
+
+                        <div class="player-center">
+                            <button type="button" class="play-toggle" id="playToggle" aria-label="Reproduzir">
+                                <i class="fas fa-play"></i>
+                                <span>Ver agora</span>
+                            </button>
+                            <p class="player-hint" id="playerHint">A carregar sala de cinema</p>
+                        </div>
+
+                        <div class="player-bottom">
+                            <div class="timeline-row">
+                                <div class="timeline-track">
+                                    <div class="timeline-progress" id="timelineProgress"></div>
+                                </div>
+                                <div class="timeline-time" id="timelineTime">00:00 / 00:00</div>
+                            </div>
+
+                            <div class="control-bar">
+                                <button type="button" class="control-icon" id="togglePlaySmall" aria-label="Play ou pausar">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <div class="volume-control" aria-label="Volume">
+                                    <button type="button" class="control-icon" id="toggleMuteSmall" aria-label="Ligar ou desligar som">
+                                        <i class="fas fa-volume-high"></i>
+                                    </button>
+                                    <input type="range" id="volumeSlider" min="0" max="100" value="70" aria-label="Volume do player" />
+                                </div>
+                                <button type="button" class="control-icon" id="toggleFullscreenSmall" aria-label="Ecrã inteiro">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 5px; background: rgba(255,255,255,0.2);">
-                <div style="width: 30%; height: 100%; background: #c47cb8;"></div>
-            </div>
-        </div>
+
+            <aside class="details-card" id="detailsCard">
+                <div class="details-hero">
+                    <div class="details-poster" id="detailsPoster"></div>
+                    <div>
+                        <p class="eyebrow">Web player streaming</p>
+                        <h1 id="movieTitle">A carregar...</h1>
+                        <p class="movie-meta" id="movieMeta"></p>
+                        <p class="movie-price" id="movieAccessType"></p>
+                    </div>
+                </div>
+
+                <div class="details-block">
+                    <h2>Sinopse</h2>
+                    <p id="movieSynopsis">A validar o conteúdo disponível para esta sessão.</p>
+                </div>
+
+                <div class="details-grid">
+                    <article>
+                        <span>Festival</span>
+                        <strong id="festivalName">—</strong>
+                    </article>
+                    <article>
+                        <span>Estado</span>
+                        <strong id="availabilityState">—</strong>
+                    </article>
+                    <article>
+                        <span>Tipo de acesso</span>
+                        <strong id="accessType">—</strong>
+                    </article>
+                    <article>
+                        <span>Duração</span>
+                        <strong id="movieDuration">—</strong>
+                    </article>
+                </div>
+
+                <div class="guard-card" id="guardCard" style="display:none;">
+                    <i class="fas fa-lock"></i>
+                    <h3>Sem acesso a esta sala</h3>
+                    <p>Este espaço só abre para clientes com bilhete do filme, passe diário ou passe completo ativo.</p>
+                    <div class="guard-actions">
+                        <a class="guard-btn primary" id="goBackToFilm" href="#">Voltar ao filme</a>
+                        <a class="guard-btn secondary" href="/Login">Iniciar sessão</a>
+                    </div>
+                </div>
+            </aside>
+        </section>
     </main>
 
-    <section class="movie-details">
-        <div class="movie-title-area">
-            <h1>Batman: O Início</h1>
-            <div class="movie-meta">
-                <span>Festival da Batata Doce</span>
-                <span>•</span>
-                <span>2005</span>
-                <span>•</span>
-                <span>2h 20min</span>
-                <span class="badge-age">M/12</span>
-            </div>
-        </div>
+    <div id="mensagem"></div>
 
-        <div>
-            <button class="btn-rate">
-                <i class="far fa-star"></i> Avaliar Filme
-            </button>
-        </div>
-    </section>
+    <script src="~/js/api-client.js" asp-append-version="true"></script>
+    <script>
+        const state = {
+            playing: false,
+            muted: false,
+            fullscreen: false,
+            volume: 70,
+            durationSeconds: 0,
+            currentSeconds: 0,
+            timerId: null,
+            filme: null,
+            festivalId: null,
+            filmId: null
+        };
 
+        function getQueryParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        function formatClock(seconds) {
+            const total = Math.max(0, Math.floor(seconds || 0));
+            const minutes = Math.floor(total / 60);
+            const remaining = total % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`;
+        }
+
+        function formatMinutes(minutes) {
+            const horas = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${horas}h ${String(mins).padStart(2, '0')}min`;
+        }
+
+        function showMensagem(msg, isError = false) {
+            const toast = document.getElementById('mensagem');
+            toast.textContent = msg;
+            toast.style.background = isError ? '#c0392b' : '#1a1a1a';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function updateControls() {
+            document.querySelector('#playToggle i').className = state.playing ? 'fas fa-pause' : 'fas fa-play';
+            document.querySelector('#playToggle span').textContent = state.playing ? 'Pausar' : 'Ver agora';
+            document.querySelector('#togglePlaySmall i').className = state.playing ? 'fas fa-pause' : 'fas fa-play';
+            document.querySelector('#toggleMuteSmall i').className = state.muted ? 'fas fa-volume-xmark' : 'fas fa-volume-high';
+            document.querySelector('#toggleFullscreenSmall i').className = state.fullscreen ? 'fas fa-compress' : 'fas fa-expand';
+            const volumeSlider = document.getElementById('volumeSlider');
+            if (volumeSlider && Number(volumeSlider.value) !== state.volume) {
+                volumeSlider.value = String(state.volume);
+            }
+        }
+
+        function setPlaying(isPlaying) {
+            state.playing = isPlaying;
+            const stage = document.getElementById('playerStage');
+            const label = document.getElementById('playerHint');
+
+            stage.classList.toggle('is-playing', isPlaying);
+            label.textContent = isPlaying ? 'Sessão em reprodução simulada' : 'A sala está pronta para começar';
+            updateControls();
+
+            if (isPlaying) {
+                if (!state.timerId) {
+                    state.timerId = window.setInterval(() => {
+                        state.currentSeconds = Math.min(state.durationSeconds, state.currentSeconds + 1);
+                        const progress = state.durationSeconds > 0 ? (state.currentSeconds / state.durationSeconds) * 100 : 0;
+                        document.getElementById('timelineProgress').style.width = `${progress}%`;
+                        document.getElementById('timelineTime').textContent = `${formatClock(state.currentSeconds)} / ${formatClock(state.durationSeconds)}`;
+                        if (state.currentSeconds >= state.durationSeconds && state.durationSeconds > 0) {
+                            setPlaying(false);
+                        }
+                    }, 1000);
+                }
+            } else if (state.timerId) {
+                window.clearInterval(state.timerId);
+                state.timerId = null;
+            }
+        }
+
+        function toggleMute() {
+            state.muted = !state.muted;
+            if (state.muted && state.volume > 0) {
+                state.volume = Number(document.getElementById('volumeSlider')?.value || 0);
+                document.getElementById('volumeSlider').value = '0';
+            } else if (!state.muted && state.volume === 0) {
+                state.volume = 70;
+                document.getElementById('volumeSlider').value = '70';
+            }
+            updateControls();
+            showMensagem(state.muted ? 'Som simulado desligado.' : 'Som simulado ligado.');
+        }
+
+        function updateVolume(value) {
+            const volume = Math.max(0, Math.min(100, Number(value) || 0));
+            state.volume = volume;
+            state.muted = volume === 0;
+            updateControls();
+        }
+
+        async function toggleFullscreen() {
+            const element = document.querySelector('.player-card');
+            try {
+                if (!document.fullscreenElement) {
+                    await element.requestFullscreen();
+                    state.fullscreen = true;
+                } else {
+                    await document.exitFullscreen();
+                    state.fullscreen = false;
+                }
+                updateControls();
+            } catch (err) {
+                showMensagem('Não foi possível ativar ecrã inteiro.', true);
+            }
+        }
+
+        function renderPlayer(filme, festival) {
+            const stage = document.getElementById('playerStage');
+            const poster = filme.posterUrl || '/images/default-poster.jpg';
+            stage.style.backgroundImage = `linear-gradient(180deg, rgba(16,10,28,0.12), rgba(6,6,12,0.86)), url('${poster}')`;
+            stage.style.backgroundSize = 'cover';
+            stage.style.backgroundPosition = 'center';
+            document.getElementById('detailsPoster').style.backgroundImage = `url('${poster}')`;
+            document.getElementById('movieTitle').textContent = filme.titulo || 'Filme';
+            document.getElementById('playerMovieTitle').textContent = filme.titulo || 'Filme';
+            document.getElementById('playerMovieSubtitle').textContent = `${festival?.nome || 'Festival associado'} • ${filme.ano || '—'} • ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : 'Duração desconhecida'}`;
+            document.getElementById('playerFestivalTag').textContent = festival?.nome || 'Festival';
+            document.getElementById('playerDurationTag').textContent = filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : 'Duração desconhecida';
+            document.getElementById('playerAccessTag').textContent = 'Acesso ativo';
+            document.getElementById('movieSynopsis').textContent = filme.sinopse || 'Sem sinopse disponível.';
+            document.getElementById('movieMeta').textContent = `${filme.ano || '—'} • ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : 'Duração desconhecida'}`;
+            document.getElementById('movieAccessType').textContent = filme.precoBilhete != null ? `Bilhete: €${Number(filme.precoBilhete).toFixed(2)}` : 'Acesso validado';
+            document.getElementById('festivalName').textContent = festival?.nome || 'Festival associado';
+            document.getElementById('accessType').textContent = 'Autorizado';
+            document.getElementById('availabilityState').textContent = 'Disponível';
+            document.getElementById('movieDuration').textContent = filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : '—';
+            document.getElementById('accessBadge').textContent = 'Acesso ativo';
+            document.getElementById('accessBadge').classList.add('active');
+            document.getElementById('guardCard').style.display = 'none';
+            document.getElementById('detailsCard').classList.remove('locked');
+            document.getElementById('backLink').href = `/Filme?id=${encodeURIComponent(state.filmId)}&festivalId=${encodeURIComponent(state.festivalId)}`;
+            setPlaying(false);
+        }
+
+        function renderBlocked(filme) {
+            const stage = document.getElementById('playerStage');
+            const poster = filme.posterUrl || '/images/default-poster.jpg';
+            stage.style.backgroundImage = `linear-gradient(180deg, rgba(16,10,28,0.1), rgba(6,6,12,0.9)), url('${poster}')`;
+            stage.style.backgroundSize = 'cover';
+            stage.style.backgroundPosition = 'center';
+            document.getElementById('detailsPoster').style.backgroundImage = `url('${poster}')`;
+            document.getElementById('movieTitle').textContent = filme.titulo || 'Filme';
+            document.getElementById('playerMovieTitle').textContent = filme.titulo || 'Filme';
+            document.getElementById('playerMovieSubtitle').textContent = `${filme.ano || '—'} • ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : 'Duração desconhecida'} • Conteúdo bloqueado`;
+            document.getElementById('playerFestivalTag').textContent = 'Acesso necessário';
+            document.getElementById('playerDurationTag').textContent = filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : 'Duração desconhecida';
+            document.getElementById('playerAccessTag').textContent = 'Bloqueado';
+            document.getElementById('movieSynopsis').textContent = filme.sinopse || 'Sem sinopse disponível.';
+            document.getElementById('movieMeta').textContent = `${filme.ano || '—'} • ${filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : 'Duração desconhecida'}`;
+            document.getElementById('movieAccessType').textContent = 'Conteúdo bloqueado';
+            document.getElementById('festivalName').textContent = 'Acesso necessário';
+            document.getElementById('accessType').textContent = 'Bloqueado';
+            document.getElementById('availabilityState').textContent = 'Indisponível';
+            document.getElementById('movieDuration').textContent = filme.duracaoMinutos ? formatMinutes(filme.duracaoMinutos) : '—';
+            document.getElementById('accessBadge').textContent = 'Sem acesso';
+            document.getElementById('accessBadge').classList.remove('active');
+            document.getElementById('guardCard').style.display = 'block';
+            document.getElementById('detailsCard').classList.add('locked');
+            document.getElementById('goBackToFilm').href = `/Filme?id=${encodeURIComponent(state.filmId)}&festivalId=${encodeURIComponent(state.festivalId)}`;
+            setPlaying(false);
+        }
+
+        async function loadCinema() {
+            const filmId = getQueryParam('id');
+            const festivalId = getQueryParam('festivalId');
+            state.filmId = filmId;
+            state.festivalId = festivalId;
+
+            if (!filmId || !festivalId) {
+                showMensagem('Faltam parâmetros para abrir a sala de cinema.', true);
+                document.getElementById('movieTitle').textContent = 'Sala indisponível';
+                document.getElementById('guardCard').style.display = 'block';
+                document.getElementById('guardCard').querySelector('h3').textContent = 'Filme não especificado';
+                document.getElementById('guardCard').querySelector('p').textContent = 'Abre a sala a partir da página do filme para carregar o conteúdo correto.';
+                return;
+            }
+
+            try {
+                const filme = await ApiClient.getFilmeById(filmId, festivalId);
+                const festival = await ApiClient.getFestivalById(festivalId);
+                state.filme = filme;
+                state.durationSeconds = Math.max(0, Number(filme.duracaoMinutos || 0) * 60);
+                state.currentSeconds = 0;
+                document.getElementById('timelineProgress').style.width = '0%';
+                document.getElementById('timelineTime').textContent = `00:00 / ${formatClock(state.durationSeconds)}`;
+
+                const userId = ApiClient.getCurrentUserId();
+                const role = ApiClient.getCurrentUserRole();
+                let hasAccess = role === 'Administrador';
+
+                if (!hasAccess && userId) {
+                    try {
+                        hasAccess = await ApiClient.get(`/api/acessos/utilizador/${userId}/festival/${festivalId}/filme/${filmId}/verificar`);
+                    } catch (error) {
+                        console.warn('Falha a validar acesso, a sala fica bloqueada.', error);
+                        hasAccess = false;
+                    }
+                }
+
+                if (hasAccess) {
+                    renderPlayer(filme, festival);
+                    return;
+                }
+
+                renderBlocked(filme);
+            } catch (error) {
+                console.error(error);
+                showMensagem(error.message || 'Não foi possível carregar a sala de cinema.', true);
+                document.getElementById('movieTitle').textContent = 'Sala indisponível';
+                document.getElementById('guardCard').style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ApiClient.renderAuthNavigation('navActions');
+            updateControls();
+            loadCinema();
+
+            document.getElementById('playToggle').addEventListener('click', () => setPlaying(!state.playing));
+            document.getElementById('togglePlaySmall').addEventListener('click', () => setPlaying(!state.playing));
+            document.getElementById('toggleMuteSmall').addEventListener('click', toggleMute);
+            document.getElementById('toggleFullscreenSmall').addEventListener('click', toggleFullscreen);
+            document.getElementById('volumeSlider').addEventListener('input', (event) => updateVolume(event.target.value));
+        });
+    </script>
 </body>
 </html>
