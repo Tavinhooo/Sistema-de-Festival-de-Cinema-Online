@@ -19,228 +19,298 @@
     <link rel="stylesheet" href="~/css/filmes.css" />
 
     <style>
-            .modal-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.55);
-                z-index: 1000;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-            .modal-overlay.active {
-                display: flex;
-            }
+        .modal-overlay.active {
+            display: flex;
+        }
 
-            .modal-festival {
-                background: white;
-                border-radius: 24px;
-                width: 100%;
-                max-width: 900px;
-                max-height: 90vh;
-                overflow-y: auto;
-                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
-            }
+        .modal-festival {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+        }
 
-            .modal-festival-header {
-                background: linear-gradient(135deg, #251433 0%, #50316f 60%, #6c4aa4 100%);
-                color: white;
-                padding: 28px 32px;
-                border-radius: 24px 24px 0 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-            }
+        .modal-festival-header {
+            background: linear-gradient(135deg, #251433 0%, #50316f 60%, #6c4aa4 100%);
+            color: white;
+            padding: 28px 32px;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
 
-            .modal-festival-header h2 {
-                font-size: 1.6rem;
-                font-weight: 800;
-                margin-bottom: 6px;
-            }
+        .modal-festival-header h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
 
-            .modal-festival-header p {
-                opacity: 0.85;
-                font-size: 14px;
-            }
+        .modal-festival-header p {
+            opacity: 0.85;
+            font-size: 14px;
+        }
 
-            .modal-close {
-                background: rgba(255, 255, 255, 0.15);
-                border: none;
-                color: white;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                cursor: pointer;
-                font-size: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-                transition: background 0.2s;
-            }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
 
-            .modal-close:hover {
-                background: rgba(255, 255, 255, 0.25);
-            }
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
 
-            .modal-festival-body {
-                padding: 28px 32px;
-            }
+        .modal-festival-body {
+            padding: 28px 32px;
+        }
 
-            /* Estilização da descrição dentro do modal */
-            .modal-festival-description-text {
-                font-family: 'Inter', sans-serif;
-                font-size: 15px;
-                color: #2b2b2b;
-                line-height: 1.6;
-                margin-top: 0;
-                margin-bottom: 24px;
-                padding: 0 4px;
-            }
+        .modal-festival-description-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #2b2b2b;
+            line-height: 1.6;
+            margin-top: 0;
+            margin-bottom: 24px;
+            padding: 0 4px;
+        }
 
-            .festival-actions-bar {
-                display: flex;
-                justify-content: flex-end;
-                margin-bottom: 18px;
-            }
+        .festival-actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 18px;
+        }
 
-            .festival-page-link {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                padding: 12px 18px;
-                border-radius: 14px;
-                background: #7b57b8;
-                color: white;
-                font-weight: 700;
-                text-decoration: none;
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
+        .festival-page-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 14px;
+            background: #7b57b8;
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-            .festival-page-link:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 10px 26px rgba(123, 87, 184, 0.18);
-            }
+        .festival-page-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px rgba(123, 87, 184, 0.18);
+        }
 
-            .modal-access-banner {
-                background: #f0ebfb;
-                border: 1px solid #d4c3f0;
-                border-radius: 14px;
-                padding: 14px 18px;
-                margin-bottom: 24px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-size: 14px;
-                font-weight: 600;
-                color: #50316f;
-            }
+        .modal-access-banner {
+            background: #f0ebfb;
+            border: 1px solid #d4c3f0;
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #50316f;
+        }
 
-            .modal-access-banner.has-access {
-                background: #edf7ee;
-                border-color: #bfe1c5;
-                color: #185a2f;
-            }
+        .modal-access-banner.has-access {
+            background: #edf7ee;
+            border-color: #bfe1c5;
+            color: #185a2f;
+        }
 
-            .modal-films-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 20px;
-            }
+        .modal-films-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
 
-            .modal-film-card {
-                border-radius: 16px;
-                overflow: hidden;
-                border: 1px solid #ede8f5;
-                background: white;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
+        .modal-film-card {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #ede8f5;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-            .modal-film-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            }
+        .modal-film-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
 
-            .modal-film-poster {
-                width: 100%;
-                height: 200px;
-                object-fit: cover;
-                display: block;
-                background: #edeaf3;
-            }
+        .modal-film-poster {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            background: #edeaf3;
+        }
 
-            .modal-film-info {
-                padding: 14px;
-            }
+        .modal-film-info {
+            padding: 14px;
+        }
 
-            .modal-film-title {
-                font-weight: 700;
-                font-size: 15px;
-                margin-bottom: 4px;
-                color: #1a1a1a;
-            }
+        .modal-film-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
 
-            .modal-film-meta {
-                font-size: 12px;
-                color: #888;
-                margin-bottom: 10px;
-            }
+        .modal-film-meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
 
-            .modal-film-price {
-                font-weight: 800;
-                color: #6b439b;
-                font-size: 15px;
-                margin-bottom: 10px;
-            }
+        .modal-film-price {
+            font-weight: 800;
+            color: #6b439b;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
 
-            .btn-ver-filme {
-                flex: 1;
-                padding: 9px 12px;
-                border-radius: 10px;
-                font-size: 13px;
-                font-weight: 700;
-                cursor: pointer;
-                border: 1px solid #7b57b8;
-                background: white;
-                color: #7b57b8;
-                text-decoration: none;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-                transition: background 0.2s;
-            }
+        .btn-ver-filme {
+            flex: 1;
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid #7b57b8;
+            background: white;
+            color: #7b57b8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
 
-            .btn-ver-filme:hover {
-                background: #f0ebfb;
-            }
+        .btn-ver-filme:hover {
+            background: #f0ebfb;
+        }
 
-            .modal-footer-actions {
-                margin-top: 24px;
-                display: flex;
-                gap: 12px;
-                justify-content: flex-end;
-            }
+        .modal-footer-actions {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
 
-            .btn-ver-todos {
-                padding: 12px 24px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: 700;
-                cursor: pointer;
-                border: none;
-                background: linear-gradient(135deg, #7b57b8, #50316f);
-                color: white;
-                text-decoration: none;
-                transition: opacity 0.2s;
-            }
+        .btn-ver-todos {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #7b57b8, #50316f);
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
 
-            .btn-ver-todos:hover {
-                opacity: 0.9;
-            }
+        .btn-ver-todos:hover {
+            opacity: 0.9;
+        }
+
+        /* ── Recomendações ── */
+        .rec-strategy-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #7b57b8;
+            background: #f0ebfb;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+        }
+
+        .rec-film-card {
+            min-width: 160px;
+            max-width: 160px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: white;
+            border: 1px solid #ede8f5;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .rec-film-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+        }
+
+        .rec-film-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            background: #edeaf3;
+        }
+
+        .rec-film-card-info {
+            padding: 10px 12px;
+        }
+
+        .rec-film-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rec-film-card-meta {
+            font-size: 11px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rec-film-card-rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            color: #f9a825;
+            font-weight: 700;
+            font-size: 11px;
+        }
     </style>
 </head>
 
@@ -273,8 +343,15 @@
                 <div class="skeleton-card"></div>
             </div>
         </section>
+
+        <!-- ── Secção de Recomendações ── -->
+        <section id="sectionRecomendacoes" style="display:none;">
+            <h2 class="section-title" id="recomendacoesTitulo">Recomendados para ti</h2>
+            <div id="recomendacoesContainer"></div>
+        </section>
     </main>
 
+    <!-- Modal Festival (inalterado) -->
     <div class="modal-overlay" id="modalFestival">
         <div class="modal-festival">
             <div class="modal-festival-header">
@@ -304,7 +381,6 @@
                     </h3>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
-
                         <div>
                             <label style="font-size:13px; font-weight:600; color:#555; display:block; margin-bottom:8px;">Tipo de Passe</label>
                             <select id="selectTipoAcesso" style="
@@ -401,13 +477,106 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             ApiClient.renderAuthNavigation('navActions');
+
             const festivalPageLink = document.getElementById('festivalPageLink');
             if (festivalPageLink) {
-                festivalPageLink.style.display = ApiClient.getCurrentUserRole() === 'Administrador' ? 'inline-flex' : 'none';
+                festivalPageLink.style.display =
+                    ApiClient.getCurrentUserRole() === 'Administrador' ? 'inline-flex' : 'none';
             }
+
             renderFestivais();
+            loadRecomendacoes();
         });
 
+        // ── Ícones por estratégia ────────────────────────────────────────
+        const ESTRATEGIA_CONFIG = {
+            'Por Género':       { icon: 'fa-masks-theater', label: 'Com base nos teus géneros favoritos' },
+            'Por Popularidade': { icon: 'fa-fire',          label: 'Os mais vistos e bem avaliados' },
+            'Por Festival':     { icon: 'fa-star',          label: 'Dos teus festivais' },
+        };
+
+        // ── Recomendações ────────────────────────────────────────────────
+        async function loadRecomendacoes() {
+            const userId = ApiClient.getCurrentUserId();
+            const section = document.getElementById('sectionRecomendacoes');
+            const container = document.getElementById('recomendacoesContainer');
+            const titulo = document.getElementById('recomendacoesTitulo');
+
+            // Visitante sem conta: mostra os mais populares via endpoint de popularidade
+            if (!userId) {
+                try {
+                    const filmes = await ApiClient.get('/api/recomendacoes/0/estrategia?nome=Por%20Popularidade');
+                    if (!filmes || filmes.length === 0) return;
+
+                    titulo.textContent = 'Filmes em destaque';
+                    container.appendChild(criarFilesRow(filmes, 'Por Popularidade'));
+                    section.style.display = 'block';
+                } catch { /* silencioso — não quebra a página */ }
+                return;
+            }
+
+            try {
+                const grupos = await ApiClient.get(`/api/recomendacoes/${userId}`);
+                if (!grupos || grupos.length === 0) return;
+
+                titulo.textContent = 'Recomendados para ti';
+                grupos.forEach(grupo => {
+                    if (!grupo.filmes || grupo.filmes.length === 0) return;
+                    container.appendChild(criarFilesRow(grupo.filmes, grupo.estrategia));
+                });
+
+                section.style.display = 'block';
+            } catch { /* silencioso */ }
+        }
+
+        function criarFilesRow(filmes, nomeEstrategia) {
+            const config = ESTRATEGIA_CONFIG[nomeEstrategia] ?? { icon: 'fa-film', label: nomeEstrategia };
+
+            const wrapper = document.createElement('div');
+            wrapper.style.marginBottom = '32px';
+
+            // Label da estratégia
+            const label = document.createElement('div');
+            label.className = 'rec-strategy-label';
+            label.innerHTML = `<i class="fas ${config.icon}"></i> ${config.label}`;
+            wrapper.appendChild(label);
+
+            // Row de cartões
+            const row = document.createElement('div');
+            row.className = 'card-row';
+            row.style.paddingBottom = '12px';
+
+            filmes.forEach(f => {
+                const festivalId = f.festivaisIds?.[0] ?? null;
+                const href = festivalId
+                    ? `/Filme?id=${f.id}&festivalId=${festivalId}`
+                    : `/Filme?id=${f.id}`;
+
+                const card = document.createElement('div');
+                card.className = 'rec-film-card';
+                card.innerHTML = `
+                    <img src="${f.posterUrl || '/images/default-poster.jpg'}"
+                         alt="${f.titulo}"
+                         onerror="this.style.background='#edeaf3'; this.src='';" />
+                    <div class="rec-film-card-info">
+                        <div class="rec-film-card-title" title="${f.titulo}">${f.titulo}</div>
+                        <div class="rec-film-card-meta">
+                            <span>${f.genero || ''}</span>
+                            ${f.mediaAvaliacao > 0
+                                ? `<span class="rec-film-card-rating"><i class="fas fa-star"></i> ${Number(f.mediaAvaliacao).toFixed(1)}</span>`
+                                : ''}
+                        </div>
+                    </div>
+                `;
+                card.addEventListener('click', () => window.location.href = href);
+                row.appendChild(card);
+            });
+
+            wrapper.appendChild(row);
+            return wrapper;
+        }
+
+        // ── Modal Festival (inalterado) ──────────────────────────────────
         let carrinhoId = null;
         let _festivalAtual = null;
         let _filmesAtuais = [];
@@ -435,7 +604,6 @@
             }
         };
 
-        // --- Fechar modal festival ---
         document.getElementById('modalClose').addEventListener('click', () =>
             document.getElementById('modalFestival').classList.remove('active'));
         document.getElementById('modalFestival').addEventListener('click', (e) => {
@@ -446,7 +614,6 @@
         document.getElementById('selectTipoAcesso').addEventListener('change', atualizarPreco);
         document.getElementById('selectFilme').addEventListener('change', atualizarPreco);
 
-        // --- Abrir modal festival ---
         async function abrirModalFestival(festival) {
             _festivalAtual = festival;
             const modal = document.getElementById('modalFestival');
@@ -461,13 +628,10 @@
             const d2 = new Date(festival.dataFim).toLocaleDateString('pt-PT');
             document.getElementById('modalFestivalDatas').textContent = `${d1} — ${d2}`;
 
-            // Mapeamento defensivo da descrição (suporta camelCase e PascalCase do DTO corrigido)
             const textoDescricao = festival.descricao || festival.Descricao;
-            if (textoDescricao && textoDescricao.trim() !== '') {
-                descContainer.textContent = textoDescricao;
-            } else {
-                descContainer.textContent = "Este festival ainda não tem uma descrição disponível.";
-            }
+            descContainer.textContent = textoDescricao?.trim()
+                ? textoDescricao
+                : 'Este festival ainda não tem uma descrição disponível.';
             descContainer.style.display = 'block';
 
             grid.innerHTML = '<p style="color:#aaa; padding:20px 0;">A carregar filmes...</p>';
@@ -482,15 +646,14 @@
             let temAcesso = false;
             if (userId) {
                 try { temAcesso = await ApiClient.verificarAcessoFestival(userId, festival.id); }
-                catch (err) { temAcesso = false; }
+                catch { temAcesso = false; }
             }
 
-            // Preparar carrinho
             if (userId) {
                 try {
                     const c = await ApiClient.getCartByUser(userId);
                     carrinhoId = c.id;
-                } catch (err) {
+                } catch {
                     try {
                         const c = await ApiClient.createCart(userId);
                         carrinhoId = c.id;
@@ -498,12 +661,11 @@
                 }
             }
 
-            // Banner de acesso
             if (role === 'Administrador') {
                 banner.className = 'modal-access-banner has-access';
                 banner.innerHTML = '<i class="fas fa-shield-alt"></i> Tens acesso total como Administrador.';
                 banner.style.display = 'flex';
-                footerActions.innerHTML = ` <a href="/Filmes?festivalId=${festival.id}" class="btn-ver-todos">Ver todos os filmes</a>`;
+                footerActions.innerHTML = `<a href="/Filmes?festivalId=${festival.id}" class="btn-ver-todos">Ver todos os filmes</a>`;
             } else if (temAcesso) {
                 banner.className = 'modal-access-banner has-access';
                 banner.innerHTML = '<i class="fas fa-check-circle"></i> Já tens acesso aos filmes deste festival!';
@@ -515,7 +677,6 @@
                 banner.style.display = 'flex';
             }
 
-            // Carregar filmes
             try {
                 const filmes = await ApiClient.getFilmesByFestival(festival.id);
                 _filmesAtuais = filmes || [];
@@ -533,7 +694,6 @@
                     card.className = 'modal-film-card';
                     card.style.cursor = 'pointer';
                     card.title = `Ver detalhes de ${f.titulo}`;
-
                     card.innerHTML = `
                         <img class="modal-film-poster"
                              src="${f.posterUrl || '/images/default-poster.jpg'}"
@@ -544,17 +704,14 @@
                             <div class="modal-film-meta">${f.genero || ''} ${f.ano ? '· ' + f.ano : ''}</div>
                             <div class="modal-film-price">€${Number(f.precoBilhete || 0).toFixed(2)}</div>
                             ${canAccess
-                                ? `<span class="btn-ver-filme" style="background: #7b57b8; color: white;"><i class="fas fa-play"></i> Ver filme</span>`
-                                : `<span style="font-size:12px; color:#aaa;"><i class="fas fa-info-circle"></i> Clica para ver detalhes</span>`
-                            }
+                                ? `<span class="btn-ver-filme" style="background:#7b57b8; color:white;"><i class="fas fa-play"></i> Ver filme</span>`
+                                : `<span style="font-size:12px; color:#aaa;"><i class="fas fa-info-circle"></i> Clica para ver detalhes</span>`}
                         </div>
                     `;
-
                     card.addEventListener('click', () => {
                         const filmId = f.id ?? f.filmeId ?? f.FilmeId;
                         window.location.href = `/Filme?id=${filmId}&festivalId=${festival.id}`;
                     });
-
                     grid.appendChild(card);
                 });
 
@@ -581,21 +738,20 @@
 
         async function atualizarPreco() {
             if (!_festivalAtual) return;
-
             const tipoAcesso = document.getElementById('selectTipoAcesso').value;
             const passeInfo = PASSES[tipoAcesso];
             const filmeSelectWrapper = document.getElementById('filmeSelectWrapper');
             const precoEl = document.getElementById('precoCalculado');
-            const TentoEl = document.getElementById('precoDesconto');
+            const descontoEl = document.getElementById('precoDesconto');
 
             filmeSelectWrapper.style.display = passeInfo.precisaFilme ? 'block' : 'none';
             document.getElementById('passeDescricaoTexto').innerHTML = passeInfo.descricao;
 
             if (passeInfo.desconto) {
-                TentoEl.textContent = passeInfo.desconto;
-                TentoEl.style.display = 'block';
+                descontoEl.textContent = passeInfo.desconto;
+                descontoEl.style.display = 'block';
             } else {
-                TentoEl.style.display = 'none';
+                descontoEl.style.display = 'none';
             }
 
             try {
@@ -605,7 +761,6 @@
                 precoEl.textContent = `€${Number(resultado.precoTotal).toFixed(2)}`;
             } catch (e) {
                 precoEl.textContent = '€—';
-                console.error('Erro ao calcular preço:', e);
             }
         }
 
@@ -615,7 +770,9 @@
 
             const tipoAcesso = document.getElementById('selectTipoAcesso').value;
             const passeInfo = PASSES[tipoAcesso];
-            const filmeId = passeInfo.precisaFilme ? parseInt(document.getElementById('selectFilme').value) : _filmesAtuais[0]?.id;
+            const filmeId = passeInfo.precisaFilme
+                ? parseInt(document.getElementById('selectFilme').value)
+                : _filmesAtuais[0]?.id;
 
             const btn = document.getElementById('btnAdicionarCarrinho');
             btn.disabled = true;
@@ -626,11 +783,11 @@
                     const c = await ApiClient.createCart(userId);
                     carrinhoId = c.id;
                 }
-
-                const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso, passeInfo.precisaFilme ? filmeId : null);
-                const itemFilmeId = tipoAcesso && tipoAcesso.toLowerCase().includes('passe')
-                    ? null
-                    : filmeId;
+                const resultado = await ApiClient.calcularPreco(
+                    _festivalAtual.id, tipoAcesso,
+                    passeInfo.precisaFilme ? filmeId : null
+                );
+                const itemFilmeId = tipoAcesso?.toLowerCase().includes('passe') ? null : filmeId;
                 await ApiClient.addToCart(carrinhoId, itemFilmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
 
                 btn.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
@@ -655,7 +812,9 @@
 
             const tipoAcesso = document.getElementById('selectTipoAcesso').value;
             const passeInfo = PASSES[tipoAcesso];
-            const filmeId = passeInfo.precisaFilme ? parseInt(document.getElementById('selectFilme').value) : _filmesAtuais[0]?.id;
+            const filmeId = passeInfo.precisaFilme
+                ? parseInt(document.getElementById('selectFilme').value)
+                : _filmesAtuais[0]?.id;
 
             const btn = document.getElementById('btnComprarAgora');
             btn.disabled = true;
@@ -666,11 +825,11 @@
                     const c = await ApiClient.createCart(userId);
                     carrinhoId = c.id;
                 }
-
-                const resultado = await ApiClient.calcularPreco(_festivalAtual.id, tipoAcesso, passeInfo.precisaFilme ? filmeId : null);
-                const itemFilmeId = tipoAcesso && tipoAcesso.toLowerCase().includes('passe')
-                    ? null
-                    : filmeId;
+                const resultado = await ApiClient.calcularPreco(
+                    _festivalAtual.id, tipoAcesso,
+                    passeInfo.precisaFilme ? filmeId : null
+                );
+                const itemFilmeId = tipoAcesso?.toLowerCase().includes('passe') ? null : filmeId;
                 await ApiClient.addToCart(carrinhoId, itemFilmeId, 1, tipoAcesso, resultado.precoTotal, _festivalAtual.id);
                 window.location.href = '/Checkout';
             } catch (e) {
